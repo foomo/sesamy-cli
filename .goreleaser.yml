@@ -1,0 +1,41 @@
+# .goreleaser.yml
+# Build customization
+builds:
+  - binary: sesamy
+    main: ./cmd/main.go
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
+      - darwin
+      - linux
+    goarch:
+      - amd64
+      - arm64
+    goarm:
+      - 7
+    flags:
+      - -trimpath
+    ldflags:
+      - -s -w -X github.com/foomo/sesamy-cli/cmd/actions.version={{.Version}}
+
+release:
+  prerelease: auto
+
+archives:
+  - format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+
+changelog:
+  use: github-native
+
+brews:
+  # Repository to push the tap to.
+  - repository:
+      owner: foomo
+      name: homebrew
+    caveats: "sesamy --help"
+    homepage: "https://github.com/foomo/sesamy-cli"
+    description: "CLI utitlity to manage Server Side Tag Management"

@@ -1,0 +1,14 @@
+.*
+*.log
+!.github/
+!.husky/
+!.editorconfig
+!.gitignore
+!.golangci.yml
+!.goreleaser.yml
+!.husky.yaml
+!.yamllint.yaml
+/bin/
+/coverage.out
+/coverage.html
+/tmp/

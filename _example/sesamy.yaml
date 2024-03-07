@@ -1,0 +1,23 @@
+google:
+  ga4:
+    measurement_id: G-PZ5ELRCR31
+
+  gtm:
+    account_id: 6099238525
+    server:
+      container_id: 175348980
+      workspace_id: 10
+      measurement_id: GTM-5NWPR4QW
+
+    web:
+      container_id: 175355532
+      workspace_id: 23
+      measurement_id: GTM-57BHX34G
+
+  credentials_file: ./tmp/google_service_account_creds.json
+
+events:
+  packages:
+    - path: "github.com/foomo/sesamy-cli/_example/server"
+      output_path: "./_example/client/types.d.ts"
+      indent: "\t"
