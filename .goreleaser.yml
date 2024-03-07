@@ -35,7 +35,7 @@ brews:
   # Repository to push the tap to.
   - repository:
       owner: foomo
-      name: homebrew
+      name: homebrew-tap
     caveats: "sesamy --help"
     homepage: "https://github.com/foomo/sesamy-cli"
     description: "CLI utitlity to manage Server Side Tag Management"
