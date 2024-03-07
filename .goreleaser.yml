@@ -2,7 +2,7 @@
 # Build customization
 builds:
   - binary: sesamy
-    main: ./cmd/main.go
+    main: ./main.go
     env:
       - CGO_ENABLED=0
     goos:
@@ -17,7 +17,7 @@ builds:
     flags:
       - -trimpath
     ldflags:
-      - -s -w -X github.com/foomo/sesamy-cli/cmd/actions.version={{.Version}}
+      - -s -w -X github.com/foomo/sesamy-cli/cmd.version={{.Version}}
 
 release:
   prerelease: auto
