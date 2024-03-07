@@ -3,7 +3,6 @@ module github.com/foomo/sesamy-cli
 go 1.21
 
 require (
-	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 	github.com/fatih/structtag v1.2.0
 	github.com/gzuidhof/tygo v0.2.14
 	github.com/mitchellh/mapstructure v1.5.0
@@ -11,7 +10,7 @@ require (
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
 	github.com/stoewer/go-strcase v1.3.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	golang.org/x/tools v0.13.0
 	google.golang.org/api v0.153.0
 )
@@ -23,6 +22,7 @@ require (
 	cloud.google.com/go/compute v1.23.3 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	github.com/containerd/console v1.0.3 // indirect
+	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
