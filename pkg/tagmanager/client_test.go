@@ -18,9 +18,9 @@ import (
 
 func TestNewClient_Server(t *testing.T) {
 	t.Skip()
-	ctx := context.TODO()
 
 	c, err := tagmanager.NewClient(
+		context.TODO(),
 		os.Getenv("TEST_ACCOUNT_ID"),
 		os.Getenv("TEST_SERVER_CONTAINER_ID"),
 		os.Getenv("TEST_SERVER_WORKSPACE_ID"),
@@ -33,7 +33,7 @@ func TestNewClient_Server(t *testing.T) {
 
 	{ // --- Folders ---
 		t.Run("upsert folder", func(t *testing.T) {
-			obj, err := c.UpsertFolder(ctx, "Sesamy")
+			obj, err := c.UpsertFolder("Sesamy")
 			require.NoError(t, err)
 			dump(t, obj)
 		})
@@ -41,7 +41,7 @@ func TestNewClient_Server(t *testing.T) {
 
 	{ // --- Variables ---
 		t.Run("upsert GTM client", func(t *testing.T) {
-			client, err := c.UpsertConstantVariable(ctx, "web-container-id", os.Getenv("TEST_WEB_CONTAINER_GID"))
+			client, err := c.UpsertConstantVariable("web-container-id", os.Getenv("TEST_WEB_CONTAINER_GID"))
 			if assert.NoError(t, err) {
 				dump(t, client)
 			}
@@ -50,16 +50,14 @@ func TestNewClient_Server(t *testing.T) {
 
 	{ // --- Clients ---
 		t.Run("list clients", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Clients.List(c.WorkspacePath())
+			cmd := c.Service().Accounts.Containers.Workspaces.Clients.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
 			}
 		})
 
 		t.Run("upsert GTM client", func(t *testing.T) {
-			client, err := c.UpsertGTMClient(ctx, "Google Tag Manager Web Container", "Constant.web-container-id")
+			client, err := c.UpsertGTMClient("Google Tag Manager Web Container", "Constant.web-container-id")
 			if assert.NoError(t, err) {
 				dump(t, client)
 			}
@@ -68,9 +66,7 @@ func TestNewClient_Server(t *testing.T) {
 
 	{ // --- Triggers ---
 		t.Run("list triggers", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Triggers.List(c.WorkspacePath())
+			cmd := c.Service().Accounts.Containers.Workspaces.Triggers.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
 			}
@@ -79,9 +75,7 @@ func TestNewClient_Server(t *testing.T) {
 
 	{ // --- Tags ---
 		t.Run("list tags", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Tags.List(c.WorkspacePath())
+			cmd := c.Service().Accounts.Containers.Workspaces.Tags.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
 			}
@@ -91,9 +85,8 @@ func TestNewClient_Server(t *testing.T) {
 
 func TestNewClient_Web(t *testing.T) {
 	t.Skip()
-	ctx := context.TODO()
-
 	c, err := tagmanager.NewClient(
+		context.TODO(),
 		os.Getenv("TEST_ACCOUNT_ID"),
 		os.Getenv("TEST_WEB_CONTAINER_ID"),
 		os.Getenv("TEST_WEB_WORKSPACE_ID"),
@@ -106,9 +99,7 @@ func TestNewClient_Web(t *testing.T) {
 
 	{ // --- Containers ---
 		t.Run("list containers", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.List(c.AccountPath())
+			cmd := c.Service().Accounts.Containers.List(c.AccountPath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
 			}
@@ -117,9 +108,7 @@ func TestNewClient_Web(t *testing.T) {
 
 	{ // --- Workspaces ---
 		t.Run("list workspaces", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.List(c.ContainerPath())
+			cmd := c.Service().Accounts.Containers.Workspaces.List(c.ContainerPath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
 			}
@@ -130,18 +119,14 @@ func TestNewClient_Web(t *testing.T) {
 	{ // --- Folders ---
 		name := "Sesamy"
 		t.Run("list folders", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Folders.List(c.WorkspacePath())
+			cmd := c.Service().Accounts.Containers.Workspaces.Folders.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
 			}
 		})
 
 		t.Run("create folder", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Folders.Create(c.WorkspacePath(), &gtagmanager.Folder{
+			cmd := c.Service().Accounts.Containers.Workspaces.Folders.Create(c.WorkspacePath(), &gtagmanager.Folder{
 				AccountId:   c.AccountID(),
 				ContainerId: c.ContainerID(),
 				WorkspaceId: c.WorkspaceID(),
@@ -154,9 +139,7 @@ func TestNewClient_Web(t *testing.T) {
 		})
 
 		t.Run("get folder", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Folders.List(c.WorkspacePath())
+			cmd := c.Service().Accounts.Containers.Workspaces.Folders.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				for _, folder := range r.Folder {
 					if folder.Name == name {
@@ -169,7 +152,7 @@ func TestNewClient_Web(t *testing.T) {
 		})
 
 		t.Run("upsert folder", func(t *testing.T) {
-			obj, err := c.UpsertFolder(ctx, name)
+			obj, err := c.UpsertFolder(name)
 			require.NoError(t, err)
 			t.Log("ID: " + obj.FolderId)
 		})
@@ -178,18 +161,14 @@ func TestNewClient_Web(t *testing.T) {
 	{ // --- Variables ---
 		name := "ga4-measurement-id"
 		t.Run("list variables", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Variables.List(c.WorkspacePath())
+			cmd := c.Service().Accounts.Containers.Workspaces.Variables.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
 			}
 		})
 
 		t.Run("create variable", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Variables.Create(c.WorkspacePath(), &gtagmanager.Variable{
+			cmd := c.Service().Accounts.Containers.Workspaces.Variables.Create(c.WorkspacePath(), &gtagmanager.Variable{
 				AccountId:      c.AccountID(),
 				ContainerId:    c.ContainerID(),
 				WorkspaceId:    c.WorkspaceID(),
@@ -211,9 +190,7 @@ func TestNewClient_Web(t *testing.T) {
 		})
 
 		t.Run("get variable", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Variables.List(c.WorkspacePath())
+			cmd := c.Service().Accounts.Containers.Workspaces.Variables.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				for _, variable := range r.Variable {
 					if variable.Name == "Constant."+name {
@@ -226,7 +203,7 @@ func TestNewClient_Web(t *testing.T) {
 		})
 
 		t.Run("upsert variable", func(t *testing.T) {
-			obj, err := c.UpsertConstantVariable(ctx, name, c.MeasurementID())
+			obj, err := c.UpsertConstantVariable(name, c.MeasurementID())
 			require.NoError(t, err)
 			t.Log("ID: " + obj.VariableId)
 		})
@@ -235,18 +212,14 @@ func TestNewClient_Web(t *testing.T) {
 	{ // --- Triggers ---
 		name := "login"
 		t.Run("list triggers", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Triggers.List(c.WorkspacePath())
+			cmd := c.Service().Accounts.Containers.Workspaces.Triggers.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
 			}
 		})
 
 		t.Run("create trigger", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Triggers.Create(c.WorkspacePath(), &gtagmanager.Trigger{
+			cmd := c.Service().Accounts.Containers.Workspaces.Triggers.Create(c.WorkspacePath(), &gtagmanager.Trigger{
 				AccountId:      c.AccountID(),
 				ContainerId:    c.ContainerID(),
 				WorkspaceId:    c.WorkspaceID(),
@@ -278,9 +251,7 @@ func TestNewClient_Web(t *testing.T) {
 		})
 
 		t.Run("get trigger", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Triggers.List(c.WorkspacePath())
+			cmd := c.Service().Accounts.Containers.Workspaces.Triggers.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				for _, trigger := range r.Trigger {
 					if trigger.Name == "Event."+name {
@@ -293,7 +264,7 @@ func TestNewClient_Web(t *testing.T) {
 		})
 
 		t.Run("upsert trigger", func(t *testing.T) {
-			obj, err := c.UpsertCustomEventTrigger(ctx, name)
+			obj, err := c.UpsertCustomEventTrigger(name)
 			require.NoError(t, err)
 			t.Log("ID: " + obj.TriggerId)
 		})
@@ -302,18 +273,14 @@ func TestNewClient_Web(t *testing.T) {
 	{ // --- Tags ---
 		name := "login"
 		t.Run("list tags", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Tags.List(c.WorkspacePath())
+			cmd := c.Service().Accounts.Containers.Workspaces.Tags.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
 			}
 		})
 
 		t.Run("create tag", func(t *testing.T) {
-			client, err := c.Service(ctx)
-			require.NoError(t, err)
-			cmd := client.Accounts.Containers.Workspaces.Tags.Create(c.WorkspacePath(), &gtagmanager.Tag{
+			cmd := c.Service().Accounts.Containers.Workspaces.Tags.Create(c.WorkspacePath(), &gtagmanager.Tag{
 				AccountId:      c.AccountID(),
 				ContainerId:    c.ContainerID(),
 				WorkspaceId:    c.WorkspaceID(),
@@ -379,11 +346,11 @@ func TestNewClient_Web(t *testing.T) {
 			Method string `json:"method"`
 		}
 
-		//t.Run("upsert tag", func(t *testing.T) {
+		// t.Run("upsert tag", func(t *testing.T) {
 		//	obj, err := c.UpsertGA4WebTag(ctx, "login", eventParameters(Login{}))
 		//	require.NoError(t, err)
 		//	t.Log("ID: " + obj.TagId)
-		//})
+		// })
 	}
 }
 

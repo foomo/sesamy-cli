@@ -1,12 +1,22 @@
 # Sesamy CLI
 
+[![Build Status](https://github.com/foomo/sesamy-cli/actions/workflows/test.yml/badge.svg?branch=main&event=push)](https://github.com/foomo/sesamy-cli/actions/workflows/test.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/foomo/sesamy-cli)](https://goreportcard.com/report/github.com/foomo/sesamy-cli)
 [![godoc](https://godoc.org/github.com/foomo/sesamy-cli?status.svg)](https://godoc.org/github.com/foomo/sesamy-cli)
-[![goreleaser](https://github.com/foomo/sesamy-cli/workflows/goreleaser/badge.svg)](https://github.com/foomo/sesamy-cli/actions)
+[![goreleaser](https://github.com/foomo/sesamy-cli/actions/workflows/release.yml/badge.svg)](https://github.com/foomo/sesamy-cli/actions)
 
 > CLI to keep you sane while working with GTM.
 
-## Quickstart
+## Installing
+
+Install the latest release of the cli:
+
+````bash
+$ brew update
+$ brew install foomo/tap/sesamy-cli
+````
+
+## Usage
 
 Add a `sesamy.yaml` configurtion
 

@@ -3,6 +3,8 @@ package tagmanager
 import (
 	"context"
 	"errors"
+	"sort"
+	"time"
 
 	"google.golang.org/api/option"
 	"google.golang.org/api/tagmanager/v2"
@@ -14,13 +16,14 @@ var (
 
 type (
 	Client struct {
-		notes         string
-		accountID     string
-		containerID   string
-		workspaceID   string
-		measurementID string
-		folderName    string
-		clientOptions []option.ClientOption
+		notes            string
+		accountID        string
+		containerID      string
+		workspaceID      string
+		measurementID    string
+		folderName       string
+		clientOptions    []option.ClientOption
+		requestThrottler *time.Ticker
 		// cache
 		service   *tagmanager.Service
 		clients   map[string]*tagmanager.Client
@@ -48,6 +51,12 @@ func ClientWithFolderName(v string) ClientOption {
 	}
 }
 
+func ClientWithRequestQuota(v int) ClientOption {
+	return func(o *Client) {
+		o.requestThrottler = time.NewTicker((100 * time.Second) / time.Duration(v))
+	}
+}
+
 func ClientWithClientOptions(v ...option.ClientOption) ClientOption {
 	return func(o *Client) {
 		o.clientOptions = append(o.clientOptions, v...)
@@ -58,7 +67,7 @@ func ClientWithClientOptions(v ...option.ClientOption) ClientOption {
 // ~ Constructor
 // ------------------------------------------------------------------------------------------------
 
-func NewClient(accountID, containerID, workspaceID, measurementID string, opts ...ClientOption) (*Client, error) {
+func NewClient(ctx context.Context, accountID, containerID, workspaceID, measurementID string, opts ...ClientOption) (*Client, error) {
 	inst := &Client{
 		accountID:     accountID,
 		containerID:   containerID,
@@ -72,21 +81,18 @@ func NewClient(accountID, containerID, workspaceID, measurementID string, opts .
 		notes:         "Managed by Sesamy. DO NOT EDIT.",
 		folderName:    "Sesamy",
 		clientOptions: []option.ClientOption{
-			//// https://developers.google.com/tag-platform/tag-manager/api/v2/authorization#AboutAuthorization
-			//option.WithScopes(
-			//	"https://www.googleapis.com/auth/tagmanager.readonly",
-			//	"https://www.googleapis.com/auth/tagmanager.edit.containers",
-			//	// https://www.googleapis.com/auth/tagmanager.delete.containers
-			//	//"https://www.googleapis.com/auth/tagmanager.edit.containerversions",
-			//	//"https://www.googleapis.com/auth/tagmanager.publish",
-			//	// https://www.googleapis.com/auth/tagmanager.manage.users
-			//	// https://www.googleapis.com/auth/tagmanager.manage.accounts
-			//),
+			option.WithRequestReason("Sesamy container provisioning"),
 		},
 	}
 
 	for _, opt := range opts {
 		opt(inst)
+	}
+
+	if value, err := tagmanager.NewService(ctx, inst.clientOptions...); err != nil {
+		return nil, err
+	} else {
+		inst.service = value
 	}
 
 	return inst, nil
@@ -120,15 +126,11 @@ func (c *Client) FolderName() string {
 	return c.folderName
 }
 
-func (c *Client) Service(ctx context.Context) (*tagmanager.Service, error) {
-	if c.service == nil {
-		v, err := tagmanager.NewService(ctx, c.clientOptions...)
-		if err != nil {
-			return nil, err
-		}
-		c.service = v
+func (c *Client) Service() *tagmanager.Service {
+	if c.requestThrottler != nil {
+		<-c.requestThrottler.C
 	}
-	return c.service, nil
+	return c.service
 }
 
 func (c *Client) AccountPath() string {
@@ -143,14 +145,9 @@ func (c *Client) WorkspacePath() string {
 	return c.ContainerPath() + "/workspaces/" + c.workspaceID
 }
 
-func (c *Client) Client(ctx context.Context, name string) (*tagmanager.Client, error) {
+func (c *Client) Client(name string) (*tagmanager.Client, error) {
 	if _, ok := c.clients[name]; !ok {
-		client, err := c.Service(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		r, err := client.Accounts.Containers.Workspaces.Clients.List(c.WorkspacePath()).Do()
+		r, err := c.Service().Accounts.Containers.Workspaces.Clients.List(c.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -171,14 +168,9 @@ func (c *Client) Client(ctx context.Context, name string) (*tagmanager.Client, e
 	return c.clients[name], nil
 }
 
-func (c *Client) Folder(ctx context.Context, name string) (*tagmanager.Folder, error) {
+func (c *Client) Folder(name string) (*tagmanager.Folder, error) {
 	if _, ok := c.folders[name]; !ok {
-		client, err := c.Service(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		r, err := client.Accounts.Containers.Workspaces.Folders.List(c.WorkspacePath()).Do()
+		r, err := c.Service().Accounts.Containers.Workspaces.Folders.List(c.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -199,14 +191,9 @@ func (c *Client) Folder(ctx context.Context, name string) (*tagmanager.Folder, e
 	return c.folders[name], nil
 }
 
-func (c *Client) Variable(ctx context.Context, name string) (*tagmanager.Variable, error) {
+func (c *Client) Variable(name string) (*tagmanager.Variable, error) {
 	if _, ok := c.variables[name]; !ok {
-		client, err := c.Service(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		r, err := client.Accounts.Containers.Workspaces.Variables.List(c.WorkspacePath()).Do()
+		r, err := c.Service().Accounts.Containers.Workspaces.Variables.List(c.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -227,14 +214,9 @@ func (c *Client) Variable(ctx context.Context, name string) (*tagmanager.Variabl
 	return c.variables[name], nil
 }
 
-func (c *Client) Trigger(ctx context.Context, name string) (*tagmanager.Trigger, error) {
+func (c *Client) Trigger(name string) (*tagmanager.Trigger, error) {
 	if _, ok := c.triggers[name]; !ok {
-		client, err := c.Service(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		r, err := client.Accounts.Containers.Workspaces.Triggers.List(c.WorkspacePath()).Do()
+		r, err := c.Service().Accounts.Containers.Workspaces.Triggers.List(c.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -255,14 +237,9 @@ func (c *Client) Trigger(ctx context.Context, name string) (*tagmanager.Trigger,
 	return c.triggers[name], nil
 }
 
-func (c *Client) Tag(ctx context.Context, name string) (*tagmanager.Tag, error) {
+func (c *Client) Tag(name string) (*tagmanager.Tag, error) {
 	if _, ok := c.tags[name]; !ok {
-		client, err := c.Service(ctx)
-		if err != nil {
-			return nil, err
-		}
-
-		r, err := client.Accounts.Containers.Workspaces.Tags.List(c.WorkspacePath()).Do()
+		r, err := c.Service().Accounts.Containers.Workspaces.Tags.List(c.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -287,18 +264,13 @@ func (c *Client) Tag(ctx context.Context, name string) (*tagmanager.Tag, error) 
 // ~ Public methods
 // ------------------------------------------------------------------------------------------------
 
-func (c *Client) UpsertGA4Client(ctx context.Context, name string) (*tagmanager.Client, error) {
-	cache, err := c.Client(ctx, name)
+func (c *Client) UpsertGA4Client(name string) (*tagmanager.Client, error) {
+	cache, err := c.Client(name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
-	s, err := c.Service(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	folder, err := c.Folder(ctx, c.folderName)
+	folder, err := c.Folder(c.folderName)
 	if err != nil {
 		return nil, err
 	}
@@ -331,29 +303,24 @@ func (c *Client) UpsertGA4Client(ctx context.Context, name string) (*tagmanager.
 	}
 
 	if cache == nil {
-		c.clients[name], err = s.Accounts.Containers.Workspaces.Clients.Create(c.WorkspacePath(), obj).Do()
+		c.clients[name], err = c.Service().Accounts.Containers.Workspaces.Clients.Create(c.WorkspacePath(), obj).Do()
 	} else {
-		c.clients[name], err = s.Accounts.Containers.Workspaces.Clients.Update(c.WorkspacePath()+"/clients/"+cache.ClientId, obj).Do()
+		c.clients[name], err = c.Service().Accounts.Containers.Workspaces.Clients.Update(c.WorkspacePath()+"/clients/"+cache.ClientId, obj).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Client(ctx, name)
+	return c.Client(name)
 }
 
-func (c *Client) UpsertGTMClient(ctx context.Context, name, webContainerMeasurementID string) (*tagmanager.Client, error) {
-	cache, err := c.Client(ctx, name)
+func (c *Client) UpsertGTMClient(name, webContainerMeasurementID string) (*tagmanager.Client, error) {
+	cache, err := c.Client(name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
-	s, err := c.Service(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	folder, err := c.Folder(ctx, c.folderName)
+	folder, err := c.Folder(c.folderName)
 	if err != nil {
 		return nil, err
 	}
@@ -402,25 +369,20 @@ func (c *Client) UpsertGTMClient(ctx context.Context, name, webContainerMeasurem
 	}
 
 	if cache == nil {
-		c.clients[name], err = s.Accounts.Containers.Workspaces.Clients.Create(c.WorkspacePath(), obj).Do()
+		c.clients[name], err = c.Service().Accounts.Containers.Workspaces.Clients.Create(c.WorkspacePath(), obj).Do()
 	} else {
-		c.clients[name], err = s.Accounts.Containers.Workspaces.Clients.Update(c.WorkspacePath()+"/clients/"+cache.ClientId, obj).Do()
+		c.clients[name], err = c.Service().Accounts.Containers.Workspaces.Clients.Update(c.WorkspacePath()+"/clients/"+cache.ClientId, obj).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Client(ctx, name)
+	return c.Client(name)
 }
 
-func (c *Client) UpsertFolder(ctx context.Context, name string) (*tagmanager.Folder, error) {
-	cache, err := c.Folder(ctx, name)
+func (c *Client) UpsertFolder(name string) (*tagmanager.Folder, error) {
+	cache, err := c.Folder(name)
 	if err != nil && !errors.Is(err, ErrNotFound) && !errors.Is(err, ErrNotFound) {
-		return nil, err
-	}
-
-	client, err := c.Service(ctx)
-	if err != nil {
 		return nil, err
 	}
 
@@ -433,47 +395,42 @@ func (c *Client) UpsertFolder(ctx context.Context, name string) (*tagmanager.Fol
 	}
 
 	if cache == nil {
-		c.folders[name], err = client.Accounts.Containers.Workspaces.Folders.Create(c.WorkspacePath(), obj).Do()
+		c.folders[name], err = c.Service().Accounts.Containers.Workspaces.Folders.Create(c.WorkspacePath(), obj).Do()
 	} else {
-		c.folders[name], err = client.Accounts.Containers.Workspaces.Folders.Update(c.WorkspacePath()+"/folders/"+cache.FolderId, obj).Do()
+		c.folders[name], err = c.Service().Accounts.Containers.Workspaces.Folders.Update(c.WorkspacePath()+"/folders/"+cache.FolderId, obj).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Folder(ctx, name)
+	return c.Folder(name)
 }
 
-func (c *Client) UpsertVariable(ctx context.Context, obj *tagmanager.Variable) (*tagmanager.Variable, error) {
-	cache, err := c.Variable(ctx, obj.Name)
+func (c *Client) UpsertVariable(variable *tagmanager.Variable) (*tagmanager.Variable, error) {
+	cache, err := c.Variable(variable.Name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
-	client, err := c.Service(ctx)
+	folder, err := c.Folder(c.folderName)
 	if err != nil {
 		return nil, err
 	}
-
-	folder, err := c.Folder(ctx, c.folderName)
-	if err != nil {
-		return nil, err
-	}
-	obj.ParentFolderId = folder.FolderId
+	variable.ParentFolderId = folder.FolderId
 
 	if cache == nil {
-		c.variables[obj.Name], err = client.Accounts.Containers.Workspaces.Variables.Create(c.WorkspacePath(), obj).Do()
+		c.variables[variable.Name], err = c.Service().Accounts.Containers.Workspaces.Variables.Create(c.WorkspacePath(), variable).Do()
 	} else {
-		c.variables[obj.Name], err = client.Accounts.Containers.Workspaces.Variables.Update(c.WorkspacePath()+"/variables/"+cache.VariableId, obj).Do()
+		c.variables[variable.Name], err = c.Service().Accounts.Containers.Workspaces.Variables.Update(c.WorkspacePath()+"/variables/"+cache.VariableId, variable).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Variable(ctx, obj.Name)
+	return c.Variable(variable.Name)
 }
 
-func (c *Client) UpsertConstantVariable(ctx context.Context, name, value string) (*tagmanager.Variable, error) {
+func (c *Client) UpsertConstantVariable(name, value string) (*tagmanager.Variable, error) {
 	obj := &tagmanager.Variable{
 		AccountId:   c.accountID,
 		ContainerId: c.containerID,
@@ -489,10 +446,10 @@ func (c *Client) UpsertConstantVariable(ctx context.Context, name, value string)
 		},
 		Type: "c",
 	}
-	return c.UpsertVariable(ctx, obj)
+	return c.UpsertVariable(obj)
 }
 
-func (c *Client) UpsertEventModelVariable(ctx context.Context, name string) (*tagmanager.Variable, error) {
+func (c *Client) UpsertEventModelVariable(name string) (*tagmanager.Variable, error) {
 	obj := &tagmanager.Variable{
 		AccountId:   c.accountID,
 		ContainerId: c.containerID,
@@ -518,22 +475,64 @@ func (c *Client) UpsertEventModelVariable(ctx context.Context, name string) (*ta
 		},
 		Type: "v",
 	}
-	return c.UpsertVariable(ctx, obj)
+	return c.UpsertVariable(obj)
 }
 
-func (c *Client) UpsertCustomEventTrigger(ctx context.Context, name string) (*tagmanager.Trigger, error) {
-	name = "Event." + name
-	cache, err := c.Trigger(ctx, name)
+func (c *Client) UpsertGTEventSettingsVariable(name string, variables map[string]*tagmanager.Variable) (*tagmanager.Variable, error) {
+	fullname := "GTEventSettings." + name
+
+	parameters := make([]string, 0, len(variables))
+	for k := range variables {
+		parameters = append(parameters, k)
+	}
+	sort.Strings(parameters)
+
+	list := make([]*tagmanager.Parameter, len(parameters))
+	for i, parameter := range parameters {
+		list[i] = &tagmanager.Parameter{
+			Type: "map",
+			Map: []*tagmanager.Parameter{
+				{
+					Key:   "parameter",
+					Type:  "template",
+					Value: parameter,
+				},
+				{
+					Key:   "parameterValue",
+					Type:  "template",
+					Value: "{{" + variables[parameter].Name + "}}",
+				},
+			},
+		}
+	}
+
+	obj := &tagmanager.Variable{
+		AccountId:   c.accountID,
+		ContainerId: c.containerID,
+		WorkspaceId: c.workspaceID,
+		Name:        fullname,
+		Notes:       c.notes,
+		Parameter: []*tagmanager.Parameter{
+			{
+				Key:  "eventSettingsTable",
+				Type: "list",
+				List: list,
+			},
+		},
+		Type: "gtes",
+	}
+
+	return c.UpsertVariable(obj)
+}
+
+func (c *Client) UpsertCustomEventTrigger(name string) (*tagmanager.Trigger, error) {
+	fullname := "Event." + name
+	cache, err := c.Trigger(fullname)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
-	client, err := c.Service(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	folder, err := c.Folder(ctx, c.folderName)
+	folder, err := c.Folder(c.folderName)
 	if err != nil {
 		return nil, err
 	}
@@ -544,7 +543,7 @@ func (c *Client) UpsertCustomEventTrigger(ctx context.Context, name string) (*ta
 		WorkspaceId:    c.workspaceID,
 		ParentFolderId: folder.FolderId,
 		Type:           "customEvent",
-		Name:           name,
+		Name:           fullname,
 		Notes:          c.notes,
 		CustomEventFilter: []*tagmanager.Condition{
 			{
@@ -566,30 +565,25 @@ func (c *Client) UpsertCustomEventTrigger(ctx context.Context, name string) (*ta
 	}
 
 	if cache == nil {
-		c.triggers[name], err = client.Accounts.Containers.Workspaces.Triggers.Create(c.WorkspacePath(), obj).Do()
+		c.triggers[fullname], err = c.Service().Accounts.Containers.Workspaces.Triggers.Create(c.WorkspacePath(), obj).Do()
 	} else {
-		c.triggers[name], err = client.Accounts.Containers.Workspaces.Triggers.Update(c.WorkspacePath()+"/triggers/"+cache.TriggerId, obj).Do()
+		c.triggers[fullname], err = c.Service().Accounts.Containers.Workspaces.Triggers.Update(c.WorkspacePath()+"/triggers/"+cache.TriggerId, obj).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Trigger(ctx, name)
+	return c.Trigger(fullname)
 }
 
-func (c *Client) UpsertClientTrigger(ctx context.Context, name, clientName string) (*tagmanager.Trigger, error) {
-	name = "Client." + name
-	cache, err := c.Trigger(ctx, name)
+func (c *Client) UpsertClientTrigger(name string, client *tagmanager.Client) (*tagmanager.Trigger, error) {
+	fullname := "Client." + name
+	cache, err := c.Trigger(fullname)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
-	client, err := c.Service(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	folder, err := c.Folder(ctx, c.folderName)
+	folder, err := c.Folder(c.folderName)
 	if err != nil {
 		return nil, err
 	}
@@ -600,7 +594,7 @@ func (c *Client) UpsertClientTrigger(ctx context.Context, name, clientName strin
 		WorkspaceId:    c.workspaceID,
 		ParentFolderId: folder.FolderId,
 		Type:           "always",
-		Name:           name,
+		Name:           fullname,
 		Notes:          c.notes,
 		Filter: []*tagmanager.Condition{
 			{
@@ -613,7 +607,7 @@ func (c *Client) UpsertClientTrigger(ctx context.Context, name, clientName strin
 					{
 						Key:   "arg1",
 						Type:  "template",
-						Value: clientName,
+						Value: client.Name,
 					},
 				},
 				Type: "equals",
@@ -622,31 +616,26 @@ func (c *Client) UpsertClientTrigger(ctx context.Context, name, clientName strin
 	}
 
 	if cache == nil {
-		c.triggers[name], err = client.Accounts.Containers.Workspaces.Triggers.Create(c.WorkspacePath(), obj).Do()
+		c.triggers[fullname], err = c.Service().Accounts.Containers.Workspaces.Triggers.Create(c.WorkspacePath(), obj).Do()
 	} else {
-		c.triggers[name], err = client.Accounts.Containers.Workspaces.Triggers.Update(c.WorkspacePath()+"/triggers/"+cache.TriggerId, obj).Do()
+		c.triggers[fullname], err = c.Service().Accounts.Containers.Workspaces.Triggers.Update(c.WorkspacePath()+"/triggers/"+cache.TriggerId, obj).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Trigger(ctx, name)
+	return c.Trigger(fullname)
 }
 
-func (c *Client) UpsertGA4WebTag(ctx context.Context, name string, parameters []string, measurementID *tagmanager.Variable, trigger *tagmanager.Trigger) (*tagmanager.Tag, error) {
-	name = "GA4." + name
+func (c *Client) UpsertGA4WebTag(name string, eventSettings *tagmanager.Variable, measurementID *tagmanager.Variable, trigger *tagmanager.Trigger) (*tagmanager.Tag, error) {
+	fullname := "GA4." + name
 
-	cache, err := c.Tag(ctx, name)
+	cache, err := c.Tag(fullname)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
-	client, err := c.Service(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	folder, err := c.Folder(ctx, c.folderName)
+	folder, err := c.Folder(c.folderName)
 	if err != nil {
 		return nil, err
 	}
@@ -657,18 +646,13 @@ func (c *Client) UpsertGA4WebTag(ctx context.Context, name string, parameters []
 		WorkspaceId:     c.workspaceID,
 		FiringTriggerId: []string{trigger.TriggerId},
 		ParentFolderId:  folder.FolderId,
-		Name:            name,
+		Name:            fullname,
 		Notes:           c.notes,
 		Parameter: []*tagmanager.Parameter{
 			{
 				Type:  "boolean",
 				Key:   "sendEcommerceData",
 				Value: "false",
-			},
-			{
-				Type:  "template",
-				Key:   "getEcommerceDataFrom",
-				Value: "dataLayer",
 			},
 			{
 				Type:  "boolean",
@@ -678,68 +662,72 @@ func (c *Client) UpsertGA4WebTag(ctx context.Context, name string, parameters []
 			{
 				Type:  "template",
 				Key:   "eventName",
-				Value: trigger.Name,
+				Value: name,
 			},
 			{
 				Type:  "template",
 				Key:   "measurementIdOverride",
 				Value: "{{" + measurementID.Name + "}}",
 			},
+			{
+				Type:  "template",
+				Key:   "eventSettingsVariable",
+				Value: "{{" + eventSettings.Name + "}}",
+			},
 		},
 		Type: "gaawe",
 	}
 
-	for _, parameterName := range parameters {
-		if _, err := c.UpsertEventModelVariable(ctx, parameterName); err != nil {
-			return nil, err
-		}
-		obj.Parameter = append(obj.Parameter, &tagmanager.Parameter{
-			Type: "list",
-			Key:  "eventSettingsTable",
-			List: []*tagmanager.Parameter{
-				{
-					Type: "map",
-					Map: []*tagmanager.Parameter{
-						{
-							Type:  "template",
-							Key:   "parameter",
-							Value: parameterName,
-						},
-						{
-							Type:  "template",
-							Key:   "parameterValue",
-							Value: "{{EventModel." + parameterName + "}}",
-						},
-					},
-				},
-			},
-		})
-	}
+	// if len(parameters) > 0 {
+	// 	list := &tagmanager.Parameter{
+	// 		Type: "list",
+	// 		Key:  "eventSettingsTable",
+	// 		List: []*tagmanager.Parameter{},
+	// 	}
+	//
+	// 	for _, parameterName := range parameters {
+	// 		param, err := c.UpsertEventModelVariable(parameterName)
+	// 		if err != nil {
+	// 			return nil, err
+	// 		}
+	// 		list.List = append(list.List, &tagmanager.Parameter{
+	// 			Type: "map",
+	// 			Map: []*tagmanager.Parameter{
+	// 				{
+	// 					Type:  "template",
+	// 					Key:   "parameter",
+	// 					Value: parameterName,
+	// 				},
+	// 				{
+	// 					Type:  "template",
+	// 					Key:   "parameterValue",
+	// 					Value: "{{" + param.Name + "}}",
+	// 				},
+	// 			},
+	// 		})
+	// 	}
+	// 	obj.Parameter = append(obj.Parameter, list)
+	// }
 
 	if cache == nil {
-		c.tags[name], err = client.Accounts.Containers.Workspaces.Tags.Create(c.WorkspacePath(), obj).Do()
+		c.tags[fullname], err = c.Service().Accounts.Containers.Workspaces.Tags.Create(c.WorkspacePath(), obj).Do()
 	} else {
-		c.tags[name], err = client.Accounts.Containers.Workspaces.Tags.Update(c.WorkspacePath()+"/tags/"+cache.TagId, obj).Do()
+		c.tags[fullname], err = c.Service().Accounts.Containers.Workspaces.Tags.Update(c.WorkspacePath()+"/tags/"+cache.TagId, obj).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Tag(ctx, name)
+	return c.Tag(fullname)
 }
 
-func (c *Client) UpsertGA4ServerTag(ctx context.Context, name string, measurementID *tagmanager.Variable, trigger *tagmanager.Trigger) (*tagmanager.Tag, error) {
-	cache, err := c.Tag(ctx, name)
+func (c *Client) UpsertGA4ServerTag(name string, measurementID *tagmanager.Variable, trigger *tagmanager.Trigger) (*tagmanager.Tag, error) {
+	cache, err := c.Tag(name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
-	client, err := c.Service(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	folder, err := c.Folder(ctx, c.folderName)
+	folder, err := c.Folder(c.folderName)
 	if err != nil {
 		return nil, err
 	}
@@ -788,13 +776,13 @@ func (c *Client) UpsertGA4ServerTag(ctx context.Context, name string, measuremen
 	}
 
 	if cache == nil {
-		c.tags[name], err = client.Accounts.Containers.Workspaces.Tags.Create(c.WorkspacePath(), obj).Do()
+		c.tags[name], err = c.Service().Accounts.Containers.Workspaces.Tags.Create(c.WorkspacePath(), obj).Do()
 	} else {
-		c.tags[name], err = client.Accounts.Containers.Workspaces.Tags.Update(c.WorkspacePath()+"/tags/"+cache.TagId, obj).Do()
+		c.tags[name], err = c.Service().Accounts.Containers.Workspaces.Tags.Update(c.WorkspacePath()+"/tags/"+cache.TagId, obj).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Tag(ctx, name)
+	return c.Tag(name)
 }
