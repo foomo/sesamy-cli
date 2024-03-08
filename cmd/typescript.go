@@ -12,9 +12,9 @@ var typescriptCmd = &cobra.Command{
 	PersistentPreRunE: preRunReadConfig,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		gen := tygo.New(&tygo.Config{
-			Packages: cfg.Events.Packages,
+			Packages: cfg.Typescript.Packages,
 		})
-		for k, v := range cfg.Events.TypeMappings {
+		for k, v := range cfg.Typescript.TypeMappings {
 			gen.SetTypeMapping(k, v)
 		}
 

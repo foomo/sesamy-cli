@@ -16,8 +16,15 @@ google:
 
   credentials_file: ./tmp/google_service_account_creds.json
 
-events:
+typescript:
   packages:
     - path: "github.com/foomo/sesamy-cli/_example/server"
       output_path: "./_example/client/types.d.ts"
       indent: "\t"
+
+tagmanager:
+  packages:
+    - path: "github.com/foomo/sesamy-cli/_example/server"
+      output_path: "./_example/client/types.d.ts"
+      exclude_files:
+        - item.go

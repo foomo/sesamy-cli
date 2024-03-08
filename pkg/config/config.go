@@ -7,7 +7,9 @@ import (
 type Config struct {
 	Google Google `yaml:"google"`
 	// https://github.com/gzuidhof/tygo
-	Events Events `yaml:"events"`
+	Typescript Source `yaml:"typescript"`
+	// https://github.com/gzuidhof/tygo
+	Tagmanager Source `yaml:"tagmanager"`
 }
 
 type Google struct {
@@ -27,12 +29,12 @@ type GTM struct {
 	Server    Container `yaml:"server"`
 }
 
-type Events struct {
+type Source struct {
 	Packages     []*tygo.PackageConfig `yaml:"packages"`
 	TypeMappings map[string]string     `yaml:"type_mappings"`
 }
 
-func (e Events) PackageNames() []string {
+func (e Source) PackageNames() []string {
 	ret := make([]string, len(e.Packages))
 	for i, value := range e.Packages {
 		ret[i] = value.Path
@@ -40,7 +42,7 @@ func (e Events) PackageNames() []string {
 	return ret
 }
 
-func (e Events) PackageConfig(path string) *tygo.PackageConfig {
+func (e Source) PackageConfig(path string) *tygo.PackageConfig {
 	for _, value := range e.Packages {
 		if value.Path == path {
 			return value

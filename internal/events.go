@@ -13,12 +13,12 @@ import (
 	"golang.org/x/tools/go/packages"
 )
 
-func GetEventParameters(cfg *config.Config) (map[string][]string, error) {
+func GetEventParameters(source config.Source) (map[string][]string, error) {
 	ret := map[string][]string{}
 
 	pkgs, err := packages.Load(&packages.Config{
 		Mode: packages.NeedSyntax | packages.NeedFiles,
-	}, cfg.Events.PackageNames()...)
+	}, source.PackageNames()...)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func GetEventParameters(cfg *config.Config) (map[string][]string, error) {
 			return nil, fmt.Errorf("no input go files for package index %d", i)
 		}
 
-		conf := cfg.Events.PackageConfig(pkg.ID)
+		conf := source.PackageConfig(pkg.ID)
 
 		for i, file := range pkg.Syntax {
 			if conf.IsFileIgnored(pkg.GoFiles[i]) {
