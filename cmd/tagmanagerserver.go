@@ -7,6 +7,8 @@ import (
 )
 
 // tagmanagerServerCmd represents the server command
+// TODO flags workspace, dry, diff
+// TODO google user auth
 var tagmanagerServerCmd = &cobra.Command{
 	Use:               "server",
 	Short:             "Provision Google Tag Manager Server Container",
