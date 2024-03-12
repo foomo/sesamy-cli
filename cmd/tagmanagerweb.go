@@ -50,6 +50,25 @@ var tagmanagerWebCmd = &cobra.Command{
 			return err
 		}
 
+		logger.Info("- Variable:", logger.Args("name", "server-container-url"))
+		serverContainerURL, err := c.UpsertConstantVariable("server-container-url", cfg.Google.ServerContainerURL)
+		if err != nil {
+			return err
+		}
+
+		logger.Info("- Variable:", logger.Args("name", "Google Tag Settings"))
+		googleTagSettings, err := c.UpsertGoogleTagSettingsVariable("Google Tag Settings", map[string]*tagmanager2.Variable{
+			"server_container_url": serverContainerURL,
+		})
+		if err != nil {
+			return err
+		}
+
+		logger.Info("- Variable:", logger.Args("name", "server-container-url"))
+		if _, err = c.UpsertGoogleTagWebTag("Google Tag", measurementID, googleTagSettings); err != nil {
+			return err
+		}
+
 		for event, parameters := range eventParameters {
 			logger.Info("- GA4 Event Trigger:", logger.Args("name", event))
 			trigger, err := c.UpsertCustomEventTrigger(event)

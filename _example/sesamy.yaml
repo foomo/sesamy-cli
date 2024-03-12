@@ -15,6 +15,7 @@ google:
       measurement_id: GTM-57BHX34G
 
   credentials_file: ./tmp/google_service_account_creds.json
+  server_container_url: http://sst.my-domain.com/
 
 typescript:
   packages:
