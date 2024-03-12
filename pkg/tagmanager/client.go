@@ -525,6 +525,51 @@ func (c *Client) UpsertGTEventSettingsVariable(name string, variables map[string
 	return c.UpsertVariable(obj)
 }
 
+func (c *Client) UpsertGoogleTagSettingsVariable(name string, variables map[string]*tagmanager.Variable) (*tagmanager.Variable, error) {
+	parameters := make([]string, 0, len(variables))
+	for k := range variables {
+		parameters = append(parameters, k)
+	}
+	sort.Strings(parameters)
+
+	list := make([]*tagmanager.Parameter, len(parameters))
+	for i, parameter := range parameters {
+		list[i] = &tagmanager.Parameter{
+			Type: "map",
+			Map: []*tagmanager.Parameter{
+				{
+					Key:   "parameter",
+					Type:  "template",
+					Value: parameter,
+				},
+				{
+					Key:   "parameterValue",
+					Type:  "template",
+					Value: "{{" + variables[parameter].Name + "}}",
+				},
+			},
+		}
+	}
+
+	obj := &tagmanager.Variable{
+		AccountId:   c.accountID,
+		ContainerId: c.containerID,
+		WorkspaceId: c.workspaceID,
+		Name:        name,
+		Notes:       c.notes,
+		Parameter: []*tagmanager.Parameter{
+			{
+				Key:  "configSettingsTable",
+				Type: "list",
+				List: list,
+			},
+		},
+		Type: "gtes",
+	}
+
+	return c.UpsertVariable(obj)
+}
+
 func (c *Client) UpsertCustomEventTrigger(name string) (*tagmanager.Trigger, error) {
 	fullname := "Event." + name
 	cache, err := c.Trigger(fullname)
@@ -719,6 +764,52 @@ func (c *Client) UpsertGA4WebTag(name string, eventSettings *tagmanager.Variable
 	}
 
 	return c.Tag(fullname)
+}
+
+func (c *Client) UpsertGoogleTagWebTag(name string, measurementID *tagmanager.Variable, configSettings *tagmanager.Variable) (*tagmanager.Tag, error) {
+	cache, err := c.Tag(name)
+	if err != nil && !errors.Is(err, ErrNotFound) {
+		return nil, err
+	}
+
+	folder, err := c.Folder(c.folderName)
+	if err != nil {
+		return nil, err
+	}
+
+	obj := &tagmanager.Tag{
+		AccountId:       c.accountID,
+		ContainerId:     c.containerID,
+		WorkspaceId:     c.workspaceID,
+		FiringTriggerId: []string{"2147479573"},
+		ParentFolderId:  folder.FolderId,
+		Name:            name,
+		Notes:           c.notes,
+		Parameter: []*tagmanager.Parameter{
+			{
+				Key:   "tagId",
+				Type:  "template",
+				Value: "{{" + measurementID.Name + "}}",
+			},
+			{
+				Key:   "configSettingsVariable",
+				Type:  "template",
+				Value: "{{" + configSettings.Name + "}}",
+			},
+		},
+		Type: "googtag",
+	}
+
+	if cache == nil {
+		c.tags[name], err = c.Service().Accounts.Containers.Workspaces.Tags.Create(c.WorkspacePath(), obj).Do()
+	} else {
+		c.tags[name], err = c.Service().Accounts.Containers.Workspaces.Tags.Update(c.WorkspacePath()+"/tags/"+cache.TagId, obj).Do()
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return c.Tag(name)
 }
 
 func (c *Client) UpsertGA4ServerTag(name string, measurementID *tagmanager.Variable, trigger *tagmanager.Trigger) (*tagmanager.Tag, error) {

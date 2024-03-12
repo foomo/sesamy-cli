@@ -85,6 +85,7 @@ func TestNewClient_Server(t *testing.T) {
 
 func TestNewClient_Web(t *testing.T) {
 	t.Skip()
+
 	c, err := tagmanager.NewClient(
 		context.TODO(),
 		os.Getenv("TEST_ACCOUNT_ID"),
