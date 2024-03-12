@@ -4,7 +4,6 @@ go 1.22.0
 
 require (
 	github.com/fatih/structtag v1.2.0
-	github.com/graze/go-throttled v0.3.1
 	github.com/gzuidhof/tygo v0.2.14
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pterm/pterm v0.12.79
@@ -12,10 +11,8 @@ require (
 	github.com/spf13/viper v1.18.2
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.9.0
-	github.com/yudppp/throttle v1.0.4
-	golang.org/x/time v0.5.0
 	golang.org/x/tools v0.19.0
-	google.golang.org/api v0.168.0
+	google.golang.org/api v0.169.0
 )
 
 require (
