@@ -159,6 +159,24 @@ func TestNewClient_Web(t *testing.T) {
 		})
 	}
 
+	{ // --- Built-In Variables ---
+		t.Run("list built-in variables", func(t *testing.T) {
+			cmd := c.Service().Accounts.Containers.Workspaces.BuiltInVariables.List(c.WorkspacePath())
+			if r, err := cmd.Do(); assert.NoError(t, err) {
+				dump(t, r)
+			}
+		})
+	}
+
+	{ // --- Built-In Variables ---
+		t.Run("list gtag config", func(t *testing.T) {
+			cmd := c.Service().Accounts.Containers.Workspaces.GtagConfig.List(c.WorkspacePath())
+			if r, err := cmd.Do(); assert.NoError(t, err) {
+				dump(t, r)
+			}
+		})
+	}
+
 	{ // --- Variables ---
 		name := "ga4-measurement-id"
 		t.Run("list variables", func(t *testing.T) {

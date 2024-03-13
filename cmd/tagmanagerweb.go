@@ -64,7 +64,7 @@ var tagmanagerWebCmd = &cobra.Command{
 			return err
 		}
 
-		logger.Info("- Variable:", logger.Args("name", "server-container-url"))
+		logger.Info("- Tag:", logger.Args("name", "Google Tag"))
 		if _, err = c.UpsertGoogleTagWebTag("Google Tag", measurementID, googleTagSettings); err != nil {
 			return err
 		}

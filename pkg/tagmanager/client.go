@@ -564,7 +564,7 @@ func (c *Client) UpsertGoogleTagSettingsVariable(name string, variables map[stri
 				List: list,
 			},
 		},
-		Type: "gtes",
+		Type: "gtcs",
 	}
 
 	return c.UpsertVariable(obj)
