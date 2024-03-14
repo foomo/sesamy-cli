@@ -6,6 +6,7 @@ require (
 	github.com/fatih/structtag v1.2.0
 	github.com/gzuidhof/tygo v0.2.14
 	github.com/mitchellh/mapstructure v1.5.0
+	github.com/pkg/errors v0.9.1
 	github.com/pterm/pterm v0.12.79
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2

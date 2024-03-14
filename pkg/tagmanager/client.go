@@ -2,10 +2,10 @@ package tagmanager
 
 import (
 	"context"
-	"errors"
 	"log/slog"
 	"time"
 
+	"github.com/pkg/errors"
 	"google.golang.org/api/option"
 	"google.golang.org/api/tagmanager/v2"
 )
@@ -212,7 +212,7 @@ func (c *Client) Variable(name string) (*tagmanager.Variable, error) {
 	return c.variables[name], nil
 }
 
-func (c *Client) BuiltInVariable(name string) (*tagmanager.Variable, error) {
+func (c *Client) BuiltInVariable(name string) (*tagmanager.BuiltInVariable, error) {
 	if c.builtInVariables == nil {
 		c.builtInVariables = map[string]*tagmanager.BuiltInVariable{}
 
@@ -227,11 +227,11 @@ func (c *Client) BuiltInVariable(name string) (*tagmanager.Variable, error) {
 		}
 	}
 
-	if _, ok := c.variables[name]; !ok {
+	if _, ok := c.builtInVariables[name]; !ok {
 		return nil, ErrNotFound
 	}
 
-	return c.variables[name], nil
+	return c.builtInVariables[name], nil
 }
 
 func (c *Client) Trigger(name string) (*tagmanager.Trigger, error) {
@@ -373,7 +373,7 @@ func (c *Client) UpsertVariable(variable *tagmanager.Variable) (*tagmanager.Vari
 	return c.Variable(variable.Name)
 }
 
-func (c *Client) EnableBuiltInVariable(name string) (*tagmanager.Variable, error) {
+func (c *Client) EnableBuiltInVariable(name string) (*tagmanager.BuiltInVariable, error) {
 	l := c.l.With("type", "Built-In Variable", "name", name)
 
 	cache, err := c.BuiltInVariable(name)
@@ -388,10 +388,11 @@ func (c *Client) EnableBuiltInVariable(name string) (*tagmanager.Variable, error
 	l.Info("creating")
 	resp, err := c.Service().Accounts.Containers.Workspaces.BuiltInVariables.Create(c.WorkspacePath()).Type(name).Do()
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to create built-in variable")
 	}
 	for _, builtInVariable := range resp.BuiltInVariable {
-		c.builtInVariables[builtInVariable.Name] = builtInVariable
+		l.Debug(builtInVariable.Type)
+		c.builtInVariables[builtInVariable.Type] = builtInVariable
 	}
 
 	return c.BuiltInVariable(name)
