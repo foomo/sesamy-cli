@@ -13,7 +13,7 @@ import (
 	"golang.org/x/tools/go/packages"
 )
 
-func GetEventParameters(source config.Source) (map[string][]string, error) {
+func GetEventParameters(source config.Tagmanager) (map[string][]string, error) {
 	ret := map[string][]string{}
 
 	pkgs, err := packages.Load(&packages.Config{

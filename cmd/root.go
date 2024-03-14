@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"io"
+	"log/slog"
 	"os"
 
 	"github.com/foomo/sesamy-cli/pkg/config"
@@ -13,7 +14,7 @@ import (
 )
 
 var (
-	logger      *pterm.Logger
+	logger      *slog.Logger
 	verbose     bool
 	cfgFilename string
 	cfg         *config.Config
@@ -46,7 +47,7 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	//rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -64,14 +65,20 @@ func initConfig() {
 	}
 
 	// read in environment variables that match
-	//viper.EnvKeyReplacer(strings.NewReplacer(".", "_"))
-	//viper.SetEnvPrefix("SESAMY")
-	//viper.AutomaticEnv()
+	// viper.EnvKeyReplacer(strings.NewReplacer(".", "_"))
+	// viper.SetEnvPrefix("SESAMY")
+	// viper.AutomaticEnv()
 
-	logger = pterm.DefaultLogger.WithTime(false)
+	plogger := pterm.DefaultLogger.WithTime(false)
 	if verbose {
-		logger = logger.WithLevel(pterm.LogLevelTrace).WithCaller(true)
+		plogger = plogger.WithLevel(pterm.LogLevelTrace).WithCaller(true)
 	}
+
+	// Create a new slog handler with the default PTerm logger
+	handler := pterm.NewSlogHandler(plogger)
+
+	// Create a new slog logger with the handler
+	logger = slog.New(handler)
 }
 
 func preRunReadConfig(cmd *cobra.Command, args []string) error {
@@ -85,12 +92,12 @@ func preRunReadConfig(cmd *cobra.Command, args []string) error {
 			return err
 		}
 	} else {
-		logger.Debug("using config file", logger.Args("filename", viper.ConfigFileUsed()))
+		logger.Debug("using config file", "filename", viper.ConfigFileUsed())
 		if err := viper.ReadInConfig(); err != nil {
 			return err
 		}
 	}
-	logger.Debug("config", logger.ArgsFromMap(viper.AllSettings()))
+	// logger.Debug("config", logger.ArgsFromMap(viper.AllSettings()))
 
 	if err := viper.Unmarshal(&cfg, func(decoderConfig *mapstructure.DecoderConfig) {
 		decoderConfig.TagName = "yaml"

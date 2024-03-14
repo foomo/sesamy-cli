@@ -3,6 +3,9 @@ package cmd
 import (
 	"github.com/foomo/sesamy-cli/internal"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	client "github.com/foomo/sesamy-cli/pkg/tagmanager/tag"
+	trigger2 "github.com/foomo/sesamy-cli/pkg/tagmanager/trigger"
+	"github.com/foomo/sesamy-cli/pkg/tagmanager/variable"
 	"github.com/spf13/cobra"
 	"google.golang.org/api/option"
 	tagmanager2 "google.golang.org/api/tagmanager/v2"
@@ -28,6 +31,7 @@ var tagmanagerWebCmd = &cobra.Command{
 
 		c, err := tagmanager.NewClient(
 			cmd.Context(),
+			logger,
 			cfg.Google.GTM.AccountID,
 			cfg.Google.GTM.Web.ContainerID,
 			cfg.Google.GTM.Web.WorkspaceID,
@@ -39,61 +43,76 @@ var tagmanagerWebCmd = &cobra.Command{
 			return err
 		}
 
-		logger.Info("- Folder:", logger.Args("name", c.FolderName()))
-		if _, err := c.UpsertFolder(c.FolderName()); err != nil {
+		p := cfg.Tagmanager.Prefixes
+
+		if _, err := c.UpsertFolder(p.FolderName(c.FolderName())); err != nil {
 			return err
 		}
 
-		logger.Info("- Variable:", logger.Args("name", "ga4-measurement-id"))
-		measurementID, err := c.UpsertConstantVariable("ga4-measurement-id", c.MeasurementID())
-		if err != nil {
-			return err
+		var ga4MeasurementID *tagmanager2.Variable
+		{
+			name := p.Variables.ConstantName("Google Analytics GA4 ID")
+			if ga4MeasurementID, err = c.UpsertVariable(variable.NewConstant(name, c.MeasurementID())); err != nil {
+				return err
+			}
 		}
 
-		logger.Info("- Variable:", logger.Args("name", "server-container-url"))
-		serverContainerURL, err := c.UpsertConstantVariable("server-container-url", cfg.Google.ServerContainerURL)
-		if err != nil {
-			return err
+		var serverContainerURL *tagmanager2.Variable
+		{
+			name := p.Variables.ConstantName("Server Container URL")
+			if serverContainerURL, err = c.UpsertVariable(variable.NewConstant(name, cfg.Google.ServerContainerURL)); err != nil {
+				return err
+			}
 		}
 
-		logger.Info("- Variable:", logger.Args("name", "Google Tag Settings"))
-		googleTagSettings, err := c.UpsertGoogleTagSettingsVariable("Google Tag Settings", map[string]*tagmanager2.Variable{
-			"server_container_url": serverContainerURL,
-		})
-		if err != nil {
-			return err
+		var googleTagSettings *tagmanager2.Variable
+		{
+			name := p.Variables.GTSettingsName("Google Tag")
+			if googleTagSettings, err = c.UpsertVariable(variable.NewGTSettings(name, map[string]*tagmanager2.Variable{
+				"server_container_url": serverContainerURL,
+			})); err != nil {
+				return err
+			}
 		}
 
-		logger.Info("- Tag:", logger.Args("name", "Google Tag"))
-		if _, err = c.UpsertGoogleTagWebTag("Google Tag", measurementID, googleTagSettings); err != nil {
-			return err
+		{
+			name := p.Tags.GoogleTagName("Google Tag")
+			if _, err = c.UpsertTag(client.NewGoogleTag(name, ga4MeasurementID, googleTagSettings)); err != nil {
+				return err
+			}
 		}
 
 		for event, parameters := range eventParameters {
-			logger.Info("- GA4 Event Trigger:", logger.Args("name", event))
-			trigger, err := c.UpsertCustomEventTrigger(event)
-			if err != nil {
-				return err
+			var trigger *tagmanager2.Trigger
+			{
+				name := p.Triggers.CustomEventName(event)
+				if trigger, err = c.UpsertTrigger(trigger2.NewCustomEvent(name, event)); err != nil {
+					return err
+				}
 			}
 
 			eventSettingsVariables := make(map[string]*tagmanager2.Variable, len(parameters))
 			for _, parameter := range parameters {
-				logger.Info("- Event Model Variable:", logger.Args("name", parameter))
-				eventSettingsVariables[parameter], err = c.UpsertEventModelVariable(parameter)
+				name := p.Variables.EventModelName(parameter)
+				eventSettingsVariables[parameter], err = c.UpsertVariable(variable.NewEventModel(name, parameter))
 				if err != nil {
 					return err
 				}
 			}
 
-			logger.Info("- GT Event Settings Variable:", logger.Args("name", event))
-			eventSettings, err := c.UpsertGTEventSettingsVariable(event, eventSettingsVariables)
-			if err != nil {
-				return err
+			var eventSettings *tagmanager2.Variable
+			{
+				name := p.Variables.GTEventSettingsName(event)
+				if eventSettings, err = c.UpsertVariable(variable.NewGTEventSettings(name, eventSettingsVariables)); err != nil {
+					return err
+				}
 			}
 
-			logger.Info("- GA4 Tag:", logger.Args("name", event, "parameters", parameters))
-			if _, err := c.UpsertGA4WebTag(event, eventSettings, measurementID, trigger); err != nil {
-				return err
+			{
+				name := p.Tags.GA4EventName(event)
+				if _, err := c.UpsertTag(client.NewGA4Event(name, event, eventSettings, ga4MeasurementID, trigger)); err != nil {
+					return err
+				}
 			}
 		}
 

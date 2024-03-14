@@ -4,12 +4,15 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"log/slog"
 	"os"
 	"reflect"
 	"strings"
 	"testing"
 
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	"github.com/foomo/sesamy-cli/pkg/tagmanager/trigger"
+	"github.com/foomo/sesamy-cli/pkg/tagmanager/variable"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/api/option"
@@ -17,10 +20,11 @@ import (
 )
 
 func TestNewClient_Server(t *testing.T) {
-	t.Skip()
+	// t.Skip()
 
 	c, err := tagmanager.NewClient(
 		context.TODO(),
+		slog.New(slog.NewTextHandler(os.Stdout, nil)),
 		os.Getenv("TEST_ACCOUNT_ID"),
 		os.Getenv("TEST_SERVER_CONTAINER_ID"),
 		os.Getenv("TEST_SERVER_WORKSPACE_ID"),
@@ -41,9 +45,24 @@ func TestNewClient_Server(t *testing.T) {
 
 	{ // --- Variables ---
 		t.Run("upsert GTM client", func(t *testing.T) {
-			client, err := c.UpsertConstantVariable("web-container-id", os.Getenv("TEST_WEB_CONTAINER_GID"))
+			client, err := c.UpsertVariable(variable.NewConstant("web-container-id", os.Getenv("TEST_WEB_CONTAINER_GID")))
 			if assert.NoError(t, err) {
 				dump(t, client)
+			}
+		})
+	}
+
+	{ // --- Built-In Variables ---
+		t.Run("list built-in variables", func(t *testing.T) {
+			cmd := c.Service().Accounts.Containers.Workspaces.BuiltInVariables.List(c.WorkspacePath())
+			if r, err := cmd.Do(); assert.NoError(t, err) {
+				dump(t, r)
+			}
+		})
+		t.Run("list built-in variables", func(t *testing.T) {
+			cmd := c.Service().Accounts.Containers.Workspaces.BuiltInVariables.Create(c.WorkspacePath()).Type()
+			if r, err := cmd.Do(); assert.NoError(t, err) {
+				dump(t, r)
 			}
 		})
 	}
@@ -56,12 +75,12 @@ func TestNewClient_Server(t *testing.T) {
 			}
 		})
 
-		t.Run("upsert GTM client", func(t *testing.T) {
-			client, err := c.UpsertGTMClient("Google Tag Manager Web Container", "Constant.web-container-id")
-			if assert.NoError(t, err) {
-				dump(t, client)
-			}
-		})
+		// t.Run("upsert GTM client", func(t *testing.T) {
+		// 	client, err := c.UpsertClient(client2.NewGTM("Google Tag Manager Web Container", "Constant.web-container-id"))
+		// 	if assert.NoError(t, err) {
+		// 		dump(t, client)
+		// 	}
+		// })
 	}
 
 	{ // --- Triggers ---
@@ -84,10 +103,11 @@ func TestNewClient_Server(t *testing.T) {
 }
 
 func TestNewClient_Web(t *testing.T) {
-	t.Skip()
+	// t.Skip()
 
 	c, err := tagmanager.NewClient(
 		context.TODO(),
+		slog.New(slog.NewTextHandler(os.Stdout, nil)),
 		os.Getenv("TEST_ACCOUNT_ID"),
 		os.Getenv("TEST_WEB_CONTAINER_ID"),
 		os.Getenv("TEST_WEB_WORKSPACE_ID"),
@@ -222,7 +242,7 @@ func TestNewClient_Web(t *testing.T) {
 		})
 
 		t.Run("upsert variable", func(t *testing.T) {
-			obj, err := c.UpsertConstantVariable(name, c.MeasurementID())
+			obj, err := c.UpsertVariable(variable.NewConstant(name, c.MeasurementID()))
 			require.NoError(t, err)
 			t.Log("ID: " + obj.VariableId)
 		})
@@ -283,7 +303,7 @@ func TestNewClient_Web(t *testing.T) {
 		})
 
 		t.Run("upsert trigger", func(t *testing.T) {
-			obj, err := c.UpsertCustomEventTrigger(name)
+			obj, err := c.UpsertTrigger(trigger.NewCustomEvent("Event."+name, name))
 			require.NoError(t, err)
 			t.Log("ID: " + obj.TriggerId)
 		})
