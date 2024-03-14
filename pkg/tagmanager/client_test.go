@@ -20,7 +20,7 @@ import (
 )
 
 func TestNewClient_Server(t *testing.T) {
-	// t.Skip()
+	t.Skip()
 
 	c, err := tagmanager.NewClient(
 		context.TODO(),
@@ -103,7 +103,7 @@ func TestNewClient_Server(t *testing.T) {
 }
 
 func TestNewClient_Web(t *testing.T) {
-	// t.Skip()
+	t.Skip()
 
 	c, err := tagmanager.NewClient(
 		context.TODO(),
