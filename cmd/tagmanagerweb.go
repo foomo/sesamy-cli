@@ -36,7 +36,7 @@ var tagmanagerWebCmd = &cobra.Command{
 			cfg.Google.GTM.Web.ContainerID,
 			cfg.Google.GTM.Web.WorkspaceID,
 			cfg.Google.GA4.MeasurementID,
-			tagmanager.ClientWithRequestQuota(15),
+			tagmanager.ClientWithRequestQuota(cfg.Google.RequestQuota),
 			tagmanager.ClientWithClientOptions(clientCredentialsOption),
 		)
 		if err != nil {

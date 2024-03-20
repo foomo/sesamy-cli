@@ -14,6 +14,7 @@ google:
       workspace_id: 23
       measurement_id: GTM-57BHX34G
 
+  request_quota: 15
   credentials_file: ./tmp/google_service_account_creds.json
   server_container_url: http://sst.my-domain.com/
 

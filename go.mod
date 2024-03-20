@@ -12,6 +12,7 @@ require (
 	github.com/spf13/viper v1.18.2
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.9.0
+	go.uber.org/zap v1.21.0
 	golang.org/x/tools v0.19.0
 	google.golang.org/api v0.169.0
 )

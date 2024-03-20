@@ -103,7 +103,7 @@ func TestNewClient_Server(t *testing.T) {
 }
 
 func TestNewClient_Web(t *testing.T) {
-	t.Skip()
+	// t.Skip()
 
 	c, err := tagmanager.NewClient(
 		context.TODO(),
@@ -198,7 +198,7 @@ func TestNewClient_Web(t *testing.T) {
 	}
 
 	{ // --- Variables ---
-		name := "ga4-measurement-id"
+		name := "Constant.ga4-measurement-id"
 		t.Run("list variables", func(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Variables.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {

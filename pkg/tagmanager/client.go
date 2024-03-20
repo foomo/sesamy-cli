@@ -55,7 +55,9 @@ func ClientWithFolderName(v string) ClientOption {
 
 func ClientWithRequestQuota(v int) ClientOption {
 	return func(o *Client) {
-		o.requestThrottler = time.NewTicker((100 * time.Second) / time.Duration(v))
+		if v > 0 {
+			o.requestThrottler = time.NewTicker((100 * time.Second) / time.Duration(v))
+		}
 	}
 }
 
@@ -71,13 +73,14 @@ func ClientWithClientOptions(v ...option.ClientOption) ClientOption {
 
 func NewClient(ctx context.Context, l *slog.Logger, accountID, containerID, workspaceID, measurementID string, opts ...ClientOption) (*Client, error) {
 	inst := &Client{
-		l:             l,
-		accountID:     accountID,
-		containerID:   containerID,
-		workspaceID:   workspaceID,
-		measurementID: measurementID,
-		notes:         "Managed by Sesamy. DO NOT EDIT.",
-		folderName:    "Sesamy",
+		l:                l,
+		accountID:        accountID,
+		containerID:      containerID,
+		workspaceID:      workspaceID,
+		measurementID:    measurementID,
+		requestThrottler: time.NewTicker((100 * time.Second) / time.Duration(15)),
+		notes:            "Managed by Sesamy. DO NOT EDIT.",
+		folderName:       "Sesamy",
 		clientOptions: []option.ClientOption{
 			option.WithRequestReason("Sesamy container provisioning"),
 		},
@@ -158,7 +161,7 @@ func (c *Client) Client(name string) (*tagmanager.Client, error) {
 		}
 
 		for _, value := range r.Client {
-			c.clients[name] = value
+			c.clients[value.Name] = value
 		}
 	}
 
@@ -180,7 +183,7 @@ func (c *Client) Folder(name string) (*tagmanager.Folder, error) {
 		}
 
 		for _, value := range r.Folder {
-			c.folders[name] = value
+			c.folders[value.Name] = value
 		}
 	}
 
@@ -202,7 +205,7 @@ func (c *Client) Variable(name string) (*tagmanager.Variable, error) {
 		}
 
 		for _, value := range r.Variable {
-			c.variables[name] = value
+			c.variables[value.Name] = value
 		}
 	}
 
@@ -245,7 +248,7 @@ func (c *Client) Trigger(name string) (*tagmanager.Trigger, error) {
 		}
 
 		for _, value := range r.Trigger {
-			c.triggers[name] = value
+			c.triggers[value.Name] = value
 		}
 	}
 
@@ -266,7 +269,7 @@ func (c *Client) Tag(name string) (*tagmanager.Tag, error) {
 		}
 
 		for _, value := range r.Tag {
-			c.tags[name] = value
+			c.tags[value.Name] = value
 		}
 	}
 
@@ -300,7 +303,7 @@ func (c *Client) UpsertClient(client *tagmanager.Client) (*tagmanager.Client, er
 		l.Info("creating")
 		c.clients[client.Name], err = c.Service().Accounts.Containers.Workspaces.Clients.Create(c.WorkspacePath(), client).Do()
 	} else {
-		l.Info("updating")
+		l.Info("updating", "id", cache.ClientId)
 		c.clients[client.Name], err = c.Service().Accounts.Containers.Workspaces.Clients.Update(c.WorkspacePath()+"/clients/"+cache.ClientId, client).Do()
 	}
 	if err != nil {
@@ -330,7 +333,7 @@ func (c *Client) UpsertFolder(name string) (*tagmanager.Folder, error) {
 		l.Info("creating")
 		c.folders[name], err = c.Service().Accounts.Containers.Workspaces.Folders.Create(c.WorkspacePath(), folder).Do()
 	} else {
-		l.Info("updating")
+		l.Info("updating", "id", cache.FolderId)
 		c.folders[name], err = c.Service().Accounts.Containers.Workspaces.Folders.Update(c.WorkspacePath()+"/folders/"+cache.FolderId, folder).Do()
 	}
 	if err != nil {
@@ -363,7 +366,7 @@ func (c *Client) UpsertVariable(variable *tagmanager.Variable) (*tagmanager.Vari
 		l.Info("creating")
 		c.variables[variable.Name], err = c.Service().Accounts.Containers.Workspaces.Variables.Create(c.WorkspacePath(), variable).Do()
 	} else {
-		l.Info("updating")
+		l.Info("updating", "id", cache.VariableId)
 		c.variables[variable.Name], err = c.Service().Accounts.Containers.Workspaces.Variables.Update(c.WorkspacePath()+"/variables/"+cache.VariableId, variable).Do()
 	}
 	if err != nil {
@@ -421,7 +424,7 @@ func (c *Client) UpsertTrigger(trigger *tagmanager.Trigger) (*tagmanager.Trigger
 		l.Info("creating")
 		c.triggers[trigger.Name], err = c.Service().Accounts.Containers.Workspaces.Triggers.Create(c.WorkspacePath(), trigger).Do()
 	} else {
-		l.Info("updating")
+		l.Info("updating", "id", cache.TriggerId)
 		c.triggers[trigger.Name], err = c.Service().Accounts.Containers.Workspaces.Triggers.Update(c.WorkspacePath()+"/triggers/"+cache.TriggerId, trigger).Do()
 	}
 	if err != nil {
@@ -454,7 +457,7 @@ func (c *Client) UpsertTag(tag *tagmanager.Tag) (*tagmanager.Tag, error) {
 		l.Info("creating")
 		c.tags[tag.Name], err = c.Service().Accounts.Containers.Workspaces.Tags.Create(c.WorkspacePath(), tag).Do()
 	} else {
-		l.Info("updating")
+		l.Info("updating", "id", cache.TagId)
 		c.tags[tag.Name], err = c.Service().Accounts.Containers.Workspaces.Tags.Update(c.WorkspacePath()+"/tags/"+cache.TagId, tag).Do()
 	}
 	if err != nil {
