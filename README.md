@@ -22,6 +22,10 @@ Add a `sesamy.yaml` configurtion
 
 ```yaml
 google:
+  gt:
+    send_page_views: true
+    server_container_url: https://sst.your.domain.com
+
   ga4:
     measurement_id: G-PZ5ELRCR31
 
