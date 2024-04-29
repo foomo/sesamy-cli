@@ -18,10 +18,8 @@
 
 ## === Tasks ===
 
-## === Tasks ===
-
 .PHONY: doc
-## Run tests
+## Open go docs
 doc:
 	@open "http://localhost:6060/pkg/github.com/foomo/sesamy-cli/"
 	@godoc -http=localhost:6060 -play

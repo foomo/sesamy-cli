@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"strconv"
+
 	"github.com/foomo/sesamy-cli/internal"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	client "github.com/foomo/sesamy-cli/pkg/tagmanager/tag"
@@ -60,7 +62,7 @@ var tagmanagerWebCmd = &cobra.Command{
 		var serverContainerURL *tagmanager2.Variable
 		{
 			name := p.Variables.ConstantName("Server Container URL")
-			if serverContainerURL, err = c.UpsertVariable(variable.NewConstant(name, cfg.Google.ServerContainerURL)); err != nil {
+			if serverContainerURL, err = c.UpsertVariable(variable.NewConstant(name, cfg.Google.GT.ServerContainerURL)); err != nil {
 				return err
 			}
 		}
@@ -77,7 +79,9 @@ var tagmanagerWebCmd = &cobra.Command{
 
 		{
 			name := p.Tags.GoogleTagName("Google Tag")
-			if _, err = c.UpsertTag(client.NewGoogleTag(name, ga4MeasurementID, googleTagSettings)); err != nil {
+			if _, err = c.UpsertTag(client.NewGoogleTag(name, ga4MeasurementID, googleTagSettings, map[string]string{
+				"enable_page_views": strconv.FormatBool(cfg.Google.GT.EnablePageViews),
+			})); err != nil {
 				return err
 			}
 		}
@@ -120,6 +124,8 @@ var tagmanagerWebCmd = &cobra.Command{
 	},
 }
 
+var filter string
+
 func init() {
 	tagmanagerCmd.AddCommand(tagmanagerWebCmd)
 
@@ -132,4 +138,5 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// tagmanagerWebCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	tagmanagerWebCmd.Flags().StringVar(&filter, "filter", "", "Filter tag manager")
 }
