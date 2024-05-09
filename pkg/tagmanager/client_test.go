@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"log/slog"
 	"os"
-	"reflect"
-	"strings"
 	"testing"
 
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
@@ -231,9 +229,9 @@ func TestNewClient_Web(t *testing.T) {
 		t.Run("get variable", func(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Variables.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
-				for _, variable := range r.Variable {
-					if variable.Name == "Constant."+name {
-						t.Log("ID: " + variable.VariableId)
+				for _, value := range r.Variable {
+					if value.Name == "Constant."+name {
+						t.Log("ID: " + value.VariableId)
 						return
 					}
 				}
@@ -292,9 +290,9 @@ func TestNewClient_Web(t *testing.T) {
 		t.Run("get trigger", func(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Triggers.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
-				for _, trigger := range r.Trigger {
-					if trigger.Name == "Event."+name {
-						t.Log("ID: " + trigger.TriggerId)
+				for _, value := range r.Trigger {
+					if value.Name == "Event."+name {
+						t.Log("ID: " + value.TriggerId)
 						return
 					}
 				}
@@ -381,9 +379,9 @@ func TestNewClient_Web(t *testing.T) {
 			}
 		})
 
-		type Login struct {
-			Method string `json:"method"`
-		}
+		// type Login struct {
+		// 	Method string `json:"method"`
+		// }
 
 		// t.Run("upsert tag", func(t *testing.T) {
 		//	obj, err := c.UpsertGA4WebTag(ctx, "login", eventParameters(Login{}))
@@ -397,24 +395,24 @@ func TestNewClient_Web(t *testing.T) {
 // ~ Private methods
 // ------------------------------------------------------------------------------------------------
 
-func eventParameters(event interface{}) []string {
-	if event == nil {
-		return nil
-	}
-	var res []string
-	v := reflect.TypeOf(event)
-
-	if v.Kind() == reflect.Ptr {
-		v = v.Elem()
-	}
-	for i := 0; i < v.NumField(); i++ {
-		tag := v.Field(i).Tag.Get("json")
-		if tag != "" && tag != "-" {
-			res = append(res, strings.Split(tag, ",")[0])
-		}
-	}
-	return res
-}
+// func eventParameters(event any) []string {
+// 	if event == nil {
+// 		return nil
+// 	}
+// 	var res []string
+// 	v := reflect.TypeOf(event)
+//
+// 	if v.Kind() == reflect.Ptr {
+// 		v = v.Elem()
+// 	}
+// 	for i := range v.NumField() {
+// 		tag := v.Field(i).Tag.Get("json")
+// 		if tag != "" && tag != "-" {
+// 			res = append(res, strings.Split(tag, ",")[0])
+// 		}
+// 	}
+// 	return res
+// }
 
 func dump(t *testing.T, i interface{ MarshalJSON() ([]byte, error) }) {
 	t.Helper()

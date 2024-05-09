@@ -19,7 +19,6 @@ var tagmanagerServerCmd = &cobra.Command{
 	Short:             "Provision Google Tag Manager Server Container",
 	PersistentPreRunE: preRunReadConfig,
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		var clientCredentialsOption option.ClientOption
 		if cfg.Google.CredentialsFile != "" {
 			clientCredentialsOption = option.WithCredentialsFile(cfg.Google.CredentialsFile)
