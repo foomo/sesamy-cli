@@ -50,6 +50,8 @@ func GetEventParameters(source config.Tagmanager) (map[string][]string, error) {
 						// e.g. "type Foo struct {}" or "type Bar = string"
 						if elem, ok := spec.(*ast.TypeSpec); ok && elem.Name.IsExported() {
 							if strct, ok := elem.Type.(*ast.StructType); ok {
+								name := strcase.SnakeCase(elem.Name.String())
+								var fields []string
 								for _, field := range strct.Fields.List {
 									tags, err := structtag.Parse(strings.Trim(field.Tag.Value, "`"))
 									if err != nil {
@@ -62,10 +64,10 @@ func GetEventParameters(source config.Tagmanager) (map[string][]string, error) {
 										return false
 									}
 									if tag.Value() != "" && tag.Value() != "-" {
-										name := strcase.SnakeCase(elem.Name.String())
-										ret[name] = append(ret[name], strings.Split(tag.Value(), ",")[0])
+										fields = append(fields, strings.Split(tag.Value(), ",")[0])
 									}
 								}
+								ret[name] = fields
 							}
 						}
 					}
