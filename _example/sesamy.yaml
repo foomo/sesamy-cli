@@ -1,4 +1,8 @@
 google:
+  gt:
+    enable_page_views: true
+    server_container_url: http://sst.my-domain.com/
+
   ga4:
     measurement_id: G-PZ5ELRCR31
 
@@ -16,7 +20,6 @@ google:
 
   request_quota: 15
   credentials_file: ./tmp/google_service_account_creds.json
-  server_container_url: http://sst.my-domain.com/
 
 typescript:
   packages:
