@@ -26,7 +26,7 @@ var tagmanagerWebCmd = &cobra.Command{
 			clientCredentialsOption = option.WithCredentialsJSON([]byte(cfg.Google.CredentialsJSON))
 		}
 
-		eventParameters, err := internal.GetEventParameters(cfg.Tagmanager)
+		eventParameters, err := internal.GetStructTypeParameters(cmd.Context(), cfg.Tagmanager.Packages)
 		if err != nil {
 			return err
 		}

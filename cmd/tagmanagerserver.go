@@ -78,6 +78,22 @@ var tagmanagerServerCmd = &cobra.Command{
 			}
 		}
 
+		var mpv2Client *tagmanager2.Client
+		{
+			name := p.ClientName("Measurement Protocol GA4")
+			if mpv2Client, err = c.UpsertClient(client.NewMPv2(name)); err != nil {
+				return err
+			}
+		}
+
+		var mpv2ClientTrigger *tagmanager2.Trigger
+		{
+			name := p.Triggers.ClientName("Measurement Protocol GA4 Client")
+			if mpv2ClientTrigger, err = c.UpsertTrigger(trigger.NewClient(name, mpv2Client)); err != nil {
+				return err
+			}
+		}
+
 		var ga4Client *tagmanager2.Client
 		{
 			name := p.ClientName("Google Analytics GA4")
@@ -96,7 +112,7 @@ var tagmanagerServerCmd = &cobra.Command{
 
 		{
 			name := p.Tags.ServerGA4EventName("Google Analytics GA4")
-			if _, err := c.UpsertTag(client2.NewServerGA4Event(name, ga4MeasurementID, ga4ClientTrigger)); err != nil {
+			if _, err := c.UpsertTag(client2.NewServerGA4Event(name, ga4MeasurementID, ga4ClientTrigger, mpv2ClientTrigger)); err != nil {
 				return err
 			}
 		}

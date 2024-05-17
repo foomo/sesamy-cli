@@ -31,23 +31,97 @@ google:
 
   gtm:
     account_id: 6099238525
-    server:
-      container_id: 175348980
-      workspace_id: 10
-      measurement_id: GTM-5NWPR4QW
-
     web:
       container_id: 175355532
-      workspace_id: 23
       measurement_id: GTM-57BHX34G
+      workspace_id: 23
+    server:
+      container_id: 175348980
+      measurement_id: GTM-5NWPR4QW
+      workspace_id: 10
 
-  credentials_file: ./tmp/google_service_account_creds.json
+  request_quota: 15
+  credentials_file: ./google_service_account_creds.json
 
-events:
+
+typescript:
   packages:
-    - path: "github.com/foomo/sesamy-cli/_example/server"
-      output_path: "./_example/client/types.d.ts"
-      indent: "\t"
+    - path: 'github.com/username/repository/event'
+      events:
+        - Custom
+    - path: 'github.com/foomo/sesamy-go/event'
+      events:
+        - PageView
+        - SelectItem
+  output_path: '/path/to/index.ts'
+
+tagmanager:
+  packages:
+    - path: 'github.com/username/repository/event'
+      events:
+        - Custom
+    - path: 'github.com/foomo/sesamy-go/event'
+      events:
+        - AddPaymentInfo
+        - AddShippingInfo
+        - AddToCart
+        - AddToWishlist
+        - AdImpression
+        - BeginCheckout
+        - CampaignDetails
+        - Click
+        - EarnVirtualMoney
+        - FileDownload
+        - FormStart
+        - FormSubmit
+        - GenerateLead
+        - JoinGroup
+        - LevelEnd
+        - LevelStart
+        - LevelUp
+        - Login
+        - PageView
+        - PostScore
+        - Purchase
+        - Refund
+        - RemoveFromCart
+        - ScreenView
+        - Scroll
+        - Search
+        - SelectContent
+        - SelectItem
+        - SelectPromotion
+        - SessionStart
+        - Share
+        - SignUp
+        - SpendVirtualCurrency
+        - TutorialBegin
+        - TutorialComplete
+        - UnlockAchievement
+        - UserEngagement
+        - VideoComplete
+        - VideoProgress
+        - VideoStart
+        - ViewCart
+        - ViewItem
+        - ViewItemList
+        - ViewPromotion
+        - ViewSearchResults
+  prefixes:
+    client: ''
+    folder: ''
+    tags:
+      ga4_event: 'GA4 - '
+      google_tag: ''
+      server_ga4_event: 'GA4 - '
+    triggers:
+      client: ''
+      custom_event: 'Event - '
+    variables:
+      constant: ''
+      event_model: 'dlv.eventModel.'
+      gt_event_settings: 'Event Settings - '
+      gt_settings: 'Settings - '
 ```
 
 ## Caveats

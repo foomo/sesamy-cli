@@ -1,7 +1,13 @@
 package cmd
 
 import (
-	"github.com/gzuidhof/tygo/tygo"
+	"os"
+	"path/filepath"
+
+	"github.com/foomo/sesamy-cli/internal"
+	"github.com/foomo/sesamy-cli/pkg/typescript"
+	"github.com/pkg/errors"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )
 
@@ -11,14 +17,32 @@ var typescriptCmd = &cobra.Command{
 	Short:             "Generate typescript events",
 	PersistentPreRunE: preRunReadConfig,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		gen := tygo.New(&tygo.Config{
-			Packages: cfg.Typescript.Packages,
-		})
-		for k, v := range cfg.Typescript.TypeMappings {
-			gen.SetTypeMapping(k, v)
+
+		eventTypes, err := internal.GetStructTypes(cmd.Context(), cfg.Typescript.Packages)
+		if err != nil {
+			return err
 		}
 
-		return gen.Generate()
+		code, err := typescript.Generate(eventTypes)
+		if err != nil {
+			return err
+		}
+
+		outPath, err := filepath.Abs(cfg.Typescript.OutputPath)
+		if err != nil {
+			return errors.Wrap(err, "failed to get output path")
+		}
+		pterm.Info.Printfln("Generated typescript code to: %s", outPath)
+
+		if err = os.MkdirAll(filepath.Dir(outPath), os.ModePerm); err != nil {
+			return errors.Wrap(err, "failed to create typescript output directory")
+		}
+
+		if err = os.WriteFile(outPath, []byte(code), 0600); err != nil {
+			return errors.Wrap(err, "failed to write typescript code")
+		}
+
+		return nil
 	},
 }
 

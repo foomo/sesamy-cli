@@ -4,9 +4,14 @@ import (
 	"google.golang.org/api/tagmanager/v2"
 )
 
-func NewServerGA4Event(name string, measurementID *tagmanager.Variable, trigger *tagmanager.Trigger) *tagmanager.Tag {
+func NewServerGA4Event(name string, measurementID *tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+	triggerIDs := make([]string, len(triggers))
+	for i, trigger := range triggers {
+		triggerIDs[i] = trigger.TriggerId
+	}
+
 	return &tagmanager.Tag{
-		FiringTriggerId: []string{trigger.TriggerId},
+		FiringTriggerId: triggerIDs,
 		Name:            name,
 		Parameter: []*tagmanager.Parameter{
 			{
