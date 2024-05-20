@@ -1,6 +1,10 @@
 package config
 
+import (
+	"github.com/foomo/sesamy-cli/internal"
+)
+
 type Typescript struct {
-	Packages   Packages `yaml:"packages"`
-	OutputPath string   `yaml:"output_path"`
+	internal.LoaderConfig `yaml:",squash"`
+	OutputPath            string `yaml:"output_path"`
 }

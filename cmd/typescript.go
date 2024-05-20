@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"os"
+	"path"
 	"path/filepath"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/foomo/sesamy-cli/internal"
 	"github.com/foomo/sesamy-cli/pkg/typescript"
 	"github.com/pkg/errors"
@@ -17,29 +19,33 @@ var typescriptCmd = &cobra.Command{
 	Short:             "Generate typescript events",
 	PersistentPreRunE: preRunReadConfig,
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		eventTypes, err := internal.GetStructTypes(cmd.Context(), cfg.Typescript.Packages)
-		if err != nil {
+		spew.Dump(cfg.Typescript)
+		parser := internal.NewLoader(&cfg.Typescript.LoaderConfig)
+		if err := parser.Load(cmd.Context()); err != nil {
 			return err
 		}
 
-		code, err := typescript.Generate(eventTypes)
+		generator := typescript.NewBuilder(parser)
+		files, err := generator.Build(cmd.Context())
 		if err != nil {
-			return err
+			return errors.Wrap(err, "failed to get build typescript")
 		}
 
 		outPath, err := filepath.Abs(cfg.Typescript.OutputPath)
 		if err != nil {
 			return errors.Wrap(err, "failed to get output path")
 		}
-		pterm.Info.Printfln("Generated typescript code to: %s", outPath)
+		pterm.Info.Printfln("generated typescript code to: %s", outPath)
 
-		if err = os.MkdirAll(filepath.Dir(outPath), os.ModePerm); err != nil {
+		if err = os.MkdirAll(outPath, os.ModePerm); err != nil {
 			return errors.Wrap(err, "failed to create typescript output directory")
 		}
 
-		if err = os.WriteFile(outPath, []byte(code), 0600); err != nil {
-			return errors.Wrap(err, "failed to write typescript code")
+		for filename, file := range files {
+			pterm.Info.Printfln("...%s", filename)
+			if err = os.WriteFile(path.Join(outPath, filename), []byte(file.String()), 0600); err != nil {
+				return errors.Wrap(err, "failed to write typescript code")
+			}
 		}
 
 		return nil

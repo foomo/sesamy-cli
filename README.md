@@ -47,21 +47,23 @@ google:
 typescript:
   packages:
     - path: 'github.com/username/repository/event'
-      events:
+      types:
         - Custom
     - path: 'github.com/foomo/sesamy-go/event'
-      events:
+      types:
         - PageView
         - SelectItem
-  output_path: '/path/to/index.ts'
+  output_path: '/path/to/src'
 
 tagmanager:
+  tags:
+    ga4_enabled: true
   packages:
     - path: 'github.com/username/repository/event'
-      events:
+      types:
         - Custom
     - path: 'github.com/foomo/sesamy-go/event'
-      events:
+      types:
         - AddPaymentInfo
         - AddShippingInfo
         - AddToCart

@@ -152,7 +152,7 @@ func TestNewClient_Web(t *testing.T) {
 				ContainerId: c.ContainerID(),
 				WorkspaceId: c.WorkspaceID(),
 				Name:        name,
-				Notes:       c.Notes(),
+				Notes:       c.Notes(nil),
 			})
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
@@ -213,7 +213,7 @@ func TestNewClient_Web(t *testing.T) {
 				WorkspaceId:    c.WorkspaceID(),
 				ParentFolderId: folderID,
 				Name:           "Constant." + name,
-				Notes:          c.Notes(),
+				Notes:          c.Notes(nil),
 				Parameter: []*gtagmanager.Parameter{
 					{
 						Key:   "value",
@@ -265,7 +265,7 @@ func TestNewClient_Web(t *testing.T) {
 				ParentFolderId: folderID,
 				Type:           "customEvent",
 				Name:           "Event." + name,
-				Notes:          c.Notes(),
+				Notes:          c.Notes(nil),
 				CustomEventFilter: []*gtagmanager.Condition{
 					{
 						Parameter: []*gtagmanager.Parameter{
@@ -325,7 +325,7 @@ func TestNewClient_Web(t *testing.T) {
 				WorkspaceId:    c.WorkspaceID(),
 				ParentFolderId: folderID,
 				Name:           "GA4." + name,
-				Notes:          c.Notes(),
+				Notes:          c.Notes(nil),
 				Parameter: []*gtagmanager.Parameter{
 					{
 						Type:  "boolean",
