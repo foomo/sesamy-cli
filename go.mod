@@ -2,12 +2,12 @@ module github.com/foomo/sesamy-cli
 
 go 1.22.3
 
-replace github.com/foomo/gocontemplate => ../gocontemplate
+//replace github.com/foomo/gocontemplate => ../gocontemplate
 
 require (
 	github.com/fatih/structtag v1.2.0
 	github.com/foomo/go v0.0.3
-	github.com/foomo/gocontemplate v0.1.2
+	github.com/foomo/gocontemplate v0.1.3
 	github.com/foomo/sesamy-go v0.1.34-0.20240521085043-de0c44a6497c
 	github.com/mitchellh/hashstructure/v2 v2.0.2
 	github.com/mitchellh/mapstructure v1.5.0
