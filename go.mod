@@ -1,12 +1,14 @@
 module github.com/foomo/sesamy-cli
 
-go 1.22.2
+go 1.22.3
+
+replace github.com/foomo/gocontemplate => ../gocontemplate
 
 require (
-	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc
 	github.com/fatih/structtag v1.2.0
 	github.com/foomo/go v0.0.3
-	github.com/foomo/sesamy-go v0.1.34-0.20240520134733-71fc83a0eb94
+	github.com/foomo/gocontemplate v0.1.2
+	github.com/foomo/sesamy-go v0.1.34-0.20240521085043-de0c44a6497c
 	github.com/mitchellh/hashstructure/v2 v2.0.2
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
@@ -17,7 +19,6 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/wissance/stringFormatter v1.2.0
 	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842
-	golang.org/x/tools v0.21.0
 	google.golang.org/api v0.181.0
 )
 
@@ -29,6 +30,7 @@ require (
 	cloud.google.com/go/auth/oauth2adapt v0.2.2 // indirect
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	github.com/containerd/console v1.0.3 // indirect
+	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/foomo/gostandards v0.1.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
@@ -71,6 +73,7 @@ require (
 	golang.org/x/sys v0.20.0 // indirect
 	golang.org/x/term v0.20.0 // indirect
 	golang.org/x/text v0.15.0 // indirect
+	golang.org/x/tools v0.21.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240506185236-b8a5c65736ae // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240513163218-0867130af1f8 // indirect
 	google.golang.org/grpc v1.63.2 // indirect

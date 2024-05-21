@@ -206,7 +206,6 @@ func (c *Client) GetFolder(name string) (*tagmanager.Folder, error) {
 
 func (c *Client) LoadFolders() (map[string]*tagmanager.Folder, error) {
 	if c.folders == nil {
-
 		c.l.Debug("listing", "type", "Folder")
 		r, err := c.Service().Accounts.Containers.Workspaces.Folders.List(c.WorkspacePath()).Do()
 		if err != nil {

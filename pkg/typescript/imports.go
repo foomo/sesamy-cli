@@ -1,5 +1,9 @@
 package typescript
 
+import (
+	"github.com/foomo/sesamy-cli/pkg/code"
+)
+
 type Imports struct {
 	imports map[string]*Import
 }
@@ -25,7 +29,7 @@ func (i *Imports) Import(location string) *Import {
 	return i.imports[location]
 }
 
-func (i *Imports) Write(f *Section) {
+func (i *Imports) Write(f *code.Section) {
 	for key := range i.imports {
 		f.Sprintf(i.imports[key].String())
 	}

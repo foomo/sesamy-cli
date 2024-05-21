@@ -1,10 +1,10 @@
 package config
 
 import (
-	"github.com/foomo/sesamy-cli/internal"
+	"github.com/foomo/gocontemplate/pkg/contemplate"
 )
 
 type Typescript struct {
-	internal.LoaderConfig `yaml:",squash"`
-	OutputPath            string `yaml:"output_path"`
+	contemplate.Config `yaml:",squash"`
+	OutputPath         string `yaml:"output_path"`
 }

@@ -1,11 +1,9 @@
-package typescript
+package code
 
 import (
-	"fmt"
 	"slices"
 	"strings"
 
-	"github.com/wissance/stringFormatter"
 	"golang.org/x/exp/maps"
 )
 
@@ -17,21 +15,12 @@ const (
 	SectionFoot        = 400
 )
 
-type (
-	File struct {
-		*strings.Builder
-		Indent       int
-		IndentString string
-		Sections     map[int]*Section
-	}
-	Section struct {
-		Parts []string
-	}
-)
+type File struct {
+	Sections map[int]*Section
+}
 
 func NewFile() *File {
 	return &File{
-		Indent: 0,
 		Sections: map[int]*Section{
 			SectionAnnotations: {},
 			SectionCopyright:   {},
@@ -39,30 +28,6 @@ func NewFile() *File {
 			SectionBody:        {},
 			SectionFoot:        {},
 		},
-		IndentString: "\t",
-	}
-}
-
-func (s *Section) Sprintf(format string, a ...any) {
-	value := fmt.Sprintf(format, a...)
-	if !slices.Contains(s.Parts, value) {
-		s.Parts = append(s.Parts, value)
-	}
-}
-
-// Tprintn {n} , n here is a number to notes order of argument list to use i.e. {0}, {1}
-func (s *Section) Tprintn(template string, a ...any) {
-	value := stringFormatter.Format(template, a...)
-	if !slices.Contains(s.Parts, value) {
-		s.Parts = append(s.Parts, value)
-	}
-}
-
-// Tprintm {name} to notes arguments by name i.e. {name}, {last_name}, {address} and so on ...
-func (s *Section) Tprintm(template string, a map[string]any) {
-	value := stringFormatter.FormatComplex(template, a)
-	if !slices.Contains(s.Parts, value) {
-		s.Parts = append(s.Parts, value)
 	}
 }
 

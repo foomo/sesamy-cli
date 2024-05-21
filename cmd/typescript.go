@@ -5,12 +5,11 @@ import (
 	"path"
 	"path/filepath"
 
-	"github.com/davecgh/go-spew/spew"
-	"github.com/foomo/sesamy-cli/internal"
-	"github.com/foomo/sesamy-cli/pkg/typescript"
+	"github.com/foomo/gocontemplate/pkg/contemplate"
+	"github.com/foomo/sesamy-cli/pkg/typescript/generator"
 	"github.com/pkg/errors"
-	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/maps"
 )
 
 // typescriptCmd represents the typescript command
@@ -19,14 +18,12 @@ var typescriptCmd = &cobra.Command{
 	Short:             "Generate typescript events",
 	PersistentPreRunE: preRunReadConfig,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		spew.Dump(cfg.Typescript)
-		parser := internal.NewLoader(&cfg.Typescript.LoaderConfig)
-		if err := parser.Load(cmd.Context()); err != nil {
+		ctpl, err := contemplate.Load(&cfg.Typescript.Config)
+		if err != nil {
 			return err
 		}
 
-		generator := typescript.NewBuilder(parser)
-		files, err := generator.Build(cmd.Context())
+		files, err := generator.Generate(logger, ctpl)
 		if err != nil {
 			return errors.Wrap(err, "failed to get build typescript")
 		}
@@ -35,14 +32,13 @@ var typescriptCmd = &cobra.Command{
 		if err != nil {
 			return errors.Wrap(err, "failed to get output path")
 		}
-		pterm.Info.Printfln("generated typescript code to: %s", outPath)
 
 		if err = os.MkdirAll(outPath, os.ModePerm); err != nil {
 			return errors.Wrap(err, "failed to create typescript output directory")
 		}
 
+		logger.InfoContext(cmd.Context(), "generated typescript code", "dir", outPath, "files", maps.Keys(files))
 		for filename, file := range files {
-			pterm.Info.Printfln("...%s", filename)
 			if err = os.WriteFile(path.Join(outPath, filename), []byte(file.String()), 0600); err != nil {
 				return errors.Wrap(err, "failed to write typescript code")
 			}
@@ -54,14 +50,4 @@ var typescriptCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(typescriptCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// typescriptCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// typescriptCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

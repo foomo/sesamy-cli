@@ -4,7 +4,8 @@ import (
 	"go/types"
 	"strconv"
 
-	"github.com/foomo/sesamy-cli/internal"
+	"github.com/foomo/gocontemplate/pkg/assume"
+	"github.com/foomo/gocontemplate/pkg/contemplate"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	client "github.com/foomo/sesamy-cli/pkg/tagmanager/tag"
 	trigger2 "github.com/foomo/sesamy-cli/pkg/tagmanager/trigger"
@@ -14,15 +15,14 @@ import (
 	tagmanager2 "google.golang.org/api/tagmanager/v2"
 )
 
-// tagmanagerWebCmd represents the web command
+// NewTagmanagerWebCmd represents the web command
 func NewTagmanagerWebCmd(root *cobra.Command) {
-
 	getEventParams := func(obj types.Object) []string {
 		var ret []string
-		if eventStruct := internal.TC[*types.Struct](obj.Type().Underlying()); eventStruct != nil {
+		if eventStruct := assume.T[*types.Struct](obj.Type().Underlying()); eventStruct != nil {
 			for i := range eventStruct.NumFields() {
 				if eventField := eventStruct.Field(i); eventField.Name() == "Params" {
-					if paramsStruct := internal.TC[*types.Struct](eventField.Type().Underlying()); paramsStruct != nil {
+					if paramsStruct := assume.T[*types.Struct](eventField.Type().Underlying()); paramsStruct != nil {
 						for j := range paramsStruct.NumFields() {
 							ret = append(ret, paramsStruct.Field(j).Name())
 						}
@@ -45,8 +45,8 @@ func NewTagmanagerWebCmd(root *cobra.Command) {
 				clientCredentialsOption = option.WithCredentialsJSON([]byte(cfg.Google.CredentialsJSON))
 			}
 
-			parser := internal.NewLoader(&cfg.Tagmanager.LoaderConfig)
-			if err := parser.Load(cmd.Context()); err != nil {
+			parser, err := contemplate.Load(&cfg.Tagmanager.Config)
+			if err != nil {
 				return err
 			}
 
@@ -154,8 +154,4 @@ func NewTagmanagerWebCmd(root *cobra.Command) {
 	}
 
 	root.AddCommand(cmd)
-}
-
-func init() {
-	NewTagmanagerWebCmd(tagmanagerCmd)
 }

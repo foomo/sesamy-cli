@@ -74,6 +74,7 @@ linters-settings:
       - name: struct-tag
         arguments:
           - "json,inline"
+          - "yaml,squash"
       - name: unhandled-error
         arguments:
           - "fmt.Println"

@@ -1,13 +1,13 @@
 package config
 
 import (
-	"github.com/foomo/sesamy-cli/internal"
+	"github.com/foomo/gocontemplate/pkg/contemplate"
 )
 
 type Tagmanager struct {
-	internal.LoaderConfig `yaml:",squash"`
-	Tags                  TagmanagerTags     `yaml:"tags"`
-	Prefixes              TagmanagerPrefixes `yaml:"prefixes"`
+	contemplate.Config `yaml:",squash"`
+	Tags               TagmanagerTags     `yaml:"tags"`
+	Prefixes           TagmanagerPrefixes `yaml:"prefixes"`
 }
 
 type TagmanagerTags struct {
