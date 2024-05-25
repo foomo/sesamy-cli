@@ -162,7 +162,7 @@ func (p *Package) tsAstType(input types.Type) string {
 
 func (p *Package) renderSesamyEvent(v ast.Expr) error {
 	p.imports.Import("@foomo/sesamy").AddModule("collect")
-	p.imports.Import("./github_com_foomo_sesamy_go").AddModule("EventName")
+	p.imports.Import("./github_com_foomo_sesamy_go_pkg_sesamy").AddModule("EventName")
 
 	var typeName string
 	var typeType string
