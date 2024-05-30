@@ -10,27 +10,34 @@ import (
 	client "github.com/foomo/sesamy-cli/pkg/tagmanager/tag"
 	trigger2 "github.com/foomo/sesamy-cli/pkg/tagmanager/trigger"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager/variable"
+	"github.com/foomo/sesamy-cli/pkg/utils"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/stoewer/go-strcase"
 	"google.golang.org/api/option"
 	tagmanager2 "google.golang.org/api/tagmanager/v2"
 )
 
 // NewTagmanagerWebCmd represents the web command
 func NewTagmanagerWebCmd(root *cobra.Command) {
-	getEventParams := func(obj types.Object) []string {
+	getEventParams := func(obj types.Object) ([]string, error) {
 		var ret []string
 		if eventStruct := assume.T[*types.Struct](obj.Type().Underlying()); eventStruct != nil {
 			for i := range eventStruct.NumFields() {
 				if eventField := eventStruct.Field(i); eventField.Name() == "Params" {
 					if paramsStruct := assume.T[*types.Struct](eventField.Type().Underlying()); paramsStruct != nil {
 						for j := range paramsStruct.NumFields() {
-							ret = append(ret, paramsStruct.Field(j).Name())
+							tag, err := utils.ParseTagName(paramsStruct.Tag(j))
+							if err != nil {
+								return nil, errors.Wrapf(err, "failed to parse tag `%s`", paramsStruct.Tag(j))
+							}
+							ret = append(ret, tag)
 						}
 					}
 				}
 			}
 		}
-		return ret
+		return ret, nil
 	}
 
 	cmd := &cobra.Command{
@@ -54,7 +61,11 @@ func NewTagmanagerWebCmd(root *cobra.Command) {
 			for _, pkgCfg := range cfg.Tagmanager.Packages {
 				pkg := parser.Package(pkgCfg.Path)
 				for _, event := range pkgCfg.Types {
-					eventParameters[event] = getEventParams(pkg.LookupScopeType(event))
+					eventParams, err := getEventParams(pkg.LookupScopeType(event))
+					if err != nil {
+						return err
+					}
+					eventParameters[strcase.SnakeCase(event)] = eventParams
 				}
 			}
 

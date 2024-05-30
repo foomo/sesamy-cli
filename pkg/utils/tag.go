@@ -1,4 +1,4 @@
-package typescript
+package utils
 
 import (
 	"strings"
