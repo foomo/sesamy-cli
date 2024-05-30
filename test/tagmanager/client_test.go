@@ -8,6 +8,8 @@ import (
 	"os"
 	"testing"
 
+	testingx "github.com/foomo/go/testing"
+	tagx "github.com/foomo/go/testing/tag"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager/trigger"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager/variable"
@@ -18,7 +20,7 @@ import (
 )
 
 func TestNewClient_Server(t *testing.T) {
-	t.Skip()
+	testingx.Tags(t, tagx.Skip)
 
 	c, err := tagmanager.NewClient(
 		context.TODO(),
@@ -101,7 +103,7 @@ func TestNewClient_Server(t *testing.T) {
 }
 
 func TestNewClient_Web(t *testing.T) {
-	t.Skip()
+	testingx.Tags(t, tagx.Skip)
 
 	c, err := tagmanager.NewClient(
 		context.TODO(),
@@ -150,7 +152,7 @@ func TestNewClient_Web(t *testing.T) {
 				ContainerId: c.ContainerID(),
 				WorkspaceId: c.WorkspaceID(),
 				Name:        name,
-				Notes:       c.Notes(),
+				Notes:       c.Notes(nil),
 			})
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
@@ -211,7 +213,7 @@ func TestNewClient_Web(t *testing.T) {
 				WorkspaceId:    c.WorkspaceID(),
 				ParentFolderId: folderID,
 				Name:           "Constant." + name,
-				Notes:          c.Notes(),
+				Notes:          c.Notes(nil),
 				Parameter: []*gtagmanager.Parameter{
 					{
 						Key:   "value",
@@ -263,7 +265,7 @@ func TestNewClient_Web(t *testing.T) {
 				ParentFolderId: folderID,
 				Type:           "customEvent",
 				Name:           "Event." + name,
-				Notes:          c.Notes(),
+				Notes:          c.Notes(nil),
 				CustomEventFilter: []*gtagmanager.Condition{
 					{
 						Parameter: []*gtagmanager.Parameter{
@@ -323,7 +325,7 @@ func TestNewClient_Web(t *testing.T) {
 				WorkspaceId:    c.WorkspaceID(),
 				ParentFolderId: folderID,
 				Name:           "GA4." + name,
-				Notes:          c.Notes(),
+				Notes:          c.Notes(nil),
 				Parameter: []*gtagmanager.Parameter{
 					{
 						Type:  "boolean",
@@ -394,25 +396,6 @@ func TestNewClient_Web(t *testing.T) {
 // ------------------------------------------------------------------------------------------------
 // ~ Private methods
 // ------------------------------------------------------------------------------------------------
-
-// func eventParameters(event any) []string {
-// 	if event == nil {
-// 		return nil
-// 	}
-// 	var res []string
-// 	v := reflect.TypeOf(event)
-//
-// 	if v.Kind() == reflect.Ptr {
-// 		v = v.Elem()
-// 	}
-// 	for i := range v.NumField() {
-// 		tag := v.Field(i).Tag.Get("json")
-// 		if tag != "" && tag != "-" {
-// 			res = append(res, strings.Split(tag, ",")[0])
-// 		}
-// 	}
-// 	return res
-// }
 
 func dump(t *testing.T, i interface{ MarshalJSON() ([]byte, error) }) {
 	t.Helper()

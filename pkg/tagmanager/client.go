@@ -2,9 +2,11 @@ package tagmanager
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"time"
 
+	"github.com/mitchellh/hashstructure/v2"
 	"github.com/pkg/errors"
 	"google.golang.org/api/option"
 	"google.golang.org/api/tagmanager/v2"
@@ -115,10 +117,6 @@ func (c *Client) WorkspaceID() string {
 	return c.workspaceID
 }
 
-func (c *Client) Notes() string {
-	return c.notes
-}
-
 func (c *Client) MeasurementID() string {
 	return c.measurementID
 }
@@ -146,323 +144,402 @@ func (c *Client) WorkspacePath() string {
 	return c.ContainerPath() + "/workspaces/" + c.workspaceID
 }
 
+func (c *Client) Notes(v any) string {
+	var hash string
+	if v != nil {
+		if value, err := hashstructure.Hash(v, hashstructure.FormatV2, nil); err != nil {
+			c.l.Warn("failed to hash struct:", "error", err)
+		} else {
+			hash = fmt.Sprintf(" [%d]", value)
+		}
+	}
+	return c.notes + hash
+}
+
 // ------------------------------------------------------------------------------------------------
 // ~ Public methods
 // ------------------------------------------------------------------------------------------------
 
-func (c *Client) Client(name string) (*tagmanager.Client, error) {
-	if c.clients == nil {
-		c.clients = map[string]*tagmanager.Client{}
+func (c *Client) GetClient(name string) (*tagmanager.Client, error) {
+	elems, err := c.LoadClients()
+	if err != nil {
+		return nil, err
+	}
 
-		c.l.Debug("listing", "type", "Client")
+	if _, ok := elems[name]; !ok {
+		return nil, ErrNotFound
+	}
+
+	return elems[name], nil
+}
+
+func (c *Client) LoadClients() (map[string]*tagmanager.Client, error) {
+	if c.clients == nil {
+		c.l.Debug("loading", "type", "Client")
 		r, err := c.Service().Accounts.Containers.Workspaces.Clients.List(c.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
 		}
 
+		res := map[string]*tagmanager.Client{}
 		for _, value := range r.Client {
-			c.clients[value.Name] = value
+			res[value.Name] = value
 		}
+		c.clients = res
 	}
 
-	if _, ok := c.clients[name]; !ok {
+	return c.clients, nil
+}
+
+func (c *Client) GetFolder(name string) (*tagmanager.Folder, error) {
+	elems, err := c.LoadFolders()
+	if err != nil {
+		return nil, err
+	}
+
+	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
 
-	return c.clients[name], nil
+	return elems[name], nil
 }
 
-func (c *Client) Folder(name string) (*tagmanager.Folder, error) {
+func (c *Client) LoadFolders() (map[string]*tagmanager.Folder, error) {
 	if c.folders == nil {
-		c.folders = map[string]*tagmanager.Folder{}
-
-		c.l.Debug("listing", "type", "Folder")
+		c.l.Debug("loading", "type", "Folder")
 		r, err := c.Service().Accounts.Containers.Workspaces.Folders.List(c.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
 		}
 
+		res := map[string]*tagmanager.Folder{}
 		for _, value := range r.Folder {
-			c.folders[value.Name] = value
+			res[value.Name] = value
 		}
+		c.folders = res
+	}
+	return c.folders, nil
+}
+
+func (c *Client) GetVariable(name string) (*tagmanager.Variable, error) {
+	elems, err := c.LoadVariables()
+	if err != nil {
+		return nil, err
 	}
 
-	if _, ok := c.folders[name]; !ok {
+	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
 
-	return c.folders[name], nil
+	return elems[name], nil
 }
 
-func (c *Client) Variable(name string) (*tagmanager.Variable, error) {
+func (c *Client) LoadVariables() (map[string]*tagmanager.Variable, error) {
 	if c.variables == nil {
-		c.variables = map[string]*tagmanager.Variable{}
-
-		c.l.Debug("listing", "type", "Variable")
+		c.l.Debug("loading", "type", "Variable")
 		r, err := c.Service().Accounts.Containers.Workspaces.Variables.List(c.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
 		}
 
+		res := map[string]*tagmanager.Variable{}
 		for _, value := range r.Variable {
-			c.variables[value.Name] = value
+			res[value.Name] = value
 		}
+		c.variables = res
 	}
 
-	if _, ok := c.variables[name]; !ok {
-		return nil, ErrNotFound
-	}
-	return c.variables[name], nil
+	return c.variables, nil
 }
 
-func (c *Client) BuiltInVariable(name string) (*tagmanager.BuiltInVariable, error) {
-	if c.builtInVariables == nil {
-		c.builtInVariables = map[string]*tagmanager.BuiltInVariable{}
+func (c *Client) GetBuiltInVariable(typeName string) (*tagmanager.BuiltInVariable, error) {
+	elems, err := c.LoadBuiltInVariables()
+	if err != nil {
+		return nil, err
+	}
 
-		c.l.Debug("listing", "type", "Built-In Variable")
+	if _, ok := elems[typeName]; !ok {
+		return nil, ErrNotFound
+	}
+
+	return elems[typeName], nil
+}
+
+func (c *Client) LoadBuiltInVariables() (map[string]*tagmanager.BuiltInVariable, error) {
+	if c.builtInVariables == nil {
+		c.l.Debug("loading", "type", "BuiltInVariable")
 		r, err := c.Service().Accounts.Containers.Workspaces.BuiltInVariables.List(c.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
 		}
 
+		res := map[string]*tagmanager.BuiltInVariable{}
 		for _, value := range r.BuiltInVariable {
-			c.builtInVariables[value.Type] = value
+			res[value.Type] = value
 		}
+		c.builtInVariables = res
 	}
 
-	if _, ok := c.builtInVariables[name]; !ok {
-		return nil, ErrNotFound
-	}
-
-	return c.builtInVariables[name], nil
+	return c.builtInVariables, nil
 }
 
 func (c *Client) Trigger(name string) (*tagmanager.Trigger, error) {
-	if c.triggers == nil {
-		c.triggers = map[string]*tagmanager.Trigger{}
+	elems, err := c.LoadTriggers()
+	if err != nil {
+		return nil, err
+	}
 
-		c.l.Debug("listing", "type", "Trigger")
+	if _, ok := elems[name]; !ok {
+		return nil, ErrNotFound
+	}
+
+	return elems[name], nil
+}
+
+func (c *Client) LoadTriggers() (map[string]*tagmanager.Trigger, error) {
+	if c.triggers == nil {
+		c.l.Debug("loading", "type", "Trigger")
 		r, err := c.Service().Accounts.Containers.Workspaces.Triggers.List(c.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
 		}
 
+		res := map[string]*tagmanager.Trigger{}
 		for _, value := range r.Trigger {
-			c.triggers[value.Name] = value
+			res[value.Name] = value
 		}
+		c.triggers = res
 	}
 
-	if _, ok := c.triggers[name]; !ok {
-		return nil, ErrNotFound
-	}
-	return c.triggers[name], nil
+	return c.triggers, nil
 }
 
 func (c *Client) Tag(name string) (*tagmanager.Tag, error) {
-	if c.tags == nil {
-		c.tags = map[string]*tagmanager.Tag{}
+	elems, err := c.LoadTags()
+	if err != nil {
+		return nil, err
+	}
 
-		c.l.Debug("listing", "type", "Tag")
+	if _, ok := elems[name]; !ok {
+		return nil, ErrNotFound
+	}
+
+	return elems[name], nil
+}
+
+func (c *Client) LoadTags() (map[string]*tagmanager.Tag, error) {
+	if c.tags == nil {
+		c.l.Debug("loading", "type", "Tag")
 		r, err := c.Service().Accounts.Containers.Workspaces.Tags.List(c.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
 		}
 
+		res := map[string]*tagmanager.Tag{}
 		for _, value := range r.Tag {
-			c.tags[value.Name] = value
+			res[value.Name] = value
 		}
+		c.tags = res
 	}
 
-	if _, ok := c.tags[name]; !ok {
-		return nil, ErrNotFound
-	}
-
-	return c.tags[name], nil
+	return c.tags, nil
 }
 
-func (c *Client) UpsertClient(client *tagmanager.Client) (*tagmanager.Client, error) {
-	l := c.l.With("type", "Client", "name", client.Name)
+func (c *Client) UpsertClient(item *tagmanager.Client) (*tagmanager.Client, error) {
+	l := c.l.With("type", "Client", "name", item.Name)
 
-	client.AccountId = c.AccountID()
-	client.ContainerId = c.ContainerID()
-	client.WorkspaceId = c.WorkspaceID()
-	client.Notes = c.Notes()
+	item.Notes = c.Notes(item)
+	item.AccountId = c.AccountID()
+	item.ContainerId = c.ContainerID()
+	item.WorkspaceId = c.WorkspaceID()
 
-	cache, err := c.Client(client.Name)
+	cache, err := c.GetClient(item.Name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
-	folder, err := c.Folder(c.folderName)
+	folder, err := c.GetFolder(c.folderName)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to retrieve folder")
 	}
-	client.ParentFolderId = folder.FolderId
+	item.ParentFolderId = folder.FolderId
 
 	if cache == nil {
-		l.Info("creating")
-		c.clients[client.Name], err = c.Service().Accounts.Containers.Workspaces.Clients.Create(c.WorkspacePath(), client).Do()
+		l.Info("⚠️ creating")
+		c.clients[item.Name], err = c.Service().Accounts.Containers.Workspaces.Clients.Create(c.WorkspacePath(), item).Do()
+	} else if item.Notes == cache.Notes {
+		l.Info("✅ unchanged", "id", cache.ClientId)
 	} else {
-		l.Info("updating", "id", cache.ClientId)
-		c.clients[client.Name], err = c.Service().Accounts.Containers.Workspaces.Clients.Update(c.WorkspacePath()+"/clients/"+cache.ClientId, client).Do()
+		l.Info("⚠️ updating", "id", cache.ClientId)
+		c.clients[item.Name], err = c.Service().Accounts.Containers.Workspaces.Clients.Update(c.WorkspacePath()+"/clients/"+cache.ClientId, item).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Client(client.Name)
+	return c.GetClient(item.Name)
 }
 
 func (c *Client) UpsertFolder(name string) (*tagmanager.Folder, error) {
 	l := c.l.With("type", "Folder", "name", name)
 
-	cache, err := c.Folder(name)
+	item := &tagmanager.Folder{
+		Name: name,
+	}
+
+	item.Notes = c.Notes(item)
+	item.AccountId = c.AccountID()
+	item.ContainerId = c.ContainerID()
+	item.WorkspaceId = c.WorkspaceID()
+
+	cache, err := c.GetFolder(name)
 	if err != nil && !errors.Is(err, ErrNotFound) && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
-	folder := &tagmanager.Folder{
-		AccountId:   c.accountID,
-		ContainerId: c.containerID,
-		WorkspaceId: c.workspaceID,
-		Name:        name,
-		Notes:       c.notes,
-	}
-
 	if cache == nil {
-		l.Info("creating")
-		c.folders[name], err = c.Service().Accounts.Containers.Workspaces.Folders.Create(c.WorkspacePath(), folder).Do()
+		l.Info("⚠️ creating")
+		c.folders[name], err = c.Service().Accounts.Containers.Workspaces.Folders.Create(c.WorkspacePath(), item).Do()
+	} else if item.Notes == cache.Notes {
+		l.Info("✅ unchanged", "id", item.FolderId)
 	} else {
-		l.Info("updating", "id", cache.FolderId)
-		c.folders[name], err = c.Service().Accounts.Containers.Workspaces.Folders.Update(c.WorkspacePath()+"/folders/"+cache.FolderId, folder).Do()
+		l.Info("⚠️ updating", "id", cache.FolderId)
+		c.folders[name], err = c.Service().Accounts.Containers.Workspaces.Folders.Update(c.WorkspacePath()+"/folders/"+cache.FolderId, item).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Folder(name)
+	return c.GetFolder(name)
 }
 
-func (c *Client) UpsertVariable(variable *tagmanager.Variable) (*tagmanager.Variable, error) {
-	l := c.l.With("type", "Variable", "name", variable.Name)
+func (c *Client) UpsertVariable(item *tagmanager.Variable) (*tagmanager.Variable, error) {
+	l := c.l.With("type", "Variable", "name", item.Name)
 
-	variable.AccountId = c.AccountID()
-	variable.ContainerId = c.ContainerID()
-	variable.WorkspaceId = c.WorkspaceID()
-	variable.Notes = c.Notes()
+	item.Notes = c.Notes(item)
+	item.AccountId = c.AccountID()
+	item.ContainerId = c.ContainerID()
+	item.WorkspaceId = c.WorkspaceID()
 
-	cache, err := c.Variable(variable.Name)
+	cache, err := c.GetVariable(item.Name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
-	folder, err := c.Folder(c.folderName)
+	folder, err := c.GetFolder(c.folderName)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to retrieve folder")
 	}
-	variable.ParentFolderId = folder.FolderId
+	item.ParentFolderId = folder.FolderId
 
 	if cache == nil {
-		l.Info("creating")
-		c.variables[variable.Name], err = c.Service().Accounts.Containers.Workspaces.Variables.Create(c.WorkspacePath(), variable).Do()
+		l.Info("⚠️ creating")
+		c.variables[item.Name], err = c.Service().Accounts.Containers.Workspaces.Variables.Create(c.WorkspacePath(), item).Do()
+	} else if item.Notes == cache.Notes {
+		l.Info("✅ unchanged", "id", cache.VariableId)
 	} else {
-		l.Info("updating", "id", cache.VariableId)
-		c.variables[variable.Name], err = c.Service().Accounts.Containers.Workspaces.Variables.Update(c.WorkspacePath()+"/variables/"+cache.VariableId, variable).Do()
+		l.Info("⚠️ updating", "id", cache.VariableId)
+		c.variables[item.Name], err = c.Service().Accounts.Containers.Workspaces.Variables.Update(c.WorkspacePath()+"/variables/"+cache.VariableId, item).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Variable(variable.Name)
+	return c.GetVariable(item.Name)
 }
 
-func (c *Client) EnableBuiltInVariable(name string) (*tagmanager.BuiltInVariable, error) {
-	l := c.l.With("type", "Built-In Variable", "name", name)
+func (c *Client) EnableBuiltInVariable(typeName string) (*tagmanager.BuiltInVariable, error) {
+	l := c.l.With("type", "Built-In Variable", "typeName", typeName)
 
-	cache, err := c.BuiltInVariable(name)
+	cache, err := c.GetBuiltInVariable(typeName)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
 	if cache != nil {
+		l.Info("✅ unchanged")
 		return cache, nil
 	}
 
-	l.Info("creating")
-	resp, err := c.Service().Accounts.Containers.Workspaces.BuiltInVariables.Create(c.WorkspacePath()).Type(name).Do()
+	l.Info("⚠️ creating")
+	resp, err := c.Service().Accounts.Containers.Workspaces.BuiltInVariables.Create(c.WorkspacePath()).Type(typeName).Do()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create built-in variable")
 	}
+
 	for _, builtInVariable := range resp.BuiltInVariable {
-		l.Debug(builtInVariable.Type)
 		c.builtInVariables[builtInVariable.Type] = builtInVariable
 	}
 
-	return c.BuiltInVariable(name)
+	return c.GetBuiltInVariable(typeName)
 }
 
-func (c *Client) UpsertTrigger(trigger *tagmanager.Trigger) (*tagmanager.Trigger, error) {
-	l := c.l.With("type", "Trigger", "name", trigger.Name)
+func (c *Client) UpsertTrigger(item *tagmanager.Trigger) (*tagmanager.Trigger, error) {
+	l := c.l.With("type", "Trigger", "name", item.Name)
 
-	trigger.AccountId = c.AccountID()
-	trigger.ContainerId = c.ContainerID()
-	trigger.WorkspaceId = c.WorkspaceID()
-	trigger.Notes = c.Notes()
+	item.Notes = c.Notes(item)
+	item.AccountId = c.AccountID()
+	item.ContainerId = c.ContainerID()
+	item.WorkspaceId = c.WorkspaceID()
 
-	cache, err := c.Trigger(trigger.Name)
+	cache, err := c.Trigger(item.Name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
-	folder, err := c.Folder(c.folderName)
+	folder, err := c.GetFolder(c.folderName)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to retrieve folder")
 	}
-	trigger.ParentFolderId = folder.FolderId
+	item.ParentFolderId = folder.FolderId
 
 	if cache == nil {
-		l.Info("creating")
-		c.triggers[trigger.Name], err = c.Service().Accounts.Containers.Workspaces.Triggers.Create(c.WorkspacePath(), trigger).Do()
+		l.Info("⚠️ creating")
+		c.triggers[item.Name], err = c.Service().Accounts.Containers.Workspaces.Triggers.Create(c.WorkspacePath(), item).Do()
+	} else if item.Notes == cache.Notes {
+		l.Info("✅ unchanged", "id", cache.TriggerId)
 	} else {
-		l.Info("updating", "id", cache.TriggerId)
-		c.triggers[trigger.Name], err = c.Service().Accounts.Containers.Workspaces.Triggers.Update(c.WorkspacePath()+"/triggers/"+cache.TriggerId, trigger).Do()
+		l.Info("⚠️ updating", "id", cache.TriggerId)
+		c.triggers[item.Name], err = c.Service().Accounts.Containers.Workspaces.Triggers.Update(c.WorkspacePath()+"/triggers/"+cache.TriggerId, item).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Trigger(trigger.Name)
+	return c.Trigger(item.Name)
 }
 
-func (c *Client) UpsertTag(tag *tagmanager.Tag) (*tagmanager.Tag, error) {
-	l := c.l.With("type", "Tag", "name", tag.Name)
+func (c *Client) UpsertTag(item *tagmanager.Tag) (*tagmanager.Tag, error) {
+	l := c.l.With("type", "Tag", "name", item.Name)
 
-	tag.AccountId = c.AccountID()
-	tag.ContainerId = c.ContainerID()
-	tag.WorkspaceId = c.WorkspaceID()
-	tag.Notes = c.Notes()
+	item.Notes = c.Notes(item)
+	item.AccountId = c.AccountID()
+	item.ContainerId = c.ContainerID()
+	item.WorkspaceId = c.WorkspaceID()
 
-	cache, err := c.Tag(tag.Name)
+	cache, err := c.Tag(item.Name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 
-	folder, err := c.Folder(c.folderName)
+	folder, err := c.GetFolder(c.folderName)
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "failed to retrieve folder")
 	}
-	tag.ParentFolderId = folder.FolderId
+	item.ParentFolderId = folder.FolderId
 
 	if cache == nil {
-		l.Info("creating")
-		c.tags[tag.Name], err = c.Service().Accounts.Containers.Workspaces.Tags.Create(c.WorkspacePath(), tag).Do()
+		l.Info("⚠️ creating")
+		c.tags[item.Name], err = c.Service().Accounts.Containers.Workspaces.Tags.Create(c.WorkspacePath(), item).Do()
+	} else if item.Notes == cache.Notes {
+		l.Info("✅ unchanged", "id", cache.TagId)
 	} else {
-		l.Info("updating", "id", cache.TagId)
-		c.tags[tag.Name], err = c.Service().Accounts.Containers.Workspaces.Tags.Update(c.WorkspacePath()+"/tags/"+cache.TagId, tag).Do()
+		l.Info("⚠️ updating", "id", cache.TagId)
+		c.tags[item.Name], err = c.Service().Accounts.Containers.Workspaces.Tags.Update(c.WorkspacePath()+"/tags/"+cache.TagId, item).Do()
 	}
 	if err != nil {
 		return nil, err
 	}
 
-	return c.Tag(tag.Name)
+	return c.Tag(item.Name)
 }

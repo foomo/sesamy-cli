@@ -30,9 +30,9 @@ typescript:
 tagmanager:
   packages:
     - path: 'github.com/foomo/sesamy-cli/_example/server'
-      output_path: './_example/client/types.d.ts'
-      exclude_files:
-        - item.go
+      events:
+        - PageView
+        - SelectItem
   prefixes:
     client: ''
     folder: ''

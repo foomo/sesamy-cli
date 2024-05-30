@@ -1,8 +1,15 @@
 package cmd
 
 import (
-	"github.com/gzuidhof/tygo/tygo"
+	"os"
+	"path"
+	"path/filepath"
+
+	"github.com/foomo/gocontemplate/pkg/contemplate"
+	"github.com/foomo/sesamy-cli/pkg/typescript/generator"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/maps"
 )
 
 // typescriptCmd represents the typescript command
@@ -11,27 +18,36 @@ var typescriptCmd = &cobra.Command{
 	Short:             "Generate typescript events",
 	PersistentPreRunE: preRunReadConfig,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		gen := tygo.New(&tygo.Config{
-			Packages: cfg.Typescript.Packages,
-		})
-		for k, v := range cfg.Typescript.TypeMappings {
-			gen.SetTypeMapping(k, v)
+		ctpl, err := contemplate.Load(&cfg.Typescript.Config)
+		if err != nil {
+			return err
 		}
 
-		return gen.Generate()
+		files, err := generator.Generate(logger, ctpl)
+		if err != nil {
+			return errors.Wrap(err, "failed to get build typescript")
+		}
+
+		outPath, err := filepath.Abs(cfg.Typescript.OutputPath)
+		if err != nil {
+			return errors.Wrap(err, "failed to get output path")
+		}
+
+		if err = os.MkdirAll(outPath, os.ModePerm); err != nil {
+			return errors.Wrap(err, "failed to create typescript output directory")
+		}
+
+		logger.InfoContext(cmd.Context(), "generated typescript code", "dir", outPath, "files", maps.Keys(files))
+		for filename, file := range files {
+			if err = os.WriteFile(path.Join(outPath, filename), []byte(file.String()), 0600); err != nil {
+				return errors.Wrap(err, "failed to write typescript code")
+			}
+		}
+
+		return nil
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(typescriptCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// typescriptCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// typescriptCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
