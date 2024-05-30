@@ -183,7 +183,7 @@ export const {0} = (
 		name: EventName.{2},
 		params,
 	});
-}`,
+};`,
 		strcase.LowerCamelCase(typeName),
 		typeType,
 		typeName,
@@ -224,7 +224,7 @@ func (p *Package) renderStruct(obj types.Object, typeName string, t *types.Struc
 
 	if typeFields.Len() == 0 {
 		p.code.Body().Tprintn(`
-export type {0} = {1}`,
+export type {0} = {1};`,
 			p.tsDecl(obj.Type()),
 			"{}",
 		)
