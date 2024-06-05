@@ -111,7 +111,7 @@ func NewTagManagerServerCmd(root *cobra.Command) {
 				}
 			}
 
-			{
+			if cfg.Tagmanager.Tags.GA4Enabled {
 				name := p.Tags.ServerGA4EventName("Google Analytics GA4")
 				if _, err := c.UpsertTag(client2.NewServerGA4Event(name, ga4MeasurementID, ga4ClientTrigger, mpv2ClientTrigger)); err != nil {
 					return err
