@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/mitchellh/hashstructure/v2"
 	"github.com/pkg/errors"
 	"google.golang.org/api/option"
@@ -35,6 +36,7 @@ type (
 		builtInVariables map[string]*tagmanager.BuiltInVariable
 		triggers         map[string]*tagmanager.Trigger
 		tags             map[string]*tagmanager.Tag
+		customTemplates  map[string]*tagmanager.CustomTemplate
 	}
 	ClientOption func(*Client)
 )
@@ -345,6 +347,37 @@ func (c *Client) LoadTags() (map[string]*tagmanager.Tag, error) {
 	return c.tags, nil
 }
 
+func (c *Client) CustomTemplate(name string) (*tagmanager.CustomTemplate, error) {
+	elems, err := c.LoadCustomTemplates()
+	if err != nil {
+		return nil, err
+	}
+
+	if _, ok := elems[name]; !ok {
+		return nil, ErrNotFound
+	}
+
+	return elems[name], nil
+}
+
+func (c *Client) LoadCustomTemplates() (map[string]*tagmanager.CustomTemplate, error) {
+	if c.tags == nil {
+		c.l.Debug("loading", "type", "CustomTemplate")
+		r, err := c.Service().Accounts.Containers.Workspaces.Templates.List(c.WorkspacePath()).Do()
+		if err != nil {
+			return nil, err
+		}
+
+		res := map[string]*tagmanager.CustomTemplate{}
+		for _, value := range r.Template {
+			res[value.Name] = value
+		}
+		c.customTemplates = res
+	}
+
+	return c.customTemplates, nil
+}
+
 func (c *Client) UpsertClient(item *tagmanager.Client) (*tagmanager.Client, error) {
 	l := c.l.With("type", "Client", "name", item.Name)
 
@@ -542,4 +575,33 @@ func (c *Client) UpsertTag(item *tagmanager.Tag) (*tagmanager.Tag, error) {
 	}
 
 	return c.Tag(item.Name)
+}
+
+func (c *Client) UpsertCustomTemplate(item *tagmanager.CustomTemplate) (*tagmanager.CustomTemplate, error) {
+	l := c.l.With("type", "CustomTemplate", "name", item.Name)
+
+	item.AccountId = c.AccountID()
+	item.ContainerId = c.ContainerID()
+	item.WorkspaceId = c.WorkspaceID()
+
+	cache, err := c.CustomTemplate(item.Name)
+	if err != nil && !errors.Is(err, ErrNotFound) {
+		return nil, err
+	}
+
+	if cache == nil {
+		l.Info("⚠️ creating")
+		c.customTemplates[item.Name], err = c.Service().Accounts.Containers.Workspaces.Templates.Create(c.WorkspacePath(), item).Do()
+	} else if item.TemplateData == cache.TemplateData {
+		l.Info("✅ unchanged", "id", cache.TemplateId)
+	} else {
+		l.Info("⚠️ updating", "id", cache.TemplateId)
+		c.customTemplates[item.Name], err = c.Service().Accounts.Containers.Workspaces.Templates.Update(c.WorkspacePath()+"/templates/"+cache.TemplateId, item).Do()
+	}
+	if err != nil {
+		spew.Dump(err)
+		return nil, err
+	}
+
+	return c.CustomTemplate(item.Name)
 }

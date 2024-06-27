@@ -57,7 +57,13 @@ typescript:
 
 tagmanager:
   tags:
-    ga4_enabled: true
+    ga4:
+      enabled: true
+    umami:
+      enabled: false
+      domain: www.your.domain
+      website_id: 123456-123456-123456-123456
+      endpoint_url: https://site-gtm-umami-ummi/api/send
   packages:
     - path: 'github.com/username/repository/event'
       types:

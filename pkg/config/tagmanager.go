@@ -9,7 +9,3 @@ type Tagmanager struct {
 	Tags               TagmanagerTags     `yaml:"tags"`
 	Prefixes           TagmanagerPrefixes `yaml:"prefixes"`
 }
-
-type TagmanagerTags struct {
-	GA4Enabled bool `yaml:"gA4_enabled"`
-}

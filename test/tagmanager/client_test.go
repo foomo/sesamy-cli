@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"os"
 	"testing"
@@ -11,8 +12,9 @@ import (
 	testingx "github.com/foomo/go/testing"
 	tagx "github.com/foomo/go/testing/tag"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
-	"github.com/foomo/sesamy-cli/pkg/tagmanager/trigger"
-	"github.com/foomo/sesamy-cli/pkg/tagmanager/variable"
+	"github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
+	"github.com/foomo/sesamy-cli/pkg/tagmanager/server/template"
+	webtrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/web/trigger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/api/option"
@@ -97,6 +99,22 @@ func TestNewClient_Server(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Tags.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
+			}
+		})
+	}
+
+	{ // --- Tags ---
+		t.Run("upsert template", func(t *testing.T) {
+			obj, err := c.UpsertCustomTemplate(template.NewUmami("Sesamy Umami"))
+			require.NoError(t, err)
+			dump(t, obj)
+		})
+
+		t.Run("list templates", func(t *testing.T) {
+			cmd := c.Service().Accounts.Containers.Workspaces.Templates.List(c.WorkspacePath())
+			if r, err := cmd.Do(); assert.NoError(t, err) {
+				// dump(t, r)
+				fmt.Println(r.Template[2].TemplateData)
 			}
 		})
 	}
@@ -303,7 +321,7 @@ func TestNewClient_Web(t *testing.T) {
 		})
 
 		t.Run("upsert trigger", func(t *testing.T) {
-			obj, err := c.UpsertTrigger(trigger.NewCustomEvent("Event."+name, name))
+			obj, err := c.UpsertTrigger(webtrigger.NewCustomEvent("Event."+name, name))
 			require.NoError(t, err)
 			t.Log("ID: " + obj.TriggerId)
 		})
