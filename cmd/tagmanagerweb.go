@@ -7,9 +7,9 @@ import (
 	"github.com/foomo/gocontemplate/pkg/assume"
 	"github.com/foomo/gocontemplate/pkg/contemplate"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
-	client "github.com/foomo/sesamy-cli/pkg/tagmanager/tag"
-	trigger2 "github.com/foomo/sesamy-cli/pkg/tagmanager/trigger"
-	"github.com/foomo/sesamy-cli/pkg/tagmanager/variable"
+	containervariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
+	containertag "github.com/foomo/sesamy-cli/pkg/tagmanager/web/tag"
+	containertrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/web/trigger"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -92,7 +92,7 @@ func NewTagmanagerWebCmd(root *cobra.Command) {
 			var ga4MeasurementID *tagmanager2.Variable
 			{
 				name := p.Variables.ConstantName("Google Analytics GA4 ID")
-				if ga4MeasurementID, err = c.UpsertVariable(variable.NewConstant(name, c.MeasurementID())); err != nil {
+				if ga4MeasurementID, err = c.UpsertVariable(containervariable.NewConstant(name, c.MeasurementID())); err != nil {
 					return err
 				}
 			}
@@ -100,7 +100,7 @@ func NewTagmanagerWebCmd(root *cobra.Command) {
 			var serverContainerURL *tagmanager2.Variable
 			{
 				name := p.Variables.ConstantName("Server Container URL")
-				if serverContainerURL, err = c.UpsertVariable(variable.NewConstant(name, cfg.Google.GT.ServerContainerURL)); err != nil {
+				if serverContainerURL, err = c.UpsertVariable(containervariable.NewConstant(name, cfg.Google.GT.ServerContainerURL)); err != nil {
 					return err
 				}
 			}
@@ -108,7 +108,7 @@ func NewTagmanagerWebCmd(root *cobra.Command) {
 			var googleTagSettings *tagmanager2.Variable
 			{
 				name := p.Variables.GTSettingsName("Google Tag")
-				if googleTagSettings, err = c.UpsertVariable(variable.NewGTSettings(name, map[string]*tagmanager2.Variable{
+				if googleTagSettings, err = c.UpsertVariable(containervariable.NewGTSettings(name, map[string]*tagmanager2.Variable{
 					"server_container_url": serverContainerURL,
 				})); err != nil {
 					return err
@@ -117,7 +117,7 @@ func NewTagmanagerWebCmd(root *cobra.Command) {
 
 			{
 				name := p.Tags.GoogleTagName("Google Tag")
-				if _, err = c.UpsertTag(client.NewGoogleTag(name, ga4MeasurementID, googleTagSettings, map[string]string{
+				if _, err = c.UpsertTag(containertag.NewGoogleTag(name, ga4MeasurementID, googleTagSettings, map[string]string{
 					"enable_page_views": strconv.FormatBool(cfg.Google.GT.EnablePageViews),
 				})); err != nil {
 					return err
@@ -128,34 +128,32 @@ func NewTagmanagerWebCmd(root *cobra.Command) {
 				var trigger *tagmanager2.Trigger
 				{
 					name := p.Triggers.CustomEventName(event)
-					if trigger, err = c.UpsertTrigger(trigger2.NewCustomEvent(name, event)); err != nil {
+					if trigger, err = c.UpsertTrigger(containertrigger.NewCustomEvent(name, event)); err != nil {
 						return err
 					}
 				}
 
-				if cfg.Tagmanager.Tags.GA4Enabled {
-					eventSettingsVariables := make(map[string]*tagmanager2.Variable, len(parameters))
-					for _, parameter := range parameters {
-						name := p.Variables.EventModelName(parameter)
-						eventSettingsVariables[parameter], err = c.UpsertVariable(variable.NewEventModel(name, parameter))
-						if err != nil {
-							return err
-						}
+				eventSettingsVariables := make(map[string]*tagmanager2.Variable, len(parameters))
+				for _, parameter := range parameters {
+					name := p.Variables.EventModelName(parameter)
+					eventSettingsVariables[parameter], err = c.UpsertVariable(containervariable.NewEventModel(name, parameter))
+					if err != nil {
+						return err
 					}
+				}
 
-					var eventSettings *tagmanager2.Variable
-					{
-						name := p.Variables.GTEventSettingsName(event)
-						if eventSettings, err = c.UpsertVariable(variable.NewGTEventSettings(name, eventSettingsVariables)); err != nil {
-							return err
-						}
+				var eventSettings *tagmanager2.Variable
+				{
+					name := p.Variables.GTEventSettingsName(event)
+					if eventSettings, err = c.UpsertVariable(containervariable.NewGTEventSettings(name, eventSettingsVariables)); err != nil {
+						return err
 					}
+				}
 
-					{
-						name := p.Tags.GA4EventName(event)
-						if _, err := c.UpsertTag(client.NewGA4Event(name, event, eventSettings, ga4MeasurementID, trigger)); err != nil {
-							return err
-						}
+				{
+					name := p.Tags.GA4EventName(event)
+					if _, err := c.UpsertTag(containertag.NewGA4Event(name, event, eventSettings, ga4MeasurementID, trigger)); err != nil {
+						return err
 					}
 				}
 			}

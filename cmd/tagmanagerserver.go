@@ -2,10 +2,11 @@ package cmd
 
 import (
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
-	"github.com/foomo/sesamy-cli/pkg/tagmanager/client"
-	client2 "github.com/foomo/sesamy-cli/pkg/tagmanager/tag"
-	"github.com/foomo/sesamy-cli/pkg/tagmanager/trigger"
-	"github.com/foomo/sesamy-cli/pkg/tagmanager/variable"
+	containervariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
+	containerclient "github.com/foomo/sesamy-cli/pkg/tagmanager/server/client"
+	containertag "github.com/foomo/sesamy-cli/pkg/tagmanager/server/tag"
+	containertemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/server/template"
+	containertrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/server/trigger"
 	"github.com/spf13/cobra"
 	"google.golang.org/api/option"
 	tagmanager2 "google.golang.org/api/tagmanager/v2"
@@ -56,33 +57,26 @@ func NewTagManagerServerCmd(root *cobra.Command) {
 				}
 			}
 
-			var ga4MeasurementID *tagmanager2.Variable
-			{
-				name := p.Variables.ConstantName("Google Analytics GA4 ID")
-				if ga4MeasurementID, err = c.UpsertVariable(variable.NewConstant(name, c.MeasurementID())); err != nil {
-					return err
-				}
-			}
-
 			var webContainerMeasurementID *tagmanager2.Variable
 			{
 				name := p.Variables.ConstantName("Google Tag Mangager Web Container ID")
-				if webContainerMeasurementID, err = c.UpsertVariable(variable.NewConstant(name, cfg.Google.GTM.Web.MeasurementID)); err != nil {
+				if webContainerMeasurementID, err = c.UpsertVariable(containervariable.NewConstant(name, cfg.Google.GTM.Web.MeasurementID)); err != nil {
 					return err
 				}
 			}
 
 			{
 				name := p.ClientName("Google Tag Manager Web Container")
-				if _, err := c.UpsertClient(client.NewGTM(name, webContainerMeasurementID)); err != nil {
+				if _, err := c.UpsertClient(containerclient.NewGTM(name, webContainerMeasurementID)); err != nil {
 					return err
 				}
 			}
 
+			// --- MPv2 Client ---
 			var mpv2Client *tagmanager2.Client
 			{
 				name := p.ClientName("Measurement Protocol GA4")
-				if mpv2Client, err = c.UpsertClient(client.NewMPv2(name)); err != nil {
+				if mpv2Client, err = c.UpsertClient(containerclient.NewMPv2(name)); err != nil {
 					return err
 				}
 			}
@@ -90,15 +84,16 @@ func NewTagManagerServerCmd(root *cobra.Command) {
 			var mpv2ClientTrigger *tagmanager2.Trigger
 			{
 				name := p.Triggers.ClientName("Measurement Protocol GA4 Client")
-				if mpv2ClientTrigger, err = c.UpsertTrigger(trigger.NewClient(name, mpv2Client)); err != nil {
+				if mpv2ClientTrigger, err = c.UpsertTrigger(containertrigger.NewClient(name, mpv2Client)); err != nil {
 					return err
 				}
 			}
 
+			// --- GA4 Client ---
 			var ga4Client *tagmanager2.Client
 			{
 				name := p.ClientName("Google Analytics GA4")
-				if ga4Client, err = c.UpsertClient(client.NewGA4(name)); err != nil {
+				if ga4Client, err = c.UpsertClient(containerclient.NewGA4(name)); err != nil {
 					return err
 				}
 			}
@@ -106,14 +101,40 @@ func NewTagManagerServerCmd(root *cobra.Command) {
 			var ga4ClientTrigger *tagmanager2.Trigger
 			{
 				name := p.Triggers.ClientName("Google Analytics GA4 Client")
-				if ga4ClientTrigger, err = c.UpsertTrigger(trigger.NewClient(name, ga4Client)); err != nil {
+				if ga4ClientTrigger, err = c.UpsertTrigger(containertrigger.NewClient(name, ga4Client)); err != nil {
 					return err
 				}
 			}
 
-			if cfg.Tagmanager.Tags.GA4Enabled {
+			// --- Tags ---
+			if cfg.Tagmanager.Tags.GA4.Enabled {
+				var ga4MeasurementID *tagmanager2.Variable
+				{
+					name := p.Variables.ConstantName("Google Analytics GA4 ID")
+					if ga4MeasurementID, err = c.UpsertVariable(containervariable.NewConstant(name, c.MeasurementID())); err != nil {
+						return err
+					}
+				}
 				name := p.Tags.ServerGA4EventName("Google Analytics GA4")
-				if _, err := c.UpsertTag(client2.NewServerGA4Event(name, ga4MeasurementID, ga4ClientTrigger, mpv2ClientTrigger)); err != nil {
+				if _, err := c.UpsertTag(containertag.NewGoogleAnalyticsGA4(name, ga4MeasurementID, ga4ClientTrigger, mpv2ClientTrigger)); err != nil {
+					return err
+				}
+			}
+
+			if cfg.Tagmanager.Tags.Umami.Enabled {
+				var umamiTemplate *tagmanager2.CustomTemplate
+				if umamiTemplate, err = c.UpsertCustomTemplate(containertemplate.NewUmami("Sesamy Umami")); err != nil {
+					return err
+				}
+				if _, err := c.UpsertTag(containertag.NewUmami(
+					"Umami",
+					cfg.Tagmanager.Tags.Umami.WebsiteID,
+					cfg.Tagmanager.Tags.Umami.Domain,
+					cfg.Tagmanager.Tags.Umami.EndpointURL,
+					umamiTemplate,
+					ga4ClientTrigger,
+					mpv2ClientTrigger,
+				)); err != nil {
 					return err
 				}
 			}
