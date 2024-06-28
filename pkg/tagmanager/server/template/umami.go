@@ -89,21 +89,12 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_SERVER___
 
-/**
- * @description Custom server-side Google Tag Manager Tag Template
- * Send events to Umami
- * @version 0.1.0
- * @see {@link https://github.com/mbaersch|GitHub} for more info
- * @see {@link https://umami.is/|Umami Homepage}
- */
-
 const JSON = require('JSON');
 const parseUrl = require('parseUrl');
 const makeString = require('makeString');
 const getAllEventData = require('getAllEventData');
 const sendHttpRequest = require('sendHttpRequest');
 const getRequestHeader = require('getRequestHeader');
-const getContainerVersion = require('getContainerVersion');
 const logToConsole = require('logToConsole');
 
 const traceId = getRequestHeader('trace-id');
@@ -121,9 +112,10 @@ if (pageLocation) {
   let umamiEvent = {
     type: "event",
     payload: {
+      name: (name === "page_view") ? "" : name,
       website: data.websiteId,
-      name: name,
       hostname: hostname,
+      title: eventData.page_title || "",
       url: pageLocation.split(parsedUrl.hostname)[1],
       referrer: ref,
       language: eventData.language || "",
@@ -140,8 +132,14 @@ if (pageLocation) {
       RequestMethod: 'POST',
       RequestUrl: serviceUrl,
       RequestBody: umamiEvent,
+      EventData: eventData,
     })
   );
+
+  const headers = {
+    'user-agent': eventData.user_agent || getRequestHeader("user-agent"),
+    'content-type': 'application/json'
+  };
 
   sendHttpRequest(
       serviceUrl, (statusCode, headers, body) => {
@@ -163,10 +161,7 @@ if (pageLocation) {
         }
       },
       {
-        headers: {
-          'user-agent': eventData.user_agent || getRequestHeader("user-agent"),
-          'content-type': 'application/json'
-        },
+        headers: addRequestHeaders(headers),
         method: 'POST',
         timeout: data.timeout||1000
       },
@@ -174,6 +169,29 @@ if (pageLocation) {
   );
 } else {
   data.gtmOnFailure();
+}
+
+function addRequestHeaders(headers) {
+  const keys = [
+    'cf-ipcity',
+    'cf-ipcountry',
+    'cf-ipcontinent',
+    'cf-iplongitude',
+    'cf-iplatitude',
+    'cf-region',
+    'cf-region-code',
+    'cf-metro-code',
+    'cf-postal-code',
+    'cf-timezone',
+  ];
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    const value = getRequestHeader(key);
+    if (value) {
+      headers[key] = value;
+    }
+  }
+  return headers;
 }
 
 
@@ -238,7 +256,7 @@ ___SERVER_PERMISSIONS___
       },
       "param": []
     },
-    "isRequired": true
+    "isRequired": false
   },
   {
     "instance": {
