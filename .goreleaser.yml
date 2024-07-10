@@ -1,5 +1,5 @@
-# .goreleaser.yml
-# Build customization
+version: 2
+
 builds:
   - binary: sesamy
     main: ./main.go
@@ -13,7 +13,7 @@ builds:
       - amd64
       - arm64
     goarm:
-      - 7
+      - '7'
     flags:
       - -trimpath
     ldflags:
@@ -32,7 +32,6 @@ changelog:
   use: github-native
 
 brews:
-  # Repository to push the tap to.
   - repository:
       owner: foomo
       name: homebrew-tap

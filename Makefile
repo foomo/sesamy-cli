@@ -49,18 +49,21 @@ tidy:
 outdated:
 	@go list -u -m -json all | go-mod-outdated -update -direct
 
-## Install binary
-install:
-	@go build -o ${GOPATH}/bin/sesamy main.go
-
-## Install debug binary
-install.debug:
-	@go build -gcflags "all=-N -l" -o ${GOPATH}/bin/sesamy main.go
-
+.PHONY: build
 ## Build binary
 build:
 	@mkdir -p bin
 	@go build -o bin/sesamy main.go
+
+.PHONY: install
+## Install binary
+install:
+	@go build -o ${GOPATH}/bin/sesamy main.go
+
+.PHONY: install.debug
+## Install debug binary
+install.debug:
+	@go build -gcflags "all=-N -l" -o ${GOPATH}/bin/sesamy main.go
 
 ## === Utils ===
 
