@@ -1,48 +1,35 @@
 package tag
 
 import (
+	"strconv"
+
+	"github.com/foomo/sesamy-cli/pkg/utils"
 	"google.golang.org/api/tagmanager/v2"
 )
 
-func NewGoogleAnalyticsGA4(name string, measurementID *tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
-	triggerIDs := make([]string, len(triggers))
-	for i, trigger := range triggers {
-		triggerIDs[i] = trigger.TriggerId
-	}
+func GoogleAnalyticsGA4Name(v string) string {
+	return "GA4 - " + v
+}
 
+func NewGoogleAnalyticsGA4(name string, redactVisitorIP bool, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	return &tagmanager.Tag{
-		FiringTriggerId: triggerIDs,
-		Name:            name,
+		FiringTriggerId: utils.TriggerIDs(triggers),
+		Name:            GoogleAnalyticsGA4Name(name),
 		Parameter: []*tagmanager.Parameter{
 			{
-				Type:  "boolean",
 				Key:   "redactVisitorIp",
-				Value: "false",
+				Type:  "boolean",
+				Value: strconv.FormatBool(redactVisitorIP),
 			},
 			{
-				Type:  "template",
 				Key:   "epToIncludeDropdown",
+				Type:  "template",
 				Value: "all",
 			},
 			{
-				Type:  "boolean",
-				Key:   "enableGoogleSignals",
-				Value: "false",
-			},
-			{
-				Type:  "template",
 				Key:   "upToIncludeDropdown",
-				Value: "all",
-			},
-			{
 				Type:  "template",
-				Key:   "measurementId",
-				Value: "{{" + measurementID.Name + "}}",
-			},
-			{
-				Type:  "boolean",
-				Key:   "enableEuid",
-				Value: "false",
+				Value: "all",
 			},
 		},
 		Type: "sgtmgaaw",

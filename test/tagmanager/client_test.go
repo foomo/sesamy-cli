@@ -11,10 +11,10 @@ import (
 
 	testingx "github.com/foomo/go/testing"
 	tagx "github.com/foomo/go/testing/tag"
+	"github.com/foomo/sesamy-cli/pkg/config"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
-	"github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
+	"github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager/server/template"
-	webtrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/web/trigger"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/api/option"
@@ -24,14 +24,16 @@ import (
 func TestNewClient_Server(t *testing.T) {
 	testingx.Tags(t, tagx.Skip)
 
-	c, err := tagmanager.NewClient(
+	c, err := tagmanager.New(
 		context.TODO(),
 		slog.New(slog.NewTextHandler(os.Stdout, nil)),
 		os.Getenv("TEST_ACCOUNT_ID"),
-		os.Getenv("TEST_SERVER_CONTAINER_ID"),
-		os.Getenv("TEST_SERVER_WORKSPACE_ID"),
-		os.Getenv("TEST_MEASUREMENT_ID"),
-		tagmanager.ClientWithClientOptions(
+		config.GoogleTagManagerContainer{
+			TagID:       os.Getenv("TEST_SERVER_TAG_ID"),
+			ContainerID: os.Getenv("TEST_SERVER_CONTAINER_ID"),
+			WorkspaceID: os.Getenv("TEST_SERVER_WORKSPACE_ID"),
+		},
+		tagmanager.WithClientOptions(
 			option.WithCredentialsFile(os.Getenv("TEST_CREDENTIALS_FILE")),
 		),
 	)
@@ -42,15 +44,6 @@ func TestNewClient_Server(t *testing.T) {
 			obj, err := c.UpsertFolder("Sesamy")
 			require.NoError(t, err)
 			dump(t, obj)
-		})
-	}
-
-	{ // --- Variables ---
-		t.Run("upsert GTM client", func(t *testing.T) {
-			client, err := c.UpsertVariable(variable.NewConstant("web-container-id", os.Getenv("TEST_WEB_CONTAINER_GID")))
-			if assert.NoError(t, err) {
-				dump(t, client)
-			}
 		})
 	}
 
@@ -123,14 +116,16 @@ func TestNewClient_Server(t *testing.T) {
 func TestNewClient_Web(t *testing.T) {
 	testingx.Tags(t, tagx.Skip)
 
-	c, err := tagmanager.NewClient(
+	c, err := tagmanager.New(
 		context.TODO(),
 		slog.New(slog.NewTextHandler(os.Stdout, nil)),
 		os.Getenv("TEST_ACCOUNT_ID"),
-		os.Getenv("TEST_WEB_CONTAINER_ID"),
-		os.Getenv("TEST_WEB_WORKSPACE_ID"),
-		os.Getenv("TEST_MEASUREMENT_ID"),
-		tagmanager.ClientWithClientOptions(
+		config.GoogleTagManagerContainer{
+			TagID:       os.Getenv("TEST_WEB_TAG_ID"),
+			ContainerID: os.Getenv("TEST_WEB_CONTAINER_ID"),
+			WorkspaceID: os.Getenv("TEST_WEB_WORKSPACE_ID"),
+		},
+		tagmanager.WithClientOptions(
 			option.WithCredentialsFile(os.Getenv("TEST_CREDENTIALS_FILE")),
 		),
 	)
@@ -216,53 +211,11 @@ func TestNewClient_Web(t *testing.T) {
 	}
 
 	{ // --- Variables ---
-		name := "Constant.ga4-measurement-id"
 		t.Run("list variables", func(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Variables.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
 			}
-		})
-
-		t.Run("create variable", func(t *testing.T) {
-			cmd := c.Service().Accounts.Containers.Workspaces.Variables.Create(c.WorkspacePath(), &gtagmanager.Variable{
-				AccountId:      c.AccountID(),
-				ContainerId:    c.ContainerID(),
-				WorkspaceId:    c.WorkspaceID(),
-				ParentFolderId: folderID,
-				Name:           "Constant." + name,
-				Notes:          c.Notes(nil),
-				Parameter: []*gtagmanager.Parameter{
-					{
-						Key:   "value",
-						Type:  "template",
-						Value: c.MeasurementID(),
-					},
-				},
-				Type: "c",
-			})
-			if r, err := cmd.Do(); assert.NoError(t, err) {
-				dump(t, r)
-			}
-		})
-
-		t.Run("get variable", func(t *testing.T) {
-			cmd := c.Service().Accounts.Containers.Workspaces.Variables.List(c.WorkspacePath())
-			if r, err := cmd.Do(); assert.NoError(t, err) {
-				for _, value := range r.Variable {
-					if value.Name == "Constant."+name {
-						t.Log("ID: " + value.VariableId)
-						return
-					}
-				}
-				t.Error("not found")
-			}
-		})
-
-		t.Run("upsert variable", func(t *testing.T) {
-			obj, err := c.UpsertVariable(variable.NewConstant(name, c.MeasurementID()))
-			require.NoError(t, err)
-			t.Log("ID: " + obj.VariableId)
 		})
 	}
 
@@ -321,7 +274,7 @@ func TestNewClient_Web(t *testing.T) {
 		})
 
 		t.Run("upsert trigger", func(t *testing.T) {
-			obj, err := c.UpsertTrigger(webtrigger.NewCustomEvent("Event."+name, name))
+			obj, err := c.UpsertTrigger(trigger.NewEvent(name))
 			require.NoError(t, err)
 			t.Log("ID: " + obj.TriggerId)
 		})

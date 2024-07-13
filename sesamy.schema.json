@@ -1,0 +1,244 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "conversionLinker": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "googleAnalytics": {
+            "type": "object",
+            "properties": {
+                "enabled": {
+                    "type": "boolean"
+                },
+                "serverContainer": {
+                    "type": "object",
+                    "properties": {
+                        "packages": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "path": {
+                                        "type": "string"
+                                    },
+                                    "types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "webContainer": {
+                    "type": "object",
+                    "properties": {
+                        "packages": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "path": {
+                                        "type": "string"
+                                    },
+                                    "types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "googleApi": {
+            "type": "object",
+            "properties": {
+                "credentials": {
+                    "type": "string"
+                },
+                "credentialsFile": {
+                    "type": "string"
+                },
+                "requestQuota": {
+                    "type": "integer"
+                }
+            }
+        },
+        "googleTag": {
+            "type": "object",
+            "properties": {
+                "debugMode": {
+                    "type": "boolean"
+                },
+                "sendPageView": {
+                    "type": "boolean"
+                },
+                "serverContainer": {
+                    "type": "object",
+                    "properties": {
+                        "packages": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "path": {
+                                        "type": "string"
+                                    },
+                                    "types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "tagId": {
+                    "type": "string"
+                },
+                "typeScript": {
+                    "type": "object",
+                    "properties": {
+                        "outputPath": {
+                            "type": "string"
+                        },
+                        "packages": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "path": {
+                                        "type": "string"
+                                    },
+                                    "types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "webContainer": {
+                    "type": "object",
+                    "properties": {
+                        "packages": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "path": {
+                                        "type": "string"
+                                    },
+                                    "types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "googleTagManager": {
+            "type": "object",
+            "properties": {
+                "accountId": {
+                    "type": "integer"
+                },
+                "serverContainer": {
+                    "type": "object",
+                    "properties": {
+                        "containerId": {
+                            "type": "integer"
+                        },
+                        "tagId": {
+                            "type": "string"
+                        },
+                        "workspaceId": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "webContainer": {
+                    "type": "object",
+                    "properties": {
+                        "containerId": {
+                            "type": "integer"
+                        },
+                        "tagId": {
+                            "type": "string"
+                        },
+                        "workspaceId": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        },
+        "redactVisitorIp": {
+            "type": "boolean"
+        },
+        "umami": {
+            "type": "object",
+            "properties": {
+                "domain": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "endpointUrl": {
+                    "type": "string"
+                },
+                "serverContainer": {
+                    "type": "object",
+                    "properties": {
+                        "packages": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "path": {
+                                        "type": "string"
+                                    },
+                                    "types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "websiteId": {
+                    "type": "string"
+                }
+            }
+        },
+        "version": {
+            "type": "string"
+        }
+    }
+}

@@ -1,109 +1,42 @@
 package cmd
 
 import (
-	"bytes"
-	"io"
-	"log/slog"
 	"os"
 
-	"github.com/foomo/sesamy-cli/pkg/config"
-	"github.com/mitchellh/mapstructure"
-	"github.com/pterm/pterm"
+	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var (
-	logger      *slog.Logger
-	verbose     bool
-	cfgFilename string
-	cfg         *config.Config
-)
+var root *cobra.Command
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "sesamy",
-	Short: "Server Side Tag Management System",
+func init() {
+	root = NewRoot()
+	NewConfig(root)
+	NewVersion(root)
+	NewTagmanager(root)
+	NewTypeScript(root)
+	cobra.OnInitialize(pkgcmd.InitConfig)
+}
+
+// NewRoot represents the base command when called without any subcommands
+func NewRoot() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "sesamy",
+		Short: "Server Side Tag Management System",
+	}
+	cmd.PersistentFlags().BoolP("verbose", "v", false, "output debug information")
+	_ = viper.BindPFlag("verbose", cmd.PersistentFlags().Lookup("verbose"))
+
+	cmd.PersistentFlags().StringP("config", "c", "sesamy.yaml", "config file (default is sesamy.yaml)")
+	_ = viper.BindPFlag("config", cmd.PersistentFlags().Lookup("config"))
+	return cmd
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
+	if err := root.Execute(); err != nil {
 		os.Exit(1)
 	}
-}
-
-func init() {
-	cobra.OnInitialize(initConfig)
-
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "output debug information")
-	rootCmd.PersistentFlags().StringVarP(&cfgFilename, "config", "c", "", "config file (default is sesamy.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	viper.SetConfigType("yaml")
-	if cfgFilename == "-" {
-		// do nothing
-	} else if cfgFilename != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFilename)
-	} else {
-		// Search config in home directory with name ".sesamy" (without extension).
-		viper.AddConfigPath(".")
-		viper.SetConfigName("sesamy")
-	}
-
-	// read in environment variables that match
-	// viper.EnvKeyReplacer(strings.NewReplacer(".", "_"))
-	// viper.SetEnvPrefix("SESAMY")
-	// viper.AutomaticEnv()
-
-	plogger := pterm.DefaultLogger.WithTime(false)
-	if verbose {
-		plogger = plogger.WithLevel(pterm.LogLevelTrace).WithCaller(true)
-	}
-
-	// Create a new slog handler with the default PTerm logger
-	handler := pterm.NewSlogHandler(plogger)
-
-	// Create a new slog logger with the handler
-	logger = slog.New(handler)
-}
-
-func preRunReadConfig(cmd *cobra.Command, args []string) error {
-	if cfgFilename == "-" {
-		logger.Debug("using config from stdin")
-		b, err := io.ReadAll(cmd.InOrStdin())
-		if err != nil {
-			return err
-		}
-		if err := viper.ReadConfig(bytes.NewBuffer(b)); err != nil {
-			return err
-		}
-	} else {
-		logger.Debug("using config file", "filename", viper.ConfigFileUsed())
-		if err := viper.ReadInConfig(); err != nil {
-			return err
-		}
-	}
-	// logger.Debug("config", logger.ArgsFromMap(viper.AllSettings()))
-
-	if err := viper.Unmarshal(&cfg, func(decoderConfig *mapstructure.DecoderConfig) {
-		decoderConfig.TagName = "yaml"
-	}); err != nil {
-		return err
-	}
-
-	return nil
 }

@@ -8,18 +8,14 @@ import (
 
 var version = "latest"
 
-func NewVersionCmd(root *cobra.Command) {
+func NewVersion(root *cobra.Command) {
 	cmd := &cobra.Command{
 		Use:   "version",
-		Short: "show version information",
+		Short: "Print version",
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println(version)
 		},
 	}
 
 	root.AddCommand(cmd)
-}
-
-func init() {
-	NewVersionCmd(rootCmd)
 }

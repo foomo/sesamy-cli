@@ -4,7 +4,7 @@ import (
 	"github.com/foomo/gocontemplate/pkg/contemplate"
 )
 
-type Typescript struct {
-	contemplate.Config `yaml:",squash"`
-	OutputPath         string `yaml:"output_path"`
+type TypeScript struct {
+	contemplate.Config `json:",inline" yaml:",squash"`
+	OutputPath         string `json:"outputPath" yaml:"outputPath"`
 }

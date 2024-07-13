@@ -4,10 +4,14 @@ import (
 	"google.golang.org/api/tagmanager/v2"
 )
 
-func NewGA4Event(name, eventName string, eventSettings *tagmanager.Variable, measurementID *tagmanager.Variable, trigger *tagmanager.Trigger) *tagmanager.Tag {
+func GoogleAnalyticsGA4EventName(v string) string {
+	return "GA4 Event - " + v
+}
+
+func NewGoogleAnalyticsGA4Event(name string, tagID, settings *tagmanager.Variable, trigger *tagmanager.Trigger) *tagmanager.Tag {
 	return &tagmanager.Tag{
 		FiringTriggerId: []string{trigger.TriggerId},
-		Name:            name,
+		Name:            GoogleAnalyticsGA4EventName(name),
 		Parameter: []*tagmanager.Parameter{
 			{
 				Type:  "boolean",
@@ -22,17 +26,17 @@ func NewGA4Event(name, eventName string, eventSettings *tagmanager.Variable, mea
 			{
 				Type:  "template",
 				Key:   "eventName",
-				Value: eventName,
+				Value: name,
 			},
 			{
 				Type:  "template",
 				Key:   "measurementIdOverride",
-				Value: "{{" + measurementID.Name + "}}",
+				Value: "{{" + tagID.Name + "}}",
 			},
 			{
 				Type:  "template",
 				Key:   "eventSettingsVariable",
-				Value: "{{" + eventSettings.Name + "}}",
+				Value: "{{" + settings.Name + "}}",
 			},
 		},
 		Type: "gaawe",

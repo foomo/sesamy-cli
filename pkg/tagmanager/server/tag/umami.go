@@ -1,36 +1,35 @@
 package tag
 
 import (
-	"fmt"
-
+	"github.com/foomo/sesamy-cli/pkg/config"
+	"github.com/foomo/sesamy-cli/pkg/utils"
 	"google.golang.org/api/tagmanager/v2"
 )
 
-func NewUmami(name, websiteID, domain, endpointURL string, template *tagmanager.CustomTemplate, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
-	triggerIDs := make([]string, len(triggers))
-	for i, trigger := range triggers {
-		triggerIDs[i] = trigger.TriggerId
-	}
+func UmamiName(v string) string {
+	return "Umami - " + v
+}
 
+func NewUmami(name string, cfg config.Umami, template *tagmanager.CustomTemplate, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	return &tagmanager.Tag{
-		FiringTriggerId: triggerIDs,
-		Name:            name,
+		FiringTriggerId: utils.TriggerIDs(triggers),
+		Name:            UmamiName(name),
 		TagFiringOption: "oncePerEvent",
 		Parameter: []*tagmanager.Parameter{
 			{
 				Key:   "websiteId",
 				Type:  "template",
-				Value: websiteID,
+				Value: cfg.WebsiteID,
 			},
 			{
 				Key:   "endpointUrl",
 				Type:  "template",
-				Value: endpointURL,
+				Value: cfg.EndpointURL,
 			},
 			{
 				Key:   "domain",
 				Type:  "template",
-				Value: domain,
+				Value: cfg.Domain,
 			},
 			{
 				Key:   "timeout",
@@ -38,6 +37,6 @@ func NewUmami(name, websiteID, domain, endpointURL string, template *tagmanager.
 				Value: "1000",
 			},
 		},
-		Type: fmt.Sprintf("cvt_%s_%s", template.ContainerId, template.TemplateId),
+		Type: utils.TemplateType(template),
 	}
 }
