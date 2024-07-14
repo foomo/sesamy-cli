@@ -7,6 +7,7 @@ type Config struct {
 	GoogleAPI        GoogleAPI        `json:"googleAPI" yaml:"googleAPI"`
 	GoogleTagManager GoogleTagManager `json:"googleTagManager" yaml:"googleTagManager"`
 	// Providers
+	GoogleAds        GoogleAds        `json:"googleAds" yaml:"googleAds"`
 	GoogleAnalytics  GoogleAnalytics  `json:"googleAnalytics" yaml:"googleAnalytics"`
 	ConversionLinker ConversionLinker `json:"conversionLinker" yaml:"conversionLinker"`
 	Facebook         Facebook         `json:"facebook" yaml:"facebook"`

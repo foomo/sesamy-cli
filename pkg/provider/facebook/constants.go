@@ -3,8 +3,8 @@ package facebook
 const (
 	Tag                           = "meta"
 	Name                          = "Facebook"
-	NamePixelIDConstant           = "Facebook Pixel ID"
-	NameAPIAcessTokenConstant     = "Facebook API Access Token"
-	NameTestEventTokenConstant    = "Facebook Test Event Token"
+	NamePixelIDConstant           = "FB Pixel ID"
+	NameAPIAcessTokenConstant     = "FB API Access Token"
+	NameTestEventTokenConstant    = "FB Test Event Token"
 	NameConversionsAPITagTemplate = "Conversions API Tag"
 )

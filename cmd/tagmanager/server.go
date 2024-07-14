@@ -4,6 +4,7 @@ import (
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
 	conversionlinkerprovider "github.com/foomo/sesamy-cli/pkg/provider/conversionlinker"
 	facebookprovider "github.com/foomo/sesamy-cli/pkg/provider/facebook"
+	googleadsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleads"
 	googleanalyticsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics"
 	googletagprovider "github.com/foomo/sesamy-cli/pkg/provider/googletag"
 	googletagmanagerprovider "github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
@@ -81,6 +82,13 @@ func NewServer(root *cobra.Command) {
 				l.Info("🅿️ Running provider", "name", facebookprovider.Name)
 				if err := facebookprovider.Server(l, tm, cfg.Facebook); err != nil {
 					return errors.Wrap(err, "failed to provision facebook")
+				}
+			}
+
+			if cfg.GoogleAds.Enabled && pkgcmd.Tag(googleadsprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", googleadsprovider.Name)
+				if err := googleadsprovider.Server(l, tm, cfg.GoogleAds); err != nil {
+					return errors.Wrap(err, "failed to provision google ads")
 				}
 			}
 

@@ -46,7 +46,7 @@ googleTag:
   webContainer:
     # Contemplate package config for generated events
     packages:
-    - path: 'github.com/foomo/sesamy-cli/_example/server'
+    - path: github.com/foomo/sesamy-go/pkg/event
       types:
       - PageView
       - SelectItem
@@ -54,7 +54,7 @@ googleTag:
   serverContainer:
     # Contemplate package config for generated events
     packages:
-    - path: 'github.com/foomo/sesamy-cli/_example/server'
+    - path: github.com/foomo/sesamy-go/pkg/event
       types:
       - PageView
       - SelectItem
@@ -131,7 +131,7 @@ googleAnalytics:
   webContainer:
     # Contemplate package config for generated events
     packages:
-      - path: 'github.com/foomo/sesamy-cli/_example/server'
+      - path: github.com/foomo/sesamy-go/pkg/event
         types:
           - PageView
           - SelectItem
@@ -139,10 +139,29 @@ googleAnalytics:
   serverContainer:
     # Contemplate package config for generated events
     packages:
-      - path: 'github.com/foomo/sesamy-cli/_example/server'
+      - path: github.com/foomo/sesamy-go/pkg/event
         types:
           - PageView
           - SelectItem
+
+# --- Google Ads
+googleAds:
+  # Enable provider
+  enabled: true
+  # Google Ads Conversion settings
+  conversion:
+    # Google Ads Conversion Tracking ID
+    conversionId: ''
+    # Google Ads Conversion Tracking Label
+    conversionLabel: ''
+    # Google Tag Manager server container settings
+    serverContainer:
+      # Contemplate package config for generated events
+      packages:
+        - path: github.com/foomo/sesamy-go/pkg/event
+          types:
+            - AddToCart
+            - Purchase
 
 # --- Conversion Linker settings
 conversionLinker:
@@ -163,7 +182,7 @@ umami:
   serverContainer:
     # Contemplate package config for generated events
     packages:
-    - path: 'github.com/foomo/sesamy-cli/_example/server'
+    - path: github.com/foomo/sesamy-go/pkg/event
       types:
       - PageView
       - SelectItem
