@@ -3,10 +3,10 @@ package umami
 import (
 	"github.com/foomo/sesamy-cli/pkg/config"
 	"github.com/foomo/sesamy-cli/pkg/provider/googletag"
+	servertemplate "github.com/foomo/sesamy-cli/pkg/provider/umami/server/template"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	commontrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
 	servertag "github.com/foomo/sesamy-cli/pkg/tagmanager/server/tag"
-	servertemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/server/template"
 	"github.com/pkg/errors"
 )
 

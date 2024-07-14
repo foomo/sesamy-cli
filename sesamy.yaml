@@ -167,3 +167,30 @@ umami:
       types:
       - PageView
       - SelectItem
+
+# --- Facebook
+# https://developers.facebook.com/docs/marketing-api/conversions-api/guides/gtm-server-side
+facebook:
+  # Enable provider
+  enabled: true
+  # Facebook pixel id
+  pixelId: '5793878117412736'
+  # To use the Conversions API, you need an access token.
+  apiAccessToken: 'EDO3KLJFrcsBO47QALoUENl3AIioUQ74PaNfRBn8iJ6a2yqCjZA1SM6CpMeDVB0dVSCsESfIrLuggtRSSZAcGg8KK79cD8a0AaJ3mvLsyiHzKU8orO15G74ZBJPuywFJfal43ikdAR5GNpSD5zngLKNZB7blZAZBJdllkjdaz4sifmqB2v47AZDZD'
+  # Code used to verify that your server events are received correctly by Conversions API
+  testEventToken: 'TEST1234'
+  # Google Tag Manager server container settings
+  serverContainer:
+    # Contemplate package config for generated events
+    packages:
+      - path: github.com/foomo/sesamy-go/pkg/event
+        types:
+          - AddPaymentInfo
+          - AddToCart
+          - AddToWishlist
+          - PageView
+          - Purchase
+          - Search
+          - BeginCheckout
+          - GenerateLead
+          - ViewItem

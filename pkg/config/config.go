@@ -9,5 +9,6 @@ type Config struct {
 	// Providers
 	GoogleAnalytics  GoogleAnalytics  `json:"googleAnalytics" yaml:"googleAnalytics"`
 	ConversionLinker ConversionLinker `json:"conversionLinker" yaml:"conversionLinker"`
+	Facebook         Facebook         `json:"facebook" yaml:"facebook"`
 	Umami            Umami            `json:"umami" yaml:"umami"`
 }

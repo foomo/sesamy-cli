@@ -170,7 +170,7 @@ func (t *TagManager) LookupClient(name string) (*tagmanager.Client, error) {
 
 func (t *TagManager) LoadClients() (map[string]*tagmanager.Client, error) {
 	if t.clients == nil {
-		t.l.Info("🛄 Loading", "type", "Client")
+		t.l.Info("🛄 Loading list", "type", "Client")
 		r, err := t.Service().Accounts.Containers.Workspaces.Clients.List(t.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
@@ -201,7 +201,7 @@ func (t *TagManager) LookupFolder(name string) (*tagmanager.Folder, error) {
 
 func (t *TagManager) LoadFolders() (map[string]*tagmanager.Folder, error) {
 	if t.folders == nil {
-		t.l.Info("🛄 Loading", "type", "Folder")
+		t.l.Info("🛄 Loading list", "type", "Folder")
 		r, err := t.Service().Accounts.Containers.Workspaces.Folders.List(t.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
@@ -231,7 +231,7 @@ func (t *TagManager) LookupVariable(name string) (*tagmanager.Variable, error) {
 
 func (t *TagManager) LoadVariables() (map[string]*tagmanager.Variable, error) {
 	if t.variables == nil {
-		t.l.Info("🛄 Loading", "type", "Variable")
+		t.l.Info("🛄 Loading list", "type", "Variable")
 		r, err := t.Service().Accounts.Containers.Workspaces.Variables.List(t.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
@@ -262,7 +262,7 @@ func (t *TagManager) GetBuiltInVariable(typeName string) (*tagmanager.BuiltInVar
 
 func (t *TagManager) LoadBuiltInVariables() (map[string]*tagmanager.BuiltInVariable, error) {
 	if t.builtInVariables == nil {
-		t.l.Info("🛄 Loading", "type", "BuiltInVariable")
+		t.l.Info("🛄 Loading list", "type", "BuiltInVariable")
 		r, err := t.Service().Accounts.Containers.Workspaces.BuiltInVariables.List(t.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
@@ -291,9 +291,22 @@ func (t *TagManager) LookupTrigger(name string) (*tagmanager.Trigger, error) {
 	return elems[name], nil
 }
 
+func (t *TagManager) LookupTemplate(name string) (*tagmanager.CustomTemplate, error) {
+	elems, err := t.LoadCustomTemplates()
+	if err != nil {
+		return nil, err
+	}
+
+	if _, ok := elems[name]; !ok {
+		return nil, ErrNotFound
+	}
+
+	return elems[name], nil
+}
+
 func (t *TagManager) LoadTriggers() (map[string]*tagmanager.Trigger, error) {
 	if t.triggers == nil {
-		t.l.Info("🛄 Loading", "type", "Trigger")
+		t.l.Info("🛄 Loading list", "type", "Trigger")
 		r, err := t.Service().Accounts.Containers.Workspaces.Triggers.List(t.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
@@ -324,7 +337,7 @@ func (t *TagManager) LookupTag(name string) (*tagmanager.Tag, error) {
 
 func (t *TagManager) LoadTags() (map[string]*tagmanager.Tag, error) {
 	if t.tags == nil {
-		t.l.Info("🛄 Loading", "type", "Tag")
+		t.l.Info("🛄 Loading list", "type", "Tag")
 		r, err := t.Service().Accounts.Containers.Workspaces.Tags.List(t.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
@@ -354,8 +367,8 @@ func (t *TagManager) CustomTemplate(name string) (*tagmanager.CustomTemplate, er
 }
 
 func (t *TagManager) LoadCustomTemplates() (map[string]*tagmanager.CustomTemplate, error) {
-	if t.tags == nil {
-		t.l.Info("🛄 Loading", "type", "CustomTemplate")
+	if t.customTemplates == nil {
+		t.l.Info("🛄 Loading list", "type", "CustomTemplate")
 		r, err := t.Service().Accounts.Containers.Workspaces.Templates.List(t.WorkspacePath()).Do()
 		if err != nil {
 			return nil, err
