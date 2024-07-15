@@ -6,7 +6,7 @@ import (
 	"google.golang.org/api/tagmanager/v2"
 )
 
-func NewGoogleTagSettings(name string, variables map[string]string) *tagmanager.Variable {
+func NewGoogleTagConfigurationSettings(name string, variables map[string]string) *tagmanager.Variable {
 	parameters := make([]string, 0, len(variables))
 	for k := range variables {
 		parameters = append(parameters, k)

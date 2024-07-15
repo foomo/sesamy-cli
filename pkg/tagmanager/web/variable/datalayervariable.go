@@ -4,13 +4,13 @@ import (
 	"google.golang.org/api/tagmanager/v2"
 )
 
-func GoogleTagEventModelName(v string) string {
-	return "dlv.eventModel." + v
+func DataLayerVariableName(v string) string {
+	return "dlv." + v
 }
 
-func NewGoogleTagEventModel(name string) *tagmanager.Variable {
+func NewDataLayerVariable(name string) *tagmanager.Variable {
 	return &tagmanager.Variable{
-		Name: GoogleTagEventModelName(name),
+		Name: DataLayerVariableName(name),
 		Parameter: []*tagmanager.Parameter{
 			{
 				Key:   "dataLayerVersion",

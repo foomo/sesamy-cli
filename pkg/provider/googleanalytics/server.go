@@ -2,11 +2,11 @@ package googleanalytics
 
 import (
 	"github.com/foomo/sesamy-cli/pkg/config"
+	containertag "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/tag"
 	"github.com/foomo/sesamy-cli/pkg/provider/googletag"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	commontrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
 	serverclient "github.com/foomo/sesamy-cli/pkg/tagmanager/server/client"
-	servertag "github.com/foomo/sesamy-cli/pkg/tagmanager/server/tag"
 	servertrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/server/trigger"
 	"github.com/pkg/errors"
 )
@@ -54,7 +54,7 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitor
 				return errors.Wrap(err, "failed to lookup event trigger: "+event)
 			}
 
-			if _, err := tm.UpsertTag(servertag.NewGoogleAnalyticsGA4(event, redactVisitorIP, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(containertag.NewGoogleAnalyticsGA4(event, redactVisitorIP, eventTrigger)); err != nil {
 				return errors.Wrap(err, "failed to upsert google analytics ga4 tag: "+event)
 			}
 		}

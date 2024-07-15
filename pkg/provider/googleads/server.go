@@ -9,6 +9,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	commontrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
+	"github.com/foomo/sesamy-cli/pkg/tagmanager/server/variable"
 	"github.com/pkg/errors"
 )
 
@@ -32,6 +33,16 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) err
 			return err
 		}
 
+		value, err := tm.UpsertVariable(variable.NewEventData("value"))
+		if err != nil {
+			return err
+		}
+
+		currency, err := tm.UpsertVariable(variable.NewEventData("currency"))
+		if err != nil {
+			return err
+		}
+
 		{ // create tags
 			eventParameters, err := googletag.CreateServerEventTriggers(tm, cfg.Conversion.ServerContainer)
 			if err != nil {
@@ -44,7 +55,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) err
 					return errors.Wrap(err, "failed to lookup event trigger: "+event)
 				}
 
-				if _, err := tm.UpsertTag(servertagx.NewGoogleAdsConversionTracking(event, conversionID, conversionLabel, eventTrigger)); err != nil {
+				if _, err := tm.UpsertTag(servertagx.NewGoogleAdsConversionTracking(event, value, currency, conversionID, conversionLabel, eventTrigger)); err != nil {
 					return err
 				}
 			}

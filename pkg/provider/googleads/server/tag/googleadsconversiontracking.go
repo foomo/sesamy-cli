@@ -9,7 +9,7 @@ func GoogleAdsConversionTrackingName(v string) string {
 	return "GAds Conversion - " + v
 }
 
-func NewGoogleAdsConversionTracking(name string, conversionID, conversionLabel *tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+func NewGoogleAdsConversionTracking(name string, value, currency, conversionID, conversionLabel *tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	return &tagmanager.Tag{
 		FiringTriggerId: utils.TriggerIDs(triggers),
 		Name:            GoogleAdsConversionTrackingName(name),
@@ -33,7 +33,7 @@ func NewGoogleAdsConversionTracking(name string, conversionID, conversionLabel *
 			{
 				Key:   "conversionValue",
 				Type:  "template",
-				Value: "{{value}}",
+				Value: "{{" + value.Name + "}}",
 			},
 			{
 				Key:   "conversionId",
@@ -43,7 +43,7 @@ func NewGoogleAdsConversionTracking(name string, conversionID, conversionLabel *
 			{
 				Key:   "currencyCode",
 				Type:  "template",
-				Value: "{{currency}}",
+				Value: "{{" + currency.Name + "}}",
 			},
 			{
 				Key:   "conversionLabel",

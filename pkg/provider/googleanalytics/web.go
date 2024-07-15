@@ -2,11 +2,11 @@ package googleanalytics
 
 import (
 	"github.com/foomo/sesamy-cli/pkg/config"
+	containertag "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/web/tag"
 	"github.com/foomo/sesamy-cli/pkg/provider/googletag"
+	commonvariable "github.com/foomo/sesamy-cli/pkg/provider/googletag/web/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	commontrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
-	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
-	webtag "github.com/foomo/sesamy-cli/pkg/tagmanager/web/tag"
 	"github.com/pkg/errors"
 )
 
@@ -41,7 +41,7 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleAnalytics) error {
 				return errors.Wrap(err, "failed to lookup google tag event setting: "+event)
 			}
 
-			if _, err := tm.UpsertTag(webtag.NewGoogleAnalyticsGA4Event(event, tagID, eventSettings, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(containertag.NewGoogleAnalyticsGA4Event(event, tagID, eventSettings, eventTrigger)); err != nil {
 				return err
 			}
 		}

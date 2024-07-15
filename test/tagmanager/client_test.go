@@ -46,6 +46,15 @@ func TestNewClient_Server(t *testing.T) {
 		})
 	}
 
+	{ // ---  Variables ---
+		t.Run("list variables", func(t *testing.T) {
+			cmd := c.Service().Accounts.Containers.Workspaces.Variables.List(c.WorkspacePath())
+			if r, err := cmd.Do(); assert.NoError(t, err) {
+				dump(t, r)
+			}
+		})
+	}
+
 	{ // --- Built-In Variables ---
 		t.Run("list built-in variables", func(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.BuiltInVariables.List(c.WorkspacePath())
@@ -53,7 +62,7 @@ func TestNewClient_Server(t *testing.T) {
 				dump(t, r)
 			}
 		})
-		t.Run("list built-in variables", func(t *testing.T) {
+		t.Run("create built-in variables", func(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.BuiltInVariables.Create(c.WorkspacePath()).Type()
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)

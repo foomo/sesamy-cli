@@ -3,10 +3,12 @@ package googletag
 import (
 	"github.com/foomo/gocontemplate/pkg/contemplate"
 	"github.com/foomo/sesamy-cli/pkg/config"
+	webtag "github.com/foomo/sesamy-cli/pkg/provider/googletag/web/tag"
+	containervariable "github.com/foomo/sesamy-cli/pkg/provider/googletag/web/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	commontrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
-	webtag "github.com/foomo/sesamy-cli/pkg/tagmanager/web/tag"
+	"github.com/foomo/sesamy-cli/pkg/tagmanager/web/variable"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	api "google.golang.org/api/tagmanager/v2"
 )
@@ -36,7 +38,7 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
 			return err
 		}
 
-		settingsVariable, err := tm.UpsertVariable(commonvariable.NewGoogleTagSettings(NameGoogleTagSettings, settings))
+		settingsVariable, err := tm.UpsertVariable(containervariable.NewGoogleTagConfigurationSettings(NameGoogleTagSettings, settings))
 		if err != nil {
 			return err
 		}
@@ -65,12 +67,12 @@ func CreateWebEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (
 
 		settings := make(map[string]*api.Variable, len(parameters))
 		for _, parameter := range parameters {
-			if settings[parameter], err = tm.UpsertVariable(commonvariable.NewGoogleTagEventModel(parameter)); err != nil {
+			if settings[parameter], err = tm.UpsertVariable(variable.NewDataLayerVariable(parameter)); err != nil {
 				return nil, err
 			}
 		}
 
-		if _, err := tm.UpsertVariable(commonvariable.NewGoogleTagEventSettings(event, settings)); err != nil {
+		if _, err := tm.UpsertVariable(containervariable.NewGoogleTagEventSettings(event, settings)); err != nil {
 			return nil, err
 		}
 	}

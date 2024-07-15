@@ -1,4 +1,4 @@
-package client
+package tag
 
 import (
 	"google.golang.org/api/tagmanager/v2"
