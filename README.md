@@ -18,118 +18,224 @@ $ brew install foomo/tap/sesamy-cli
 
 ## Usage
 
-Add a `sesamy.yaml` configurtion
+Add a `sesamy.yaml` configuration
 
 ```yaml
-google:
-  gt:
-    send_page_views: true
-    server_container_url: https://sst.your.domain.com
+# yaml-language-server: $schema=https://raw.githubusercontent.com/foomo/sesamy-cli/v0.3.0/sesamy.yaml
+version: '1.0'
 
-  ga4:
-    measurement_id: G-PZ5ELRCR31
+# Whether to redact the visitor ip
+redactVisitorIp: true
 
-  gtm:
-    account_id: 6099238525
-    web:
-      container_id: 175355532
-      measurement_id: GTM-57BHX34G
-      workspace_id: 23
-    server:
-      container_id: 175348980
-      measurement_id: GTM-5NWPR4QW
-      workspace_id: 10
+# --- Google API settings
+googleApi:
+  # Single line Service Account credentials
+  credentials: '{...\\n...\\n...}'
+  # Path to the Service Account credentials json file
+  credentialsFile: google_service_account_creds.json
+  # Current API request quota (send a request to increase the quota)
+  requestQuota: 15
 
-  request_quota: 15
-  credentials_file: ./google_service_account_creds.json
+# --- Google Tag Manager settings
+googleTagManager:
+  # The account id
+  accountId: 6099238525
+  # Web container settings
+  webContainer:
+    # The container tag id
+    tagId: GTM-57BHX34G
+    # The container id
+    containerId: 175355532
+    # The workspace id that should be used by the api
+    workspaceId: 23
+  # Server container settings
+  serverContainer:
+    # The container tag id
+    tagId: GTM-5NWPR4QW
+    # The container id
+    containerId: 175348980
+    # The workspace id that should be used by the api
+    workspaceId: 10
 
+# --- Google Tag settings
+googleTag:
+  # A tag ID is an identifier that you put on your page to load a given Google tag
+  tagId: G-PZ5ELRCR31
+  # Whether a page_view should be sent on initial load
+  sendPageView: true
+  # Enable debug mode for all user devices
+  debugMode: false
+  # Google Tag Manager web container settings
+  webContainer:
+    # Contemplate package config for generated events
+    packages:
+      - path: github.com/foomo/sesamy-go/pkg/event
+        types:
+          - PageView
+          - SelectItem
+  # Google Tag Manager server container settings
+  serverContainer:
+    # Contemplate package config for generated events
+    packages:
+      - path: github.com/foomo/sesamy-go/pkg/event
+        types:
+          - PageView
+          - SelectItem
+  # Google Tag Manager web container settings
+  typeScript:
+    # Target directory for generate files
+    outputPath: path/to/target
+    # Contemplate package config for generated events
+    packages:
+      - path: github.com/foomo/sesamy-go/pkg/event
+        types:
+          ## GA4 Automatically collected events
+          ## https://support.google.com/analytics/answer/9234069
+          - Click
+          - FileDownload
+          - FirstVisit
+          - FormStart
+          - FormSubmit
+          - PageView
+          - Scroll
+          - UserEngagement
+          - VideoComplete
+          - VideoProgress
+          - VideoStart
+          - ViewSearchResults
+          ## Recommended events
+          ## https://developers.google.com/tag-platform/gtagjs/reference/events
+          - AdImpression
+          - AddPaymentInfo
+          - AddShippingInfo
+          - AddToCart
+          - AddToWishlist
+          - BeginCheckout
+          - CampaignDetails
+          - CloseConvertLead
+          - CloseUnconvertLead
+          - DisqualifyLead
+          - EarnVirtualMoney
+          - Exception
+          - GenerateLead
+          - JoinGroup
+          - LevelEnd
+          - LevelStart
+          - LevelUp
+          - Login
+          - PostScore
+          - Purchase
+          - QualifyLead
+          - Refund
+          - RemoveFromCart
+          - ScreenView
+          - Search
+          - SelectContent
+          - SelectItem
+          - SelectPromotion
+          - SessionStart
+          - Share
+          - SignUp
+          - SpendVirtualCurrency
+          - TutorialBegin
+          - TutorialComplete
+          - UnlockAchievement
+          - ViewCart
+          - ViewItem
+          - ViewItemList
+          - ViewPromotion
+          - WorkingLead
 
-typescript:
-  packages:
-    - path: 'github.com/username/repository/event'
-      types:
-        - Custom
-    - path: 'github.com/foomo/sesamy-go/event'
-      types:
-        - PageView
-        - SelectItem
-  output_path: '/path/to/src'
+# --- Google Analytics settings
+googleAnalytics:
+  # Enable provider
+  enabled: true
+  # Google Tag Manager web container settings
+  webContainer:
+    # Contemplate package config for generated events
+    packages:
+      - path: github.com/foomo/sesamy-go/pkg/event
+        types:
+          - PageView
+          - SelectItem
+  # Google Tag Manager server container settings
+  serverContainer:
+    # Contemplate package config for generated events
+    packages:
+      - path: github.com/foomo/sesamy-go/pkg/event
+        types:
+          - PageView
+          - SelectItem
 
-tagmanager:
-  tags:
-    ga4:
-      enabled: true
-    umami:
-      enabled: false
-      domain: www.your.domain
-      website_id: 123456-123456-123456-123456
-      endpoint_url: https://site-gtm-umami-ummi/api/send
-  packages:
-    - path: 'github.com/username/repository/event'
-      types:
-        - Custom
-    - path: 'github.com/foomo/sesamy-go/event'
-      types:
-        - AddPaymentInfo
-        - AddShippingInfo
-        - AddToCart
-        - AddToWishlist
-        - AdImpression
-        - BeginCheckout
-        - CampaignDetails
-        - Click
-        - EarnVirtualMoney
-        - FileDownload
-        - FormStart
-        - FormSubmit
-        - GenerateLead
-        - JoinGroup
-        - LevelEnd
-        - LevelStart
-        - LevelUp
-        - Login
-        - PageView
-        - PostScore
-        - Purchase
-        - Refund
-        - RemoveFromCart
-        - ScreenView
-        - Scroll
-        - Search
-        - SelectContent
-        - SelectItem
-        - SelectPromotion
-        - SessionStart
-        - Share
-        - SignUp
-        - SpendVirtualCurrency
-        - TutorialBegin
-        - TutorialComplete
-        - UnlockAchievement
-        - UserEngagement
-        - VideoComplete
-        - VideoProgress
-        - VideoStart
-        - ViewCart
-        - ViewItem
-        - ViewItemList
-        - ViewPromotion
-        - ViewSearchResults
-  prefixes:
-    client: ''
-    folder: ''
-    tags:
-      ga4_event: 'GA4 - '
-      google_tag: ''
-      server_ga4_event: 'GA4 - '
-    triggers:
-      client: ''
-      custom_event: 'Event - '
-    variables:
-      constant: ''
-      event_model: 'dlv.eventModel.'
-      gt_event_settings: 'Event Settings - '
-      gt_settings: 'Settings - '
+# --- Google Ads
+googleAds:
+  # Enable provider
+  enabled: true
+  # Google Ads Conversion settings
+  conversion:
+    # Google Ads Conversion Tracking ID
+    conversionId: ''
+    # Google Ads Conversion Tracking Label
+    conversionLabel: ''
+    # Google Tag Manager server container settings
+    serverContainer:
+      # Contemplate package config for generated events
+      packages:
+        - path: github.com/foomo/sesamy-go/pkg/event
+          types:
+            - AddToCart
+            - Purchase
+
+# --- Conversion Linker settings
+conversionLinker:
+  # Enable provider
+  enabled: true
+
+# --- Umami settings
+umami:
+  # Enable provider
+  enabled: true
+  # Enter an optional fixed domain to override event data
+  domain: your-domain.com
+  # Paste ID for your website from the Umami settings
+  websiteId: ''
+  # Endpoint url of the umami api
+  endpointUrl: https://umami.your-domain.com
+  # Google Tag Manager server container settings
+  serverContainer:
+    # Contemplate package config for generated events
+    packages:
+      - path: github.com/foomo/sesamy-go/pkg/event
+        types:
+          - PageView
+          - SelectItem
+
+# --- Facebook
+# https://developers.facebook.com/docs/marketing-api/conversions-api/guides/gtm-server-side
+facebook:
+  # Enable provider
+  enabled: true
+  # Facebook pixel id
+  pixelId: ''
+  # To use the Conversions API, you need an access token.
+  apiAccessToken: ''
+  # Code used to verify that your server events are received correctly by Conversions API
+  testEventToken: ''
+  # Google Tag Manager server container settings
+  serverContainer:
+    # Contemplate package config for generated events
+    packages:
+      - path: github.com/foomo/sesamy-go/pkg/event
+        types:
+          - AddPaymentInfo
+          - AddToCart
+          - AddToWishlist
+          - PageView
+          - Purchase
+          - Search
+          - BeginCheckout
+          - GenerateLead
+          - ViewItem
 ```
 
 ## Caveats
