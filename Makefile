@@ -18,6 +18,11 @@
 
 ## === Tasks ===
 
+.PHONY: schema
+## Open go schemas
+schema:
+	@helm schema-gen sesamy.yaml > sesamy.schema.json
+
 .PHONY: doc
 ## Open go docs
 doc:

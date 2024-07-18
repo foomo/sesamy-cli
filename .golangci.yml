@@ -78,6 +78,7 @@ linters-settings:
       - name: unhandled-error
         arguments:
           - "fmt.Println"
+          - "viper.BindPFlag"
           - "strings.Builder.WriteString"
       # TODO remove
       - name: deep-exit
