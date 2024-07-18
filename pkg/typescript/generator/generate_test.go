@@ -90,8 +90,13 @@ export enum EventName {
 	BeginCheckout = "begin_checkout",
 	CampaignDetails = "campaign_details",
 	Click = "click",
+	CloseConvertLead = "close_convert_lead",
+	CloseUnconvertLead = "close_unconvert_lead",
+	DisqualifyLead = "disqualify_lead",
 	EarnVirtualMoney = "earn_virtual_money",
+	Exception = "exception",
 	FileDownload = "file_download",
+	FirstVisit = "first_visit",
 	FormStart = "form_start",
 	FormSubmit = "form_submit",
 	GenerateLead = "generate_lead",
@@ -103,6 +108,7 @@ export enum EventName {
 	PageView = "page_view",
 	PostScore = "post_score",
 	Purchase = "purchase",
+	QualifyLead = "qualify_lead",
 	Refund = "refund",
 	RemoveFromCart = "remove_from_cart",
 	ScreenView = "screen_view",
@@ -127,6 +133,7 @@ export enum EventName {
 	ViewItemList = "view_item_list",
 	ViewPromotion = "view_promotion",
 	ViewSearchResults = "view_search_results",
+	WorkingLead = "working_lead",
 }
 
 export interface Event<P> {
