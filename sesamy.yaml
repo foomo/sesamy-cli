@@ -9,7 +9,7 @@ googleApi:
   # Single line Service Account credentials
   credentials: '{...\\n...\\n...}'
   # Path to the Service Account credentials json file
-  credentialsFile: ./tmp/google_service_account_creds.json
+  credentialsFile: google_service_account_creds.json
   # Current API request quota (send a request to increase the quota)
   requestQuota: 15
 
@@ -175,7 +175,7 @@ umami:
   # Enter an optional fixed domain to override event data
   domain: your-domain.com
   # Paste ID for your website from the Umami settings
-  websiteId: 4lkdakkt-al32jklafja-adflakj4ldk-4l9akcnn
+  websiteId: ''
   # Endpoint url of the umami api
   endpointUrl: https://umami.your-domain.com
   # Google Tag Manager server container settings
@@ -193,11 +193,11 @@ facebook:
   # Enable provider
   enabled: true
   # Facebook pixel id
-  pixelId: '5793878117412736'
+  pixelId: ''
   # To use the Conversions API, you need an access token.
-  apiAccessToken: 'EDO3KLJFrcsBO47QALoUENl3AIioUQ74PaNfRBn8iJ6a2yqCjZA1SM6CpMeDVB0dVSCsESfIrLuggtRSSZAcGg8KK79cD8a0AaJ3mvLsyiHzKU8orO15G74ZBJPuywFJfal43ikdAR5GNpSD5zngLKNZB7blZAZBJdllkjdaz4sifmqB2v47AZDZD'
+  apiAccessToken: ''
   # Code used to verify that your server events are received correctly by Conversions API
-  testEventToken: 'TEST1234'
+  testEventToken: ''
   # Google Tag Manager server container settings
   serverContainer:
     # Contemplate package config for generated events

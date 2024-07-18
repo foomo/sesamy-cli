@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/foomo/sesamy-cli/pkg/config"
 	"github.com/mitchellh/hashstructure/v2"
 	"github.com/pkg/errors"
@@ -605,7 +604,6 @@ func (t *TagManager) UpsertCustomTemplate(item *tagmanager.CustomTemplate) (*tag
 		t.customTemplates[item.Name], err = t.Service().Accounts.Containers.Workspaces.Templates.Update(t.WorkspacePath()+"/templates/"+cache.TemplateId, item).Do()
 	}
 	if err != nil {
-		spew.Dump(err)
 		return nil, err
 	}
 

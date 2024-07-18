@@ -10,6 +10,86 @@
                 }
             }
         },
+        "facebook": {
+            "type": "object",
+            "properties": {
+                "apiAccessToken": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "pixelId": {
+                    "type": "string"
+                },
+                "serverContainer": {
+                    "type": "object",
+                    "properties": {
+                        "packages": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "path": {
+                                        "type": "string"
+                                    },
+                                    "types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "testEventToken": {
+                    "type": "string"
+                }
+            }
+        },
+        "googleAds": {
+            "type": "object",
+            "properties": {
+                "conversion": {
+                    "type": "object",
+                    "properties": {
+                        "conversionId": {
+                            "type": "string"
+                        },
+                        "conversionLabel": {
+                            "type": "string"
+                        },
+                        "serverContainer": {
+                            "type": "object",
+                            "properties": {
+                                "packages": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "path": {
+                                                "type": "string"
+                                            },
+                                            "types": {
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "enabled": {
+                    "type": "boolean"
+                }
+            }
+        },
         "googleAnalytics": {
             "type": "object",
             "properties": {
