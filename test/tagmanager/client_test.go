@@ -104,18 +104,17 @@ func TestNewClient_Server(t *testing.T) {
 		})
 	}
 
-	{ // --- Tags ---
+	{ // --- Templates ---
 		// t.Run("upsert template", func(t *testing.T) {
 		// 	obj, err := c.UpsertCustomTemplate(template2.NewConversionsAPITag("Facebook"))
 		// 	require.NoError(t, err)
 		// 	dump(t, obj)
 		// })
-
 		t.Run("list templates", func(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Templates.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				// dump(t, r)
-				fmt.Println(r.Template[0].TemplateData)
+				fmt.Println(r.Template[4].TemplateData)
 			}
 		})
 	}
@@ -369,6 +368,16 @@ func TestNewClient_Web(t *testing.T) {
 		//	require.NoError(t, err)
 		//	t.Log("ID: " + obj.TagId)
 		// })
+	}
+
+	{ // --- Templates ---
+		t.Run("list templates", func(t *testing.T) {
+			cmd := c.Service().Accounts.Containers.Workspaces.Templates.List(c.WorkspacePath())
+			if r, err := cmd.Do(); assert.NoError(t, err) {
+				// dump(t, r)
+				fmt.Println(r.Template[0].TemplateData)
+			}
+		})
 	}
 }
 

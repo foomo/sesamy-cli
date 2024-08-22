@@ -25,7 +25,7 @@ func NewDataLayerVariable(name string) *tagmanager.Variable {
 			{
 				Key:   "name",
 				Type:  "template",
-				Value: "eventModel." + name,
+				Value: name,
 			},
 		},
 		Type: "v",

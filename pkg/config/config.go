@@ -11,5 +11,6 @@ type Config struct {
 	GoogleAnalytics  GoogleAnalytics  `json:"googleAnalytics" yaml:"googleAnalytics"`
 	ConversionLinker ConversionLinker `json:"conversionLinker" yaml:"conversionLinker"`
 	Facebook         Facebook         `json:"facebook" yaml:"facebook"`
+	Emarsys          Emarsys          `json:"emarsys" yaml:"emarsys"`
 	Umami            Umami            `json:"umami" yaml:"umami"`
 }
