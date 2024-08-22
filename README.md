@@ -146,10 +146,19 @@ googleTag:
           - ViewPromotion
           - WorkingLead
 
+
 # --- Google Analytics settings
 googleAnalytics:
   # Enable provider
   enabled: true
+  # Google GTag.js settings
+  googleGTag:
+    # Provision custom client
+    enabled: true
+    # Client priority
+    priority: 10
+    # Patch ecommerce items
+    ecommerceItems: true
   # Google Tag Manager web container settings
   webContainer:
     # Contemplate package config for generated events
@@ -236,6 +245,24 @@ facebook:
           - BeginCheckout
           - GenerateLead
           - ViewItem
+
+# --- Emarsys
+emarsys:
+  # Enable provider
+  enabled: true
+  # Emarsys merchant id
+  merchantId: ''
+  # Name of the event to mark as new page view
+  newPageViewEvent: '''
+  # Google Tag Manager server container settings
+  serverContainer:
+    # Contemplate package config for generated events
+    packages:
+      - path: github.com/foomo/sesamy-go/pkg/event
+        types:
+          - Purchase
+          - ViewItem
+          - ViewItemList
 ```
 
 ## Caveats

@@ -9,13 +9,13 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
-func LoadEventParams(cfg contemplate.Config) (map[string][]string, error) {
+func LoadEventParams(cfg contemplate.Config) (map[string]map[string]string, error) {
 	parser, err := contemplate.Load(&cfg)
 	if err != nil {
 		return nil, err
 	}
 
-	ret := map[string][]string{}
+	ret := map[string]map[string]string{}
 	for _, cfgPkg := range cfg.Packages {
 		pkg := parser.Package(cfgPkg.Path)
 		for _, typ := range cfgPkg.Types {
@@ -30,18 +30,28 @@ func LoadEventParams(cfg contemplate.Config) (map[string][]string, error) {
 	return ret, nil
 }
 
-func getEventParams(obj types.Object) ([]string, error) {
-	var ret []string
+func getEventParams(obj types.Object) (map[string]string, error) {
+	ret := map[string]string{}
 	if eventStruct := assume.T[*types.Struct](obj.Type().Underlying()); eventStruct != nil {
 		for i := range eventStruct.NumFields() {
 			if eventField := eventStruct.Field(i); eventField.Name() == "Params" {
 				if paramsStruct := assume.T[*types.Struct](eventField.Type().Underlying()); paramsStruct != nil {
 					for j := range paramsStruct.NumFields() {
-						tag, err := ParseStructTagName(paramsStruct.Tag(j))
+						var name string
+						var value string
+
+						tag, err := ParseStructTagName(paramsStruct.Tag(j), "json")
 						if err != nil {
 							return nil, errors.Wrapf(err, "failed to parse tag `%s`", paramsStruct.Tag(j))
 						}
-						ret = append(ret, tag)
+						name = tag
+						value = "eventModel." + tag
+
+						// check if there is a custom dlv tag
+						if tag, err := ParseStructTagName(paramsStruct.Tag(j), "dlv"); err == nil {
+							value = tag
+						}
+						ret[name] = value
 					}
 				}
 			}
