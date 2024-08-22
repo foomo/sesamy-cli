@@ -2,7 +2,9 @@ package googleanalytics
 
 import (
 	"github.com/foomo/sesamy-cli/pkg/config"
+	client2 "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/client"
 	containertag "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/tag"
+	template2 "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/template"
 	"github.com/foomo/sesamy-cli/pkg/provider/googletag"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	commontrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
@@ -37,6 +39,18 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitor
 				return err
 			}
 			if _, err = tm.UpsertTrigger(servertrigger.NewClient(NameMeasurementProtocolGA4ClientTrigger, client)); err != nil {
+				return err
+			}
+		}
+
+		if cfg.GoogleGTag.Enabled {
+			template, err := tm.UpsertCustomTemplate(template2.NewGoogleGTagClient(NameGoogleGTagClientTemplate))
+			if err != nil {
+				return err
+			}
+
+			_, err = tm.UpsertClient(client2.NewGoogleGTag(NameGoogleGTagClient, cfg.GoogleGTag, template))
+			if err != nil {
 				return err
 			}
 		}

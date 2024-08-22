@@ -3,6 +3,7 @@ package tagmanager
 import (
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
 	conversionlinkerprovider "github.com/foomo/sesamy-cli/pkg/provider/conversionlinker"
+	emarsysprovider "github.com/foomo/sesamy-cli/pkg/provider/emarsys"
 	facebookprovider "github.com/foomo/sesamy-cli/pkg/provider/facebook"
 	googleadsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleads"
 	googleanalyticsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics"
@@ -58,37 +59,44 @@ func NewServer(root *cobra.Command) {
 			}
 
 			if cfg.GoogleAnalytics.Enabled && pkgcmd.Tag(googleanalyticsprovider.Tag, tags) {
-				l.Info("🅿️ Running provider", "name", googleanalyticsprovider.Name)
+				l.Info("🅿️ Running provider", "name", googleanalyticsprovider.Name, "tag", googleanalyticsprovider.Tag)
 				if err := googleanalyticsprovider.Server(tm, cfg.GoogleAnalytics, cfg.RedactVisitorIP); err != nil {
 					return errors.Wrap(err, "failed to provision google analytics")
 				}
 			}
 
 			if cfg.ConversionLinker.Enabled && pkgcmd.Tag(conversionlinkerprovider.Tag, tags) {
-				l.Info("🅿️ Running provider", "name", conversionlinkerprovider.Name)
+				l.Info("🅿️ Running provider", "name", conversionlinkerprovider.Name, "tag", conversionlinkerprovider.Tag)
 				if err := conversionlinkerprovider.Server(tm, cfg.ConversionLinker); err != nil {
 					return errors.Wrap(err, "failed to provision conversion linker")
 				}
 			}
 
 			if cfg.Umami.Enabled && pkgcmd.Tag(umamiprovider.Tag, tags) {
-				l.Info("🅿️ Running provider", "name", umamiprovider.Name)
+				l.Info("🅿️ Running provider", "name", umamiprovider.Name, "tag", umamiprovider.Tag)
 				if err := umamiprovider.Server(tm, cfg.Umami); err != nil {
 					return errors.Wrap(err, "failed to provision umammi")
 				}
 			}
 
 			if cfg.Facebook.Enabled && pkgcmd.Tag(facebookprovider.Tag, tags) {
-				l.Info("🅿️ Running provider", "name", facebookprovider.Name)
+				l.Info("🅿️ Running provider", "name", facebookprovider.Name, "tag", facebookprovider.Tag)
 				if err := facebookprovider.Server(l, tm, cfg.Facebook); err != nil {
 					return errors.Wrap(err, "failed to provision facebook")
 				}
 			}
 
 			if cfg.GoogleAds.Enabled && pkgcmd.Tag(googleadsprovider.Tag, tags) {
-				l.Info("🅿️ Running provider", "name", googleadsprovider.Name)
+				l.Info("🅿️ Running provider", "name", googleadsprovider.Name, "tag", googleadsprovider.Tag)
 				if err := googleadsprovider.Server(l, tm, cfg.GoogleAds); err != nil {
 					return errors.Wrap(err, "failed to provision google ads")
+				}
+			}
+
+			if cfg.Emarsys.Enabled && pkgcmd.Tag(emarsysprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", emarsysprovider.Name, "tag", emarsysprovider.Tag)
+				if err := emarsysprovider.Server(l, tm, cfg.Emarsys); err != nil {
+					return errors.Wrap(err, "failed to provision emarsys")
 				}
 			}
 

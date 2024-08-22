@@ -18,7 +18,7 @@ func Server(tm *tagmanager.TagManager) error {
 	return nil
 }
 
-func CreateServerEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (map[string][]string, error) {
+func CreateServerEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (map[string]map[string]string, error) {
 	previousFolderName := tm.FolderName()
 	tm.SetFolderName("Sesamy - " + Name)
 	defer tm.SetFolderName(previousFolderName)

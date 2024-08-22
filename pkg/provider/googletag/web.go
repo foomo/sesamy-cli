@@ -50,7 +50,7 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
 	return nil
 }
 
-func CreateWebEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (map[string][]string, error) {
+func CreateWebEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (map[string]map[string]string, error) {
 	previousFolderName := tm.FolderName()
 	tm.SetFolderName("Sesamy - " + Name)
 	defer tm.SetFolderName(previousFolderName)
@@ -65,14 +65,14 @@ func CreateWebEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (
 			return nil, err
 		}
 
-		settings := make(map[string]*api.Variable, len(parameters))
-		for _, parameter := range parameters {
-			if settings[parameter], err = tm.UpsertVariable(variable.NewDataLayerVariable(parameter)); err != nil {
+		variables := make(map[string]*api.Variable, len(parameters))
+		for parameterName, parameterValue := range parameters {
+			if variables[parameterName], err = tm.UpsertVariable(variable.NewDataLayerVariable(parameterValue)); err != nil {
 				return nil, err
 			}
 		}
 
-		if _, err := tm.UpsertVariable(containervariable.NewGoogleTagEventSettings(event, settings)); err != nil {
+		if _, err := tm.UpsertVariable(containervariable.NewGoogleTagEventSettings(event, variables)); err != nil {
 			return nil, err
 		}
 	}

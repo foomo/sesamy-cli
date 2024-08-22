@@ -11,6 +11,13 @@ type Section struct {
 	Parts []string
 }
 
+func (s *Section) Sprint(a ...any) {
+	value := fmt.Sprint(a...)
+	if !slices.Contains(s.Parts, value) {
+		s.Parts = append(s.Parts, value)
+	}
+}
+
 func (s *Section) Sprintf(format string, a ...any) {
 	value := fmt.Sprintf(format, a...)
 	if !slices.Contains(s.Parts, value) {

@@ -2,6 +2,7 @@ package tagmanager
 
 import (
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
+	emarsysprovider "github.com/foomo/sesamy-cli/pkg/provider/emarsys"
 	googleanaylticsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics"
 	googletagprovider "github.com/foomo/sesamy-cli/pkg/provider/googletag"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
@@ -49,6 +50,12 @@ func NewWeb(root *cobra.Command) {
 			if cfg.GoogleAnalytics.Enabled && pkgcmd.Tag(googleanaylticsprovider.Tag, tags) {
 				if err := googleanaylticsprovider.Web(tm, cfg.GoogleAnalytics); err != nil {
 					return errors.Wrap(err, "failed to provision google analytics tag")
+				}
+			}
+
+			if cfg.Emarsys.Enabled && pkgcmd.Tag(emarsysprovider.Tag, tags) {
+				if err := emarsysprovider.Web(tm, cfg.Emarsys); err != nil {
+					return errors.Wrap(err, "failed to provision emarsys tag")
 				}
 			}
 

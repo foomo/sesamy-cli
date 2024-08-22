@@ -31,6 +31,6 @@ func (i *Imports) Import(location string) *Import {
 
 func (i *Imports) Write(f *code.Section) {
 	for key := range i.imports {
-		f.Sprintf(i.imports[key].String())
+		f.Sprint(i.imports[key].String())
 	}
 }
