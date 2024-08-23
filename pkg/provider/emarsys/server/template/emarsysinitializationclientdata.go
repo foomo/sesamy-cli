@@ -61,7 +61,7 @@ const sessionId = getCookieValues('emarsys_s')[0] || getRequestQueryParameter('s
 const visitorId = getCookieValues('emarsys_cdv')[0] || getRequestQueryParameter('vi');
 const pageViewId = getRequestQueryParameter('pv') || null;
 
-if (!pageViewId || !sessionId || !visitorId) {
+if (!pageViewId) {
   setResponseStatus(400);
   returnResponse();
   return;
