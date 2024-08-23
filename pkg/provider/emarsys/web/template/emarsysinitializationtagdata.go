@@ -114,9 +114,6 @@ ___WEB_PERMISSIONS___
         }
       ]
     },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
     "isRequired": true
   },
   {
@@ -135,8 +132,23 @@ ___WEB_PERMISSIONS___
         }
       ]
     },
-    "clientAnnotations": {
-      "isEditedByUser": true
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "get_cookies",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "cookieAccess",
+          "value": {
+            "type": 1,
+            "string": "any"
+          }
+        }
+      ]
     },
     "isRequired": true
   },
@@ -234,9 +246,6 @@ ___WEB_PERMISSIONS___
           }
         }
       ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
     },
     "isRequired": true
   }
