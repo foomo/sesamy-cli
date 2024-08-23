@@ -130,7 +130,7 @@ function mapEventData() {
     customerId: eventData.user_id || null,
     sessionId: getCookieValues('emarsys_s')[0] || eventData.ga_session_id,
     pageViewId: eventData.page_view_id || generatePageViewId(),
-    isNewPageView: eventData.event_name == 'custom',
+    isNewPageView: data.isNewPageView || !eventData.page_view_id,
     visitorId: getCookieValues('emarsys_cdv')[0] || eventData.client_id,
     referrer: eventData.page_referrer || null,
     orderId: null,
@@ -159,7 +159,7 @@ function mapEventData() {
       mappedData.view = serializeItem(eventData.items[0] || {});
       break;
     }
-		// standard ecommerce evens
+    // standard ecommerce evens
     case 'view_cart': {
       mappedData.cart = serializeItems(eventData.items || []);
       break;
@@ -213,7 +213,7 @@ function serializeData(mappedData) {
     slist.push("xp=1");
   }
   if (mappedData.customerId) {
-    slist.push("ci=" + encodeUriComponent(mappedData.customId));
+    slist.push("ci=" + encodeUriComponent(mappedData.customerId));
   }
   if (mappedData.sessionId) {
     slist.push("s=" + encodeUriComponent(mappedData.sessionId));
@@ -233,7 +233,7 @@ function serializeData(mappedData) {
   if (mappedData.order) {
     slist.push("co=" + encodeUriComponent(mappedData.order));
   }
-  if (mappedData.cart) {
+  if (mappedData.cart !== null) {
     slist.push("ca=" + encodeUriComponent(mappedData.cart));
     slist.push("cv=1");
   }
