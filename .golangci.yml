@@ -115,7 +115,6 @@ linters:
     - errname # Checks that sentinel errors are prefixed with the `Err` and error types are suffixed with the `Error`. [fast: false, auto-fix: false]
     - errorlint # errorlint is a linter for that can be used to find code that will cause problems with the error wrapping scheme introduced in Go 1.13. [fast: false, auto-fix: false]
     - exhaustive # check exhaustiveness of enum switch statements [fast: false, auto-fix: false]
-    - exportloopref # checks for pointers to enclosing loop variables [fast: false, auto-fix: false]
     #- forbidigo # Forbids identifiers [fast: false, auto-fix: false]
     - forcetypeassert # finds forced type assertions [fast: true, auto-fix: false]
     - gocheckcompilerdirectives # Checks that go compiler directive comments (//go:) are valid. [fast: true, auto-fix: false]
@@ -165,6 +164,8 @@ linters:
     - usestdlibvars # A linter that detect the possibility to use variables/constants from the Go standard library. [fast: true, auto-fix: false]
     - wastedassign # Finds wasted assignment statements [fast: false, auto-fix: false]
     - whitespace # Whitespace is a linter that checks for unnecessary newlines at the start and end of functions, if, for, etc. [fast: true, auto-fix: true]
+    - canonicalheader # Checks whether net/http.Header uses canonical header [fast: false, auto-fix: false]
+    - fatcontext #Detects nested contexts in loops [fast: false, auto-fix: false]
 
     ## Don't enable
     #- cyclop # checks function and package cyclomatic complexity [fast: false, auto-fix: false]

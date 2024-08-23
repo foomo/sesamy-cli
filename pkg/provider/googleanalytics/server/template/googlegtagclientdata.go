@@ -119,9 +119,6 @@ ___SERVER_PERMISSIONS___
         }
       ]
     },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
     "isRequired": true
   },
   {
@@ -175,9 +172,6 @@ ___SERVER_PERMISSIONS___
         }
       ]
     },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
     "isRequired": true
   },
   {
@@ -195,9 +189,6 @@ ___SERVER_PERMISSIONS___
           }
         }
       ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
     },
     "isRequired": true
   },

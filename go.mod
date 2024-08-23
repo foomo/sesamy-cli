@@ -1,8 +1,6 @@
 module github.com/foomo/sesamy-cli
 
-go 1.22.3
-
-toolchain go1.22.5
+go 1.23
 
 require (
 	github.com/fatih/structtag v1.2.0
