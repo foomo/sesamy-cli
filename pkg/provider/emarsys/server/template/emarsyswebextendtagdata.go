@@ -213,7 +213,7 @@ function serializeData(mappedData) {
     slist.push("xp=1");
   }
   if (mappedData.customerId) {
-    slist.push("ci=" + encodeUriComponent(mappedData.customId));
+    slist.push("ci=" + encodeUriComponent(mappedData.customerId));
   }
   if (mappedData.sessionId) {
     slist.push("s=" + encodeUriComponent(mappedData.sessionId));
