@@ -127,6 +127,20 @@ googleTag:
 googleAnalytics:
   # Enable provider
   enabled: true
+  # Google GTag.js settings
+  googleGTag:
+    # Provision custom client
+    enabled: true
+    # Client priority
+    priority: 10
+    # Patch ecommerce items
+    ecommerceItems: true
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: analytics_storage
   # Google Tag Manager web container settings
   webContainer:
     # Contemplate package config for generated events
@@ -148,6 +162,12 @@ googleAnalytics:
 googleAds:
   # Enable provider
   enabled: true
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: ad_storage
   # Google Ads Conversion settings
   conversion:
     # Google Ads Conversion Tracking ID
@@ -167,6 +187,12 @@ googleAds:
 conversionLinker:
   # Enable provider
   enabled: true
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: ad_storage
 
 # --- Umami settings
 umami:
@@ -178,6 +204,12 @@ umami:
   websiteId: ''
   # Endpoint url of the umami api
   endpointUrl: https://umami.your-domain.com
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: analytics_storage
   # Google Tag Manager server container settings
   serverContainer:
     # Contemplate package config for generated events
@@ -199,6 +231,12 @@ facebook:
   # Code used to verify that your server events are received correctly by Conversions API
   testEventToken: ''
   # Google Tag Manager server container settings
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: ad_storage
   serverContainer:
     # Contemplate package config for generated events
     packages:
@@ -213,3 +251,41 @@ facebook:
           - BeginCheckout
           - GenerateLead
           - ViewItem
+
+# --- Emarsys
+emarsys:
+  # Enable provider
+  enabled: true
+  # Emarsys merchant id
+  merchantId: ''
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: analytics_storage
+  # Google Tag Manager server container settings
+  serverContainer:
+    # Contemplate package config for generated events
+    packages:
+      - path: github.com/foomo/sesamy-go/pkg/event
+        types:
+          - Purchase
+          - ViewItem
+          - ViewItemList
+
+# --- Cookiebot CMP
+cookiebot:
+  # Enable provider
+  enabled: true
+  # Name of the manually installed Cookiebot CMP tag template
+  # "https://tagmanager.google.com/gallery/#/owners/cybotcorp/templates/gtm-templates-cookiebot-cmp
+  templateName: Cookiebot CMP
+  # Cookiebot id
+  cookiebotId: ''
+  # CDN Region (eu, com)
+  cdnRegion: eu
+  # Enable URL passthrough
+  urlPassthrough: false
+  # Enable advertiser consent mode
+  AdvertiserConsentModeEnabled: false
