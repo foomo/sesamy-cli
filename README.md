@@ -21,7 +21,7 @@ $ brew install foomo/tap/sesamy-cli
 Add a `sesamy.yaml` configuration
 
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/foomo/sesamy-cli/v0.4.0/sesamy.yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/foomo/sesamy-cli/v0.4.1/sesamy.yaml
 version: '1.0'
 
 # Whether to redact the visitor ip
