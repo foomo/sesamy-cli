@@ -5,11 +5,13 @@ import (
 
 	"github.com/foomo/sesamy-cli/pkg/config"
 	servertagx "github.com/foomo/sesamy-cli/pkg/provider/googleads/server/tag"
-	"github.com/foomo/sesamy-cli/pkg/provider/googletag"
+	"github.com/foomo/sesamy-cli/pkg/provider/googleads/server/trigger"
+	"github.com/foomo/sesamy-cli/pkg/provider/googleconsent"
+	googleconsentvariable "github.com/foomo/sesamy-cli/pkg/provider/googleconsent/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
-	commontrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager/server/variable"
+	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
 )
 
@@ -44,15 +46,27 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) err
 		}
 
 		{ // create tags
-			eventParameters, err := googletag.CreateServerEventTriggers(tm, cfg.Conversion.ServerContainer)
+			eventParameters, err := utils.LoadEventParams(cfg.Conversion.ServerContainer)
 			if err != nil {
 				return err
 			}
 
 			for event := range eventParameters {
-				eventTrigger, err := tm.LookupTrigger(commontrigger.EventName(event))
+				var eventTriggerOpts []trigger.GoogleAdsEventOption
+				if cfg.GoogleConsent.Enabled {
+					if err := googleconsent.ServerEnsure(tm); err != nil {
+						return err
+					}
+					consentVariable, err := tm.LookupVariable(googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
+					if err != nil {
+						return err
+					}
+					eventTriggerOpts = append(eventTriggerOpts, trigger.GoogleAdsEventWithConsentMode(consentVariable))
+				}
+
+				eventTrigger, err := tm.UpsertTrigger(trigger.NewGoogleAdsEvent(event, eventTriggerOpts...))
 				if err != nil {
-					return errors.Wrap(err, "failed to lookup event trigger: "+event)
+					return errors.Wrap(err, "failed to upsert event trigger: "+event)
 				}
 
 				if _, err := tm.UpsertTag(servertagx.NewGoogleAdsConversionTracking(event, value, currency, conversionID, conversionLabel, eventTrigger)); err != nil {

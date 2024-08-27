@@ -9,5 +9,6 @@ type Facebook struct {
 	PixelID         string             `json:"pixelId" yaml:"pixelId"`
 	APIAccessToken  string             `json:"apiAccessToken" yaml:"apiAccessToken"`
 	TestEventToken  string             `json:"testEventToken" yaml:"testEventToken"`
+	GoogleConsent   GoogleConsent      `json:"googleConsent" yaml:"googleConsent"`
 	ServerContainer contemplate.Config `json:"serverContainer" yaml:"serverContainer"`
 }

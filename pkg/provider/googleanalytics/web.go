@@ -41,7 +41,7 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleAnalytics) error {
 				return errors.Wrap(err, "failed to lookup google tag event setting: "+event)
 			}
 
-			if _, err := tm.UpsertTag(containertag.NewGoogleAnalyticsGA4Event(event, tagID, eventSettings, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(containertag.NewGoogleAnalyticsEvent(event, tagID, eventSettings, eventTrigger)); err != nil {
 				return err
 			}
 		}

@@ -2,6 +2,7 @@ package tagmanager
 
 import (
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
+	cookiebotprovider "github.com/foomo/sesamy-cli/pkg/provider/cookiebot"
 	emarsysprovider "github.com/foomo/sesamy-cli/pkg/provider/emarsys"
 	googleanaylticsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics"
 	googletagprovider "github.com/foomo/sesamy-cli/pkg/provider/googletag"
@@ -43,19 +44,25 @@ func NewWeb(root *cobra.Command) {
 
 			if pkgcmd.Tag(googletagprovider.Tag, tags) {
 				if err := googletagprovider.Web(tm, cfg.GoogleTag); err != nil {
-					return errors.Wrap(err, "failed to provision google tag")
+					return errors.Wrap(err, "failed to provision google provider")
 				}
 			}
 
 			if cfg.GoogleAnalytics.Enabled && pkgcmd.Tag(googleanaylticsprovider.Tag, tags) {
 				if err := googleanaylticsprovider.Web(tm, cfg.GoogleAnalytics); err != nil {
-					return errors.Wrap(err, "failed to provision google analytics tag")
+					return errors.Wrap(err, "failed to provision google analytics provider")
 				}
 			}
 
 			if cfg.Emarsys.Enabled && pkgcmd.Tag(emarsysprovider.Tag, tags) {
 				if err := emarsysprovider.Web(tm, cfg.Emarsys); err != nil {
-					return errors.Wrap(err, "failed to provision emarsys tag")
+					return errors.Wrap(err, "failed to provision emarsys provider")
+				}
+			}
+
+			if cfg.Cookiebot.Enabled && pkgcmd.Tag(cookiebotprovider.Tag, tags) {
+				if err := cookiebotprovider.Web(tm, cfg.Cookiebot); err != nil {
+					return errors.Wrap(err, "failed to provision cookiebot provider")
 				}
 			}
 

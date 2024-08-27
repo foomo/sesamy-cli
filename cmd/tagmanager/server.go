@@ -7,7 +7,6 @@ import (
 	facebookprovider "github.com/foomo/sesamy-cli/pkg/provider/facebook"
 	googleadsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleads"
 	googleanalyticsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics"
-	googletagprovider "github.com/foomo/sesamy-cli/pkg/provider/googletag"
 	googletagmanagerprovider "github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
 	umamiprovider "github.com/foomo/sesamy-cli/pkg/provider/umami"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
@@ -44,12 +43,6 @@ func NewServer(root *cobra.Command) {
 			)
 			if err != nil {
 				return err
-			}
-
-			if pkgcmd.Tag(googletagprovider.Tag, tags) {
-				if err := googletagprovider.Server(tm); err != nil {
-					return errors.Wrap(err, "failed to provision google tag")
-				}
 			}
 
 			if pkgcmd.Tag(googletagmanagerprovider.Tag, tags) {

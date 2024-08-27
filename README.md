@@ -159,6 +159,12 @@ googleAnalytics:
     priority: 10
     # Patch ecommerce items
     ecommerceItems: true
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: analytics_storage
   # Google Tag Manager web container settings
   webContainer:
     # Contemplate package config for generated events
@@ -180,6 +186,12 @@ googleAnalytics:
 googleAds:
   # Enable provider
   enabled: true
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: ad_storage
   # Google Ads Conversion settings
   conversion:
     # Google Ads Conversion Tracking ID
@@ -210,6 +222,12 @@ umami:
   websiteId: ''
   # Endpoint url of the umami api
   endpointUrl: https://umami.your-domain.com
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: analytics_storage
   # Google Tag Manager server container settings
   serverContainer:
     # Contemplate package config for generated events
@@ -230,6 +248,12 @@ facebook:
   apiAccessToken: ''
   # Code used to verify that your server events are received correctly by Conversions API
   testEventToken: ''
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: ad_storage
   # Google Tag Manager server container settings
   serverContainer:
     # Contemplate package config for generated events
@@ -252,8 +276,12 @@ emarsys:
   enabled: true
   # Emarsys merchant id
   merchantId: ''
-  # Name of the event to mark as new page view
-  newPageViewEvent: '''
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: analytics_storage
   # Google Tag Manager server container settings
   serverContainer:
     # Contemplate package config for generated events
@@ -263,6 +291,22 @@ emarsys:
           - Purchase
           - ViewItem
           - ViewItemList
+
+# --- Cookiebot CMP
+cookiebot:
+  # Enable provider
+  enabled: true
+  # Name of the manually installed Cookiebot CMP tag template
+  # "https://tagmanager.google.com/gallery/#/owners/cybotcorp/templates/gtm-templates-cookiebot-cmp
+  templateName: "Cookiebot CMP"
+  # Cookiebot id
+  cookiebotId: ''
+  # CDN Region (eu, com)
+  cdnRegion: eu
+  # Enable URL passthrough
+  urlPassthrough: false
+  # Enable advertiser consent mode
+  AdvertiserConsentModeEnabled: false
 ```
 
 ## Caveats
