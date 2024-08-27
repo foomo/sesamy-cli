@@ -21,7 +21,7 @@ $ brew install foomo/tap/sesamy-cli
 Add a `sesamy.yaml` configuration
 
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/foomo/sesamy-cli/v0.3.0/sesamy.yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/foomo/sesamy-cli/v0.4.1/sesamy.yaml
 version: '1.0'
 
 # Whether to redact the visitor ip
@@ -211,6 +211,12 @@ googleAds:
 conversionLinker:
   # Enable provider
   enabled: true
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: ad_storage
 
 # --- Umami settings
 umami:
@@ -298,7 +304,7 @@ cookiebot:
   enabled: true
   # Name of the manually installed Cookiebot CMP tag template
   # "https://tagmanager.google.com/gallery/#/owners/cybotcorp/templates/gtm-templates-cookiebot-cmp
-  templateName: "Cookiebot CMP"
+  templateName: Cookiebot CMP
   # Cookiebot id
   cookiebotId: ''
   # CDN Region (eu, com)
