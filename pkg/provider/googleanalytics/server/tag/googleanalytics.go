@@ -7,14 +7,14 @@ import (
 	"google.golang.org/api/tagmanager/v2"
 )
 
-func GoogleAnalyticsGA4Name(v string) string {
+func GoogleAnalyticsName(v string) string {
 	return "GA4 - " + v
 }
 
-func NewGoogleAnalyticsGA4(name string, redactVisitorIP bool, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+func NewGoogleAnalytics(name string, redactVisitorIP bool, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	return &tagmanager.Tag{
 		FiringTriggerId: utils.TriggerIDs(triggers),
-		Name:            GoogleAnalyticsGA4Name(name),
+		Name:            GoogleAnalyticsName(name),
 		Parameter: []*tagmanager.Parameter{
 			{
 				Key:   "redactVisitorIp",

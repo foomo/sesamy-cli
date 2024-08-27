@@ -30,12 +30,6 @@ ___TEMPLATE_PARAMETERS___
     "simpleValueType": true
   },
   {
-    "type": "CHECKBOX",
-    "name": "isNewPageView",
-    "checkboxText": "New Page View",
-    "simpleValueType": true
-  },
-  {
     "type": "GROUP",
     "name": "consentSettingsGroup",
     "displayName": "Consent Settings",
@@ -130,7 +124,7 @@ function mapEventData() {
     customerId: eventData.user_id || null,
     sessionId: getCookieValues('emarsys_s')[0] || eventData.ga_session_id,
     pageViewId: eventData.page_view_id || generatePageViewId(),
-    isNewPageView: data.isNewPageView || !eventData.page_view_id,
+    isNewPageView: !eventData.page_view_id,
     visitorId: getCookieValues('emarsys_cdv')[0] || eventData.client_id,
     referrer: eventData.page_referrer || null,
     orderId: null,

@@ -5,11 +5,13 @@ import (
 	client2 "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/client"
 	containertag "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/tag"
 	template2 "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/template"
-	"github.com/foomo/sesamy-cli/pkg/provider/googletag"
+	"github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/trigger"
+	"github.com/foomo/sesamy-cli/pkg/provider/googleconsent"
+	googleconsentvariable "github.com/foomo/sesamy-cli/pkg/provider/googleconsent/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
-	commontrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
 	serverclient "github.com/foomo/sesamy-cli/pkg/tagmanager/server/client"
 	servertrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/server/trigger"
+	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
 )
 
@@ -57,18 +59,30 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitor
 	}
 
 	{ // create tags
-		eventParameters, err := googletag.CreateServerEventTriggers(tm, cfg.ServerContainer)
+		eventParameters, err := utils.LoadEventParams(cfg.ServerContainer)
 		if err != nil {
 			return err
 		}
 
 		for event := range eventParameters {
-			eventTrigger, err := tm.LookupTrigger(commontrigger.EventName(event))
-			if err != nil {
-				return errors.Wrap(err, "failed to lookup event trigger: "+event)
+			var eventTriggerOpts []trigger.GoogleAnalyticsEventOption
+			if cfg.GoogleConsent.Enabled {
+				if err := googleconsent.ServerEnsure(tm); err != nil {
+					return err
+				}
+				consentVariable, err := tm.LookupVariable(googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
+				if err != nil {
+					return err
+				}
+				eventTriggerOpts = append(eventTriggerOpts, trigger.GoogleAnalyticsEventWithConsentMode(consentVariable))
 			}
 
-			if _, err := tm.UpsertTag(containertag.NewGoogleAnalyticsGA4(event, redactVisitorIP, eventTrigger)); err != nil {
+			eventTrigger, err := tm.UpsertTrigger(trigger.NewGoogleAnalyticsEvent(event, eventTriggerOpts...))
+			if err != nil {
+				return errors.Wrap(err, "failed to upsert event trigger: "+event)
+			}
+
+			if _, err := tm.UpsertTag(containertag.NewGoogleAnalytics(event, redactVisitorIP, eventTrigger)); err != nil {
 				return errors.Wrap(err, "failed to upsert google analytics ga4 tag: "+event)
 			}
 		}

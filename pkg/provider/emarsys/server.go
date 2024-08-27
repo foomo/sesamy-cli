@@ -7,10 +7,12 @@ import (
 	serverclientx "github.com/foomo/sesamy-cli/pkg/provider/emarsys/server/client"
 	servertagx "github.com/foomo/sesamy-cli/pkg/provider/emarsys/server/tag"
 	"github.com/foomo/sesamy-cli/pkg/provider/emarsys/server/template"
-	"github.com/foomo/sesamy-cli/pkg/provider/googletag"
+	"github.com/foomo/sesamy-cli/pkg/provider/emarsys/server/trigger"
+	"github.com/foomo/sesamy-cli/pkg/provider/googleconsent"
+	googleconsentvariable "github.com/foomo/sesamy-cli/pkg/provider/googleconsent/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
-	commontrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
+	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
 )
 
@@ -45,18 +47,30 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Emarsys) error
 		}
 
 		{ // create tags
-			eventParameters, err := googletag.CreateServerEventTriggers(tm, cfg.ServerContainer)
+			eventParameters, err := utils.LoadEventParams(cfg.ServerContainer)
 			if err != nil {
 				return err
 			}
 
 			for event := range eventParameters {
-				eventTrigger, err := tm.LookupTrigger(commontrigger.EventName(event))
-				if err != nil {
-					return errors.Wrap(err, "failed to lookup event trigger: "+event)
+				var eventTriggerOpts []trigger.EmarsysEventOption
+				if cfg.GoogleConsent.Enabled {
+					if err := googleconsent.ServerEnsure(tm); err != nil {
+						return err
+					}
+					consentVariable, err := tm.LookupVariable(googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
+					if err != nil {
+						return err
+					}
+					eventTriggerOpts = append(eventTriggerOpts, trigger.EmarsysEventWithConsentMode(consentVariable))
 				}
 
-				if _, err := tm.UpsertTag(servertagx.NewEmarsys(event, cfg.NewPageViewEvent == eventTrigger.Name, merchantID, tagTemplate, eventTrigger)); err != nil {
+				eventTrigger, err := tm.UpsertTrigger(trigger.NewEmarsysEvent(event, eventTriggerOpts...))
+				if err != nil {
+					return errors.Wrap(err, "failed to upsert event trigger: "+event)
+				}
+
+				if _, err := tm.UpsertTag(servertagx.NewEmarsys(event, merchantID, tagTemplate, eventTrigger)); err != nil {
 					return err
 				}
 			}
