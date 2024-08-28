@@ -95,7 +95,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) err
 				return errors.Wrap(err, "failed to upsert event trigger: "+NameGoogleAdsRemarketingTrigger)
 			}
 
-			if _, err := tm.UpsertTag(servertagx.NewGoogleAdsRemarketing(Name, conversionID, cfg.Remarketing, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(servertagx.NewGoogleAdsRemarketing(NameGoogleAdsRemarketingTag, conversionID, cfg.Remarketing, eventTrigger)); err != nil {
 				return err
 			}
 		}
