@@ -186,16 +186,24 @@ googleAnalytics:
 googleAds:
   # Enable provider
   enabled: true
+  # Google Ads Conversion Tracking ID
+  conversionId: ''
   # Google Consent settings
   googleConsent:
     # Enable consent mode
     enabled: true
     # Consent mode name
     mode: ad_storage
+  # Google Ads Remarketing settings
+  remarketing:
+    # Enable Google Ads Remarketing
+    enabled: true
+    # Enable conversion linking
+    enableConversionLinker: true
   # Google Ads Conversion settings
   conversion:
-    # Google Ads Conversion Tracking ID
-    conversionId: ''
+    # Enable Google Ads Conversion
+    enabled: true
     # Google Ads Conversion Tracking Label
     conversionLabel: ''
     # Google Tag Manager server container settings
@@ -312,7 +320,7 @@ cookiebot:
   # Enable URL passthrough
   urlPassthrough: false
   # Enable advertiser consent mode
-  AdvertiserConsentModeEnabled: false
+  advertiserConsentModeEnabled: false
 ```
 
 ## Caveats
