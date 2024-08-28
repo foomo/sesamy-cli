@@ -24,12 +24,13 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) err
 		}
 	}
 
-	{ // conversion
-		conversionID, err := tm.UpsertVariable(commonvariable.NewConstant(NameConversionIDConstant, cfg.Conversion.ConversionID))
-		if err != nil {
-			return err
-		}
+	conversionID, err := tm.UpsertVariable(commonvariable.NewConstant(NameConversionIDConstant, cfg.ConversionID))
+	if err != nil {
+		return err
+	}
 
+	// conversion
+	if cfg.Conversion.Enabled {
 		conversionLabel, err := tm.UpsertVariable(commonvariable.NewConstant(NameConversionLabelConstant, cfg.Conversion.ConversionLabel))
 		if err != nil {
 			return err
@@ -72,6 +73,30 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) err
 				if _, err := tm.UpsertTag(servertagx.NewGoogleAdsConversionTracking(event, value, currency, conversionID, conversionLabel, eventTrigger)); err != nil {
 					return err
 				}
+			}
+		}
+
+		// remarketing
+		if cfg.Remarketing.Enabled {
+			var eventTriggerOpts []trigger.GoogleAdsRemarketingEventOption
+			if cfg.GoogleConsent.Enabled {
+				if err := googleconsent.ServerEnsure(tm); err != nil {
+					return err
+				}
+				consentVariable, err := tm.LookupVariable(googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
+				if err != nil {
+					return err
+				}
+				eventTriggerOpts = append(eventTriggerOpts, trigger.GoogleAdsRemarketingEventWithConsentMode(consentVariable))
+			}
+
+			eventTrigger, err := tm.UpsertTrigger(trigger.NewGoogleAdsRemarketingEvent(NameGoogleAdsRemarketingTrigger, eventTriggerOpts...))
+			if err != nil {
+				return errors.Wrap(err, "failed to upsert event trigger: "+NameGoogleAdsRemarketingTrigger)
+			}
+
+			if _, err := tm.UpsertTag(servertagx.NewGoogleAdsRemarketing(Name, conversionID, cfg.Remarketing, eventTrigger)); err != nil {
+				return err
 			}
 		}
 	}
