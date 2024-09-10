@@ -141,7 +141,7 @@ function mapEventData() {
       break;
     }
     case 'emarsys_category': {
-      mappedData.category = eventData.item_list_name;
+      mappedData.category = eventData.item_list_id;
       break;
     }
     case 'emarsys_purchase': {
@@ -159,7 +159,7 @@ function mapEventData() {
       break;
     }
     case 'view_item_list': {
-      mappedData.category = eventData.item_list_name;
+      mappedData.category = eventData.item_list_id;
       break;
     }
     case 'purchase': {
