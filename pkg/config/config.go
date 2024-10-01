@@ -13,5 +13,6 @@ type Config struct {
 	ConversionLinker ConversionLinker `json:"conversionLinker" yaml:"conversionLinker"`
 	Facebook         Facebook         `json:"facebook" yaml:"facebook"`
 	Emarsys          Emarsys          `json:"emarsys" yaml:"emarsys"`
+	Tracify          Tracify          `json:"tracify" yaml:"tracify"`
 	Umami            Umami            `json:"umami" yaml:"umami"`
 }

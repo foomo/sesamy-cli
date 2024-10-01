@@ -417,6 +417,53 @@
         "redactVisitorIp": {
             "type": "boolean"
         },
+        "tracify": {
+            "type": "object",
+            "properties": {
+                "customerSiteId": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "boolean"
+                },
+                "googleConsent": {
+                    "type": "object",
+                    "properties": {
+                        "enabled": {
+                            "type": "boolean"
+                        },
+                        "mode": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "serverContainer": {
+                    "type": "object",
+                    "properties": {
+                        "packages": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "path": {
+                                        "type": "string"
+                                    },
+                                    "types": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "token": {
+                    "type": "string"
+                }
+            }
+        },
         "umami": {
             "type": "object",
             "properties": {
