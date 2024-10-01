@@ -306,6 +306,31 @@ emarsys:
           - ViewItem
           - ViewItemList
 
+# --- Tracify
+tracify:
+  # Enable provider
+  enabled: true
+  # Tracify token
+  token: ''
+  # Tracify customer site id
+  customerSiteId: ''
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: analytics_storage
+  # Google Tag Manager server container settings
+  serverContainer:
+    # Contemplate package config for generated events
+    packages:
+      - path: github.com/foomo/sesamy-go/pkg/event
+        types:
+          - AddToCart
+          - PageView
+          - ViewItem
+          - Purchase
+
 # --- Cookiebot CMP
 cookiebot:
   # Enable provider

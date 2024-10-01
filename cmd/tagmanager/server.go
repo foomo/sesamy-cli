@@ -8,6 +8,7 @@ import (
 	googleadsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleads"
 	googleanalyticsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics"
 	googletagmanagerprovider "github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
+	tracifyprovider "github.com/foomo/sesamy-cli/pkg/provider/tracify"
 	umamiprovider "github.com/foomo/sesamy-cli/pkg/provider/umami"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	"github.com/pkg/errors"
@@ -90,6 +91,13 @@ func NewServer(root *cobra.Command) {
 				l.Info("🅿️ Running provider", "name", emarsysprovider.Name, "tag", emarsysprovider.Tag)
 				if err := emarsysprovider.Server(l, tm, cfg.Emarsys); err != nil {
 					return errors.Wrap(err, "failed to provision emarsys")
+				}
+			}
+
+			if cfg.Tracify.Enabled && pkgcmd.Tag(tracifyprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", tracifyprovider.Name, "tag", tracifyprovider.Tag)
+				if err := tracifyprovider.Server(l, tm, cfg.Tracify); err != nil {
+					return errors.Wrap(err, "failed to provision tracify")
 				}
 			}
 

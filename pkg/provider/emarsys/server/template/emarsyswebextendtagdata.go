@@ -105,16 +105,17 @@ if (!isConsentGivenOrNotRequired()) {
 // --- Main ---
 
 const mappedData = mapEventData();
-logToConsole(JSON.stringify(mappedData));
 
 return sendHttpGet(merchantUrl+'?'+serializeData(mappedData)).then((result) => {
-	if (result.statusCode >= 200 && result.statusCode < 300) {
-		setResponseBody(result.body);
-		data.gtmOnSuccess();
-	} else {
-		data.gtmOnFailure();
-	}
-	setResponseStatus(result.statusCode);
+  if (result.statusCode >= 200 && result.statusCode < 300) {
+	data.gtmOnSuccess();
+  } else {
+    logToConsole('[FAILURE]', {
+      request: mappedData,
+      eventData: eventData,
+    });
+	data.gtmOnFailure();
+  }
 });
 
 // --- Utils ---
