@@ -48,8 +48,8 @@ github.com/foomo/gocontemplate v0.1.4 h1:MYSsoltno9pNMU5NwALd7PNSQ1XjN1tpqMGWAhC
 github.com/foomo/gocontemplate v0.1.4/go.mod h1:BH8eODDwlqWhasSl86avbtMN3Zfgt4pWwr8/PBPM5v0=
 github.com/foomo/gostandards v0.1.0 h1:dN6Yoj5un74W8hooC+boYcdbkTzF9jqU39q5kQCkzn4=
 github.com/foomo/gostandards v0.1.0/go.mod h1:eyoFzndWb1kuDfupR/qf567mHeHZRi5//m64khreVac=
-github.com/foomo/sesamy-go v0.3.0 h1:heB3hlHtlHo6nk4l+nU66DHDRza/XhBltOSIv4i37bo=
-github.com/foomo/sesamy-go v0.3.0/go.mod h1:1XLhdMVvCC/mDSIG/g9JP2sRfxWoj1o454DQqmoXu3A=
+github.com/foomo/sesamy-go v0.4.0 h1:V3g3Da51xa+SFtfrTd/rQ2YTsgPqZl9RL59M4jwDuWg=
+github.com/foomo/sesamy-go v0.4.0/go.mod h1:2o6C5hVznZ0VXwXiH4APrCl0XMCh1Y6PrTh2VPWM+Io=
 github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
 github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
 github.com/fsnotify/fsnotify v1.7.0 h1:8JEhPFa5W2WU7YfeZzPNqzMP6Lwt7L2715Ggo0nosvA=
