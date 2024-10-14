@@ -234,6 +234,7 @@ function mapEventData() {
         origin: url.hostname,
         order_id: makeString(eventData.transaction_id),
         currency: eventData.currency,
+        cc: eventData.currency, // required due to API bug
         amount: amount(eventData.value),
       };
       event.data = mapItems(eventData.items || [], event.data);
@@ -245,6 +246,7 @@ function mapEventData() {
         origin: url.hostname,
         conversion_id: makeString(eventData.transaction_id),
         currency: eventData.currency,
+        cc: eventData.currency, // required due to API bug
         value: amount(eventData.value),
       };
       break;
