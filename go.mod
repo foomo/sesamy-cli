@@ -18,7 +18,7 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/wissance/stringFormatter v1.2.0
 	golang.org/x/exp v0.0.0-20240909161429-701f63a606c0
-	google.golang.org/api v0.200.0
+	google.golang.org/api v0.201.0
 )
 
 require (
