@@ -1,9 +1,13 @@
-# Sesamy CLI
-
 [![Build Status](https://github.com/foomo/sesamy-cli/actions/workflows/test.yml/badge.svg?branch=main&event=push)](https://github.com/foomo/sesamy-cli/actions/workflows/test.yml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/foomo/sesamy-cli)](https://goreportcard.com/report/github.com/foomo/sesamy-cli)
-[![godoc](https://godoc.org/github.com/foomo/sesamy-cli?status.svg)](https://godoc.org/github.com/foomo/sesamy-cli)
+[![GoDoc](https://godoc.org/github.com/foomo/sesamy-cli?status.svg)](https://godoc.org/github.com/foomo/sesamy-cli)
 [![goreleaser](https://github.com/foomo/sesamy-cli/actions/workflows/release.yml/badge.svg)](https://github.com/foomo/sesamy-cli/actions)
+
+<p align="center">
+  <img alt="sesamy" src=".github/assets/sesamy.png"/>
+</p>
+
+# Sesamy CLI
 
 > CLI to keep you sane while working with GTM.
 
@@ -17,6 +21,31 @@ $ brew install foomo/tap/sesamy-cli
 ````
 
 ## Usage
+
+```shell
+$ sesamy help
+Server Side Tag Management System
+
+Usage:
+  sesamy [command]
+
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  config      Print config
+  help        Help about any command
+  tagmanager  Provision Google Tag Manager containers
+  typescript  Generate typescript events
+  version     Print version
+
+Flags:
+  -c, --config string   config file (default is sesamy.yaml) (default "sesamy.yaml")
+  -h, --help            help for sesamy
+  -v, --verbose         output debug information
+
+Use "sesamy [command] --help" for more information about a command.
+```
+
+## Configuration
 
 Add a `sesamy.yaml` configuration
 
@@ -359,3 +388,5 @@ Make a pull request...
 ## License
 
 Distributed under MIT License, please see license file within the code for more details.
+
+_Made with ♥ [foomo](https://www.foomo.org) by [bestbytes](https://www.bestbytes.com)_
