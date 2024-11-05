@@ -166,15 +166,14 @@ function mapEventData() {
     data: {},
   };
 
-
   // Anonymized email address (optional, if available)
   if (eventData.user_id) {
     event.identity_dataidentity[anonymize(eventData.user_id)] = 1;
   }
   // Anonymized session id
-  if (sessionId) {
-    event.identity_data[anonymize(sessionId)] = 2;
-  }
+	if (remoteAddress && userAgent) {
+    event.identity_data[anonymize(remoteAddress+'|'+userAgent)] = 2;
+	}
   // Anonymized IP address
   if (remoteAddress) {
     event.identity_data[anonymize(remoteAddress)] = 3;
@@ -183,7 +182,6 @@ function mapEventData() {
   if (userAgent) {
     event.identity_data[anonymize(userAgent)] = 4;
   }
-
 
   const url = parseUrl(pageLocation);
   switch (eventData.event_name) {
