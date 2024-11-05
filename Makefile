@@ -1,6 +1,10 @@
 .DEFAULT_GOAL:=help
 -include .makerc
 
+# --- Config -----------------------------------------------------------------
+
+export PATH := bin:$(PATH)
+
 # --- Targets -----------------------------------------------------------------
 
 # This allows us to accept extra arguments
@@ -12,16 +16,16 @@
 .husky:
 	@if ! command -v husky &> /dev/null; then \
 		echo "ERROR: missing executeable 'husky', please run:"; \
-		echo "\n$ go install github.com/go-courier/husky/cmd/husky@latest\n"; \
+		echo "\n$ make brew\n"; \
 	fi
 	@git config core.hooksPath .husky
 
 ## === Tasks ===
 
-.PHONY: schema
-## Open go schemas
-schema:
-	@helm schema-gen sesamy.yaml > sesamy.schema.json
+.PHONY: brew
+## Install project binaries
+brew:
+	@ownbrew install
 
 .PHONY: doc
 ## Open go docs
