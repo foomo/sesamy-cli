@@ -12,6 +12,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/config"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/api/option"
@@ -20,6 +21,7 @@ import (
 
 func TestNewClient_Web(t *testing.T) {
 	testingx.Tags(t, tagx.Skip)
+	require.NoError(t, godotenv.Load("../../.env"))
 
 	c, err := tagmanager.New(
 		context.TODO(),

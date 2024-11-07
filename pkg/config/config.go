@@ -23,6 +23,8 @@ type Config struct {
 	Facebook Facebook `json:"facebook" yaml:"facebook"`
 	// Emarsys provider settings
 	Emarsys Emarsys `json:"emarsys" yaml:"emarsys"`
+	// Hotjar provider settings
+	Hotjar Hotjar `json:"hotjar" yaml:"hotjar"`
 	// Tracify provider settings
 	Tracify Tracify `json:"tracify" yaml:"tracify"`
 	// Umami provider settings

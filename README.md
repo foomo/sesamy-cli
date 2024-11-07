@@ -51,6 +51,7 @@ Add a `sesamy.yaml` configuration
 
 ```yaml
 # yaml-language-server: $schema=https://raw.githubusercontent.com/foomo/sesamy-cli/v0.4.1/sesamy.yaml
+# yaml-language-server: $schema=sesamy.schema.json
 version: '1.0'
 
 # Whether to redact the visitor ip
@@ -68,49 +69,33 @@ googleApi:
 # --- Google Tag Manager settings
 googleTagManager:
   # The account id
-  accountId: 6099238525
+  accountId: '6099238525'
   # Web container settings
   webContainer:
     # The container tag id
     tagId: GTM-57BHX34G
     # The container id
-    containerId: 175355532
+    containerId: '175355532'
     # The workspace id that should be used by the api
-    workspaceId: 23
+    workspaceId: '23'
   # Server container settings
   serverContainer:
     # The container tag id
     tagId: GTM-5NWPR4QW
     # The container id
-    containerId: 175348980
+    containerId: '175348980'
     # The workspace id that should be used by the api
-    workspaceId: 10
+    workspaceId: '10'
 
 # --- Google Tag settings
 googleTag:
   # A tag ID is an identifier that you put on your page to load a given Google tag
   tagId: G-PZ5ELRCR31
-  # Whether a page_view should be sent on initial load
-  sendPageView: true
   # Enable debug mode for all user devices
   debugMode: false
-  # Google Tag Manager web container settings
-  webContainer:
-    # Contemplate package config for generated events
-    packages:
-      - path: github.com/foomo/sesamy-go/pkg/event
-        types:
-          - PageView
-          - SelectItem
-  # Google Tag Manager server container settings
-  serverContainer:
-    # Contemplate package config for generated events
-    packages:
-      - path: github.com/foomo/sesamy-go/pkg/event
-        types:
-          - PageView
-          - SelectItem
-  # Google Tag Manager web container settings
+  # Whether a page_view should be sent on initial load
+  sendPageView: true
+  # TypeScript settings
   typeScript:
     # Target directory for generate files
     outputPath: path/to/target
@@ -174,7 +159,6 @@ googleTag:
           - ViewItemList
           - ViewPromotion
           - WorkingLead
-
 
 # --- Google Analytics settings
 googleAnalytics:
@@ -291,13 +275,13 @@ facebook:
   apiAccessToken: ''
   # Code used to verify that your server events are received correctly by Conversions API
   testEventToken: ''
+  # Google Tag Manager server container settings
   # Google Consent settings
   googleConsent:
     # Enable consent mode
     enabled: true
     # Consent mode name
     mode: ad_storage
-  # Google Tag Manager server container settings
   serverContainer:
     # Contemplate package config for generated events
     packages:
@@ -359,6 +343,13 @@ tracify:
           - PageView
           - ViewItem
           - Purchase
+
+# --- Hotjar
+hotjar:
+  # Enable provider
+  enabled: true
+  # Hotjar site id
+  siteId: 123456
 
 # --- Cookiebot CMP
 cookiebot:

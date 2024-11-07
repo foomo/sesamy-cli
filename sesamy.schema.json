@@ -1,9 +1,42 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/foomo/sesamy-cli/pkg/config/config",
-  "$ref": "#/$defs/Config",
+  "$id": "https://github.com/foomo/sesamy-cli/pkg/config/github.com.foomo.sesamy-cli.pkg.config.-config",
+  "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Config",
   "$defs": {
-    "Config": {
+    "[]*contemplate.PackageConfig": {
+      "items": {
+        "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.PackageConfig"
+      },
+      "type": "array"
+    },
+    "[]string": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "github.com.foomo.gocontemplate.pkg.contemplate.Config": {
+      "properties": {
+        "packages": {
+          "$ref": "#/$defs/[]*contemplate.PackageConfig"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.gocontemplate.pkg.contemplate.PackageConfig": {
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "types": {
+          "$ref": "#/$defs/[]string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.Config": {
       "properties": {
         "version": {
           "type": "string",
@@ -14,85 +47,73 @@
           "description": "Globally redact visitor ip"
         },
         "googleTag": {
-          "$ref": "#/$defs/GoogleTag",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTag",
           "description": "Google Tag settings"
         },
         "googleApi": {
-          "$ref": "#/$defs/GoogleAPI",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAPI",
           "description": "Google API settings"
         },
         "googleTagManager": {
-          "$ref": "#/$defs/GoogleTagManager",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManager",
           "description": "Google Tag Manager settings"
         },
         "googleAds": {
-          "$ref": "#/$defs/GoogleAds",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAds",
           "description": "Google Ads provider settings"
         },
         "cookiebot": {
-          "$ref": "#/$defs/Cookiebot",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Cookiebot",
           "description": "CookieBot provider settings"
         },
         "googleAnalytics": {
-          "$ref": "#/$defs/GoogleAnalytics",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAnalytics",
           "description": "Google Analytics provider settings"
         },
         "conversionLinker": {
-          "$ref": "#/$defs/ConversionLinker",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.ConversionLinker",
           "description": "Conversion Linker provider settings"
         },
         "facebook": {
-          "$ref": "#/$defs/Facebook",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Facebook",
           "description": "Facebook provider settings"
         },
         "emarsys": {
-          "$ref": "#/$defs/Emarsys",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Emarsys",
           "description": "Emarsys provider settings"
         },
+        "hotjar": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Hotjar",
+          "description": "Hotjar provider settings"
+        },
         "tracify": {
-          "$ref": "#/$defs/Tracify",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Tracify",
           "description": "Tracify provider settings"
         },
         "umami": {
-          "$ref": "#/$defs/Umami",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Umami",
           "description": "Umami provider settings"
         }
       },
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "version",
-        "redactVisitorIp",
-        "googleTag",
-        "googleApi",
-        "googleTagManager",
-        "googleAds",
-        "cookiebot",
-        "googleAnalytics",
-        "conversionLinker",
-        "facebook",
-        "emarsys",
-        "tracify",
-        "umami"
+        "version"
       ]
     },
-    "ConversionLinker": {
+    "github.com.foomo.sesamy-cli.pkg.config.ConversionLinker": {
       "properties": {
         "enabled": {
           "type": "boolean"
         },
         "googleConsent": {
-          "$ref": "#/$defs/GoogleConsent"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent"
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "enabled",
-        "googleConsent"
-      ]
+      "type": "object"
     },
-    "Cookiebot": {
+    "github.com.foomo.sesamy-cli.pkg.config.Cookiebot": {
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -114,45 +135,35 @@
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "enabled",
-        "templateName",
-        "cookiebotId",
-        "cdnRegion",
-        "urlPassthrough",
-        "advertiserConsentModeEnabled"
-      ]
+      "type": "object"
     },
-    "Emarsys": {
+    "github.com.foomo.sesamy-cli.pkg.config.Emarsys": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable provider"
         },
         "merchantId": {
-          "type": "string"
+          "type": "string",
+          "description": "Emarsys merchant id"
         },
         "googleConsent": {
-          "$ref": "#/$defs/GoogleConsent"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
+          "description": "Google Consent settings"
         },
         "webContainer": {
-          "$ref": "#/$defs/Config"
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
+          "description": "Google Tag Manager web container settings"
         },
         "serverContainer": {
-          "$ref": "#/$defs/Config"
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
+          "description": "Google Tag Manager server container settings"
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "enabled",
-        "merchantId",
-        "googleConsent",
-        "webContainer",
-        "serverContainer"
-      ]
+      "type": "object"
     },
-    "Facebook": {
+    "github.com.foomo.sesamy-cli.pkg.config.Facebook": {
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -167,24 +178,16 @@
           "type": "string"
         },
         "googleConsent": {
-          "$ref": "#/$defs/GoogleConsent"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent"
         },
         "serverContainer": {
-          "$ref": "#/$defs/Config"
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config"
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "enabled",
-        "pixelId",
-        "apiAccessToken",
-        "testEventToken",
-        "googleConsent",
-        "serverContainer"
-      ]
+      "type": "object"
     },
-    "GoogleAPI": {
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleAPI": {
       "properties": {
         "credentials": {
           "type": "string"
@@ -197,42 +200,30 @@
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "credentials",
-        "credentialsFile",
-        "requestQuota"
-      ]
+      "type": "object"
     },
-    "GoogleAds": {
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleAds": {
       "properties": {
         "enabled": {
           "type": "boolean"
         },
         "googleConsent": {
-          "$ref": "#/$defs/GoogleConsent"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent"
         },
         "conversionId": {
           "type": "string"
         },
         "conversion": {
-          "$ref": "#/$defs/GoogleAdsConversion"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversion"
         },
         "remarketing": {
-          "$ref": "#/$defs/GoogleAdsRemarketing"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAdsRemarketing"
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "enabled",
-        "googleConsent",
-        "conversionId",
-        "conversion",
-        "remarketing"
-      ]
+      "type": "object"
     },
-    "GoogleAdsConversion": {
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversion": {
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -241,18 +232,13 @@
           "type": "string"
         },
         "serverContainer": {
-          "$ref": "#/$defs/Config"
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config"
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "enabled",
-        "conversionLabel",
-        "serverContainer"
-      ]
+      "type": "object"
     },
-    "GoogleAdsRemarketing": {
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleAdsRemarketing": {
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -262,41 +248,30 @@
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "enabled",
-        "enableConversionLinker"
-      ]
+      "type": "object"
     },
-    "GoogleAnalytics": {
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleAnalytics": {
       "properties": {
         "enabled": {
           "type": "boolean"
         },
         "googleGTag": {
-          "$ref": "#/$defs/GoogleGTag"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleGTag"
         },
         "googleConsent": {
-          "$ref": "#/$defs/GoogleConsent"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent"
         },
         "webContainer": {
-          "$ref": "#/$defs/Config"
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config"
         },
         "serverContainer": {
-          "$ref": "#/$defs/Config"
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config"
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "enabled",
-        "googleGTag",
-        "googleConsent",
-        "webContainer",
-        "serverContainer"
-      ]
+      "type": "object"
     },
-    "GoogleConsent": {
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleConsent": {
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -306,13 +281,9 @@
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "enabled",
-        "mode"
-      ]
+      "type": "object"
     },
-    "GoogleGTag": {
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleGTag": {
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -325,58 +296,46 @@
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "enabled",
-        "priority",
-        "ecommerceItems"
-      ]
+      "type": "object"
     },
-    "GoogleTag": {
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleTag": {
       "properties": {
         "tagId": {
-          "type": "string"
+          "type": "string",
+          "description": "A tag ID is an identifier that you put on your page to load a given Google tag"
         },
         "debugMode": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable debug mode for all user devices"
         },
         "sendPageView": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Whether a page_view should be sent on initial load"
         },
         "typeScript": {
-          "$ref": "#/$defs/TypeScript"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.TypeScript",
+          "description": "TypeScript settings"
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "tagId",
-        "debugMode",
-        "sendPageView",
-        "typeScript"
-      ]
+      "type": "object"
     },
-    "GoogleTagManager": {
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleTagManager": {
       "properties": {
         "accountId": {
           "type": "string"
         },
         "webContainer": {
-          "$ref": "#/$defs/GoogleTagManagerContainer"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerContainer"
         },
         "serverContainer": {
-          "$ref": "#/$defs/GoogleTagManagerContainer"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerContainer"
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "accountId",
-        "webContainer",
-        "serverContainer"
-      ]
+      "type": "object"
     },
-    "GoogleTagManagerContainer": {
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerContainer": {
       "properties": {
         "tagId": {
           "type": "string"
@@ -389,80 +348,59 @@
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "tagId",
-        "containerId",
-        "workspaceId"
-      ]
+      "type": "object"
     },
-    "PackageConfig": {
-      "properties": {
-        "path": {
-          "type": "string"
-        },
-        "types": {
-          "items": {
-            "type": "string"
-          },
-          "type": "array"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "path",
-        "types"
-      ]
-    },
-    "Tracify": {
+    "github.com.foomo.sesamy-cli.pkg.config.Hotjar": {
       "properties": {
         "enabled": {
           "type": "boolean"
         },
-        "token": {
+        "siteId": {
           "type": "string"
-        },
-        "customerSiteId": {
-          "type": "string"
-        },
-        "googleConsent": {
-          "$ref": "#/$defs/GoogleConsent"
-        },
-        "serverContainer": {
-          "$ref": "#/$defs/Config"
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "enabled",
-        "token",
-        "customerSiteId",
-        "googleConsent",
-        "serverContainer"
-      ]
+      "type": "object"
     },
-    "TypeScript": {
+    "github.com.foomo.sesamy-cli.pkg.config.Tracify": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable provider"
+        },
+        "token": {
+          "type": "string",
+          "description": "Tracify token"
+        },
+        "customerSiteId": {
+          "type": "string",
+          "description": "Tracify customer site id"
+        },
+        "googleConsent": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
+          "description": "Google Consent settings"
+        },
+        "serverContainer": {
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
+          "description": "Google Tag Manager server container settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.TypeScript": {
       "properties": {
         "packages": {
-          "items": {
-            "$ref": "#/$defs/PackageConfig"
-          },
-          "type": "array"
+          "$ref": "#/$defs/[]*contemplate.PackageConfig"
         },
         "outputPath": {
           "type": "string"
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "packages",
-        "outputPath"
-      ]
+      "type": "object"
     },
-    "Umami": {
+    "github.com.foomo.sesamy-cli.pkg.config.Umami": {
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -477,22 +415,14 @@
           "type": "string"
         },
         "googleConsent": {
-          "$ref": "#/$defs/GoogleConsent"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent"
         },
         "serverContainer": {
-          "$ref": "#/$defs/Config"
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config"
         }
       },
       "additionalProperties": false,
-      "type": "object",
-      "required": [
-        "enabled",
-        "domain",
-        "websiteId",
-        "endpointUrl",
-        "googleConsent",
-        "serverContainer"
-      ]
+      "type": "object"
     }
   }
 }
