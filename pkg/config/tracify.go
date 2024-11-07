@@ -5,9 +5,14 @@ import (
 )
 
 type Tracify struct {
-	Enabled         bool               `json:"enabled" yaml:"enabled"`
-	Token           string             `json:"token" yaml:"token"`
-	CustomerSiteID  string             `json:"customerSiteId" yaml:"customerSiteId"`
-	GoogleConsent   GoogleConsent      `json:"googleConsent" yaml:"googleConsent"`
+	// Enable provider
+	Enabled bool `json:"enabled" yaml:"enabled"`
+	// Tracify token
+	Token string `json:"token" yaml:"token"`
+	// Tracify customer site id
+	CustomerSiteID string `json:"customerSiteId" yaml:"customerSiteId"`
+	// Google Consent settings
+	GoogleConsent GoogleConsent `json:"googleConsent" yaml:"googleConsent"`
+	// Google Tag Manager server container settings
 	ServerContainer contemplate.Config `json:"serverContainer" yaml:"serverContainer"`
 }

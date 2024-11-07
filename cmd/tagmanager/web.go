@@ -6,6 +6,7 @@ import (
 	emarsysprovider "github.com/foomo/sesamy-cli/pkg/provider/emarsys"
 	googleanaylticsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics"
 	googletagprovider "github.com/foomo/sesamy-cli/pkg/provider/googletag"
+	hotjarprovider "github.com/foomo/sesamy-cli/pkg/provider/hotjar"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -57,6 +58,12 @@ func NewWeb(root *cobra.Command) {
 			if cfg.Emarsys.Enabled && pkgcmd.Tag(emarsysprovider.Tag, tags) {
 				if err := emarsysprovider.Web(tm, cfg.Emarsys); err != nil {
 					return errors.Wrap(err, "failed to provision emarsys provider")
+				}
+			}
+
+			if cfg.Hotjar.Enabled && pkgcmd.Tag(hotjarprovider.Tag, tags) {
+				if err := hotjarprovider.Web(tm, cfg.Hotjar); err != nil {
+					return errors.Wrap(err, "failed to provision hotjar provider")
 				}
 			}
 

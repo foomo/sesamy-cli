@@ -5,6 +5,8 @@ import (
 	"errors"
 	"os"
 	"path"
+	"reflect"
+	"strings"
 	"testing"
 
 	testingx "github.com/foomo/go/testing"
@@ -22,6 +24,13 @@ func TestConfig(t *testing.T) {
 	require.NoError(t, err)
 
 	reflector := new(jsonschema.Reflector)
+	reflector.RequiredFromJSONSchemaTags = true
+	reflector.Namer = func(t reflect.Type) string {
+		if t.Name() == "" {
+			return t.String()
+		}
+		return strings.ReplaceAll(t.PkgPath(), "/", ".") + "." + t.Name()
+	}
 	require.NoError(t, reflector.AddGoComments("github.com/foomo/sesamy-cli", "./"))
 	schema := reflector.Reflect(&config.Config{})
 	actual, err := json.MarshalIndent(schema, "", "  ")
