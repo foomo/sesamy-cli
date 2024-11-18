@@ -25,6 +25,8 @@ type Config struct {
 	Emarsys Emarsys `json:"emarsys" yaml:"emarsys"`
 	// Hotjar provider settings
 	Hotjar Hotjar `json:"hotjar" yaml:"hotjar"`
+	// Criteo provider settings
+	Criteo Criteo `json:"criteo" yaml:"criteo"`
 	// Tracify provider settings
 	Tracify Tracify `json:"tracify" yaml:"tracify"`
 	// Umami provider settings

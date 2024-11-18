@@ -9,7 +9,7 @@ func TracifyName(v string) string {
 	return "Tracify - " + v
 }
 
-func NewTracify(name string, customerSiteID, token *tagmanager.Variable, template *tagmanager.CustomTemplate, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+func NewTracify(name string, token, customerSiteID *tagmanager.Variable, template *tagmanager.CustomTemplate, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	return &tagmanager.Tag{
 		FiringTriggerId: utils.TriggerIDs(triggers),
 		Name:            TracifyName(name),
