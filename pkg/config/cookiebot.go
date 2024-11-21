@@ -1,6 +1,7 @@
 package config
 
 type Cookiebot struct {
+	// Enable provider
 	Enabled                      bool   `json:"enabled" yaml:"enabled"`
 	TemplateName                 string `json:"templateName" yaml:"templateName"`
 	CookiebotID                  string `json:"cookiebotId" yaml:"cookiebotId"`

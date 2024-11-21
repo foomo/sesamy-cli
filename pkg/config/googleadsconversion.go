@@ -5,7 +5,9 @@ import (
 )
 
 type GoogleAdsConversion struct {
-	Enabled         bool               `json:"enabled" yaml:"enabled"`
-	ConversionLabel string             `json:"conversionLabel" yaml:"conversionLabel"`
+	// Enable provider
+	Enabled         bool   `json:"enabled" yaml:"enabled"`
+	ConversionLabel string `json:"conversionLabel" yaml:"conversionLabel"`
+	// Google Tag Manager server container settings
 	ServerContainer contemplate.Config `json:"serverContainer" yaml:"serverContainer"`
 }

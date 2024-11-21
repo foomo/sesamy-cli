@@ -86,6 +86,10 @@
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Hotjar",
           "description": "Hotjar provider settings"
         },
+        "criteo": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Criteo",
+          "description": "Criteo provider settings"
+        },
         "tracify": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Tracify",
           "description": "Tracify provider settings"
@@ -104,10 +108,12 @@
     "github.com.foomo.sesamy-cli.pkg.config.ConversionLinker": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable provider"
         },
         "googleConsent": {
-          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
+          "description": "Google Consent settings"
         }
       },
       "additionalProperties": false,
@@ -116,7 +122,8 @@
     "github.com.foomo.sesamy-cli.pkg.config.Cookiebot": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable provider"
         },
         "templateName": {
           "type": "string"
@@ -132,6 +139,32 @@
         },
         "advertiserConsentModeEnabled": {
           "type": "boolean"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.Criteo": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable provider"
+        },
+        "callerId": {
+          "type": "string",
+          "description": "Criteo caller id"
+        },
+        "partnerId": {
+          "type": "string",
+          "description": "Criteo partner id"
+        },
+        "googleConsent": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
+          "description": "Google Consent settings"
+        },
+        "serverContainer": {
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
+          "description": "Google Tag Manager server container settings"
         }
       },
       "additionalProperties": false,
@@ -166,7 +199,8 @@
     "github.com.foomo.sesamy-cli.pkg.config.Facebook": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable provider"
         },
         "pixelId": {
           "type": "string"
@@ -178,10 +212,12 @@
           "type": "string"
         },
         "googleConsent": {
-          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
+          "description": "Google Consent settings"
         },
         "serverContainer": {
-          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config"
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
+          "description": "Google Tag Manager server container settings"
         }
       },
       "additionalProperties": false,
@@ -205,10 +241,12 @@
     "github.com.foomo.sesamy-cli.pkg.config.GoogleAds": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable provider"
         },
         "googleConsent": {
-          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
+          "description": "Google Consent settings"
         },
         "conversionId": {
           "type": "string"
@@ -226,13 +264,15 @@
     "github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversion": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable provider"
         },
         "conversionLabel": {
           "type": "string"
         },
         "serverContainer": {
-          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config"
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
+          "description": "Google Tag Manager server container settings"
         }
       },
       "additionalProperties": false,
@@ -241,7 +281,8 @@
     "github.com.foomo.sesamy-cli.pkg.config.GoogleAdsRemarketing": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable provider"
         },
         "enableConversionLinker": {
           "type": "boolean"
@@ -253,19 +294,22 @@
     "github.com.foomo.sesamy-cli.pkg.config.GoogleAnalytics": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable provider"
         },
         "googleGTag": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleGTag"
         },
         "googleConsent": {
-          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
+          "description": "Google Consent settings"
         },
         "webContainer": {
           "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config"
         },
         "serverContainer": {
-          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config"
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
+          "description": "Google Tag Manager server container settings"
         }
       },
       "additionalProperties": false,
@@ -274,7 +318,8 @@
     "github.com.foomo.sesamy-cli.pkg.config.GoogleConsent": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable provider"
         },
         "mode": {
           "type": "string"
@@ -286,7 +331,8 @@
     "github.com.foomo.sesamy-cli.pkg.config.GoogleGTag": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable provider"
         },
         "priority": {
           "type": "integer"
@@ -329,7 +375,8 @@
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerContainer"
         },
         "serverContainer": {
-          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerContainer"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerContainer",
+          "description": "Google Tag Manager server container settings"
         }
       },
       "additionalProperties": false,
@@ -353,7 +400,8 @@
     "github.com.foomo.sesamy-cli.pkg.config.Hotjar": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable provider"
         },
         "siteId": {
           "type": "string"
@@ -403,7 +451,8 @@
     "github.com.foomo.sesamy-cli.pkg.config.Umami": {
       "properties": {
         "enabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "Enable provider"
         },
         "domain": {
           "type": "string"
@@ -415,10 +464,12 @@
           "type": "string"
         },
         "googleConsent": {
-          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
+          "description": "Google Consent settings"
         },
         "serverContainer": {
-          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config"
+          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
+          "description": "Google Tag Manager server container settings"
         }
       },
       "additionalProperties": false,

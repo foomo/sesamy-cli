@@ -3,6 +3,7 @@ package tagmanager
 import (
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
 	cookiebotprovider "github.com/foomo/sesamy-cli/pkg/provider/cookiebot"
+	criteoprovider "github.com/foomo/sesamy-cli/pkg/provider/criteo"
 	emarsysprovider "github.com/foomo/sesamy-cli/pkg/provider/emarsys"
 	googleanaylticsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics"
 	googletagprovider "github.com/foomo/sesamy-cli/pkg/provider/googletag"
@@ -64,6 +65,12 @@ func NewWeb(root *cobra.Command) {
 			if cfg.Hotjar.Enabled && pkgcmd.Tag(hotjarprovider.Tag, tags) {
 				if err := hotjarprovider.Web(tm, cfg.Hotjar); err != nil {
 					return errors.Wrap(err, "failed to provision hotjar provider")
+				}
+			}
+
+			if cfg.Criteo.Enabled && pkgcmd.Tag(criteoprovider.Tag, tags) {
+				if err := criteoprovider.Web(l, tm, cfg.Criteo); err != nil {
+					return errors.Wrap(err, "failed to provision criteo provider")
 				}
 			}
 

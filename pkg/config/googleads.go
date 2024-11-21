@@ -1,7 +1,9 @@
 package config
 
 type GoogleAds struct {
-	Enabled       bool                 `json:"enabled" yaml:"enabled"`
+	// Enable provider
+	Enabled bool `json:"enabled" yaml:"enabled"`
+	// Google Consent settings
 	GoogleConsent GoogleConsent        `json:"googleConsent" yaml:"googleConsent"`
 	ConversionID  string               `json:"conversionId" yaml:"conversionId"`
 	Conversion    GoogleAdsConversion  `json:"conversion" yaml:"conversion"`

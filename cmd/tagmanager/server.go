@@ -3,6 +3,7 @@ package tagmanager
 import (
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
 	conversionlinkerprovider "github.com/foomo/sesamy-cli/pkg/provider/conversionlinker"
+	criteoprovider "github.com/foomo/sesamy-cli/pkg/provider/criteo"
 	emarsysprovider "github.com/foomo/sesamy-cli/pkg/provider/emarsys"
 	facebookprovider "github.com/foomo/sesamy-cli/pkg/provider/facebook"
 	googleadsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleads"
@@ -98,6 +99,13 @@ func NewServer(root *cobra.Command) {
 				l.Info("🅿️ Running provider", "name", tracifyprovider.Name, "tag", tracifyprovider.Tag)
 				if err := tracifyprovider.Server(l, tm, cfg.Tracify); err != nil {
 					return errors.Wrap(err, "failed to provision tracify")
+				}
+			}
+
+			if cfg.Criteo.Enabled && pkgcmd.Tag(criteoprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", criteoprovider.Name, "tag", criteoprovider.Tag)
+				if err := criteoprovider.Server(l, tm, cfg.Criteo); err != nil {
+					return errors.Wrap(err, "failed to provision criteo")
 				}
 			}
 
