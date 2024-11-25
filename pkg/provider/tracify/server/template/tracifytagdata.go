@@ -168,7 +168,7 @@ function mapEventData() {
 
   // Anonymized email address (optional, if available)
   if (eventData.user_id) {
-    event.identity_dataidentity[anonymize(eventData.user_id)] = 1;
+    event.identity_data[anonymize(eventData.user_id)] = 1;
   }
   // Anonymized session id
 	if (remoteAddress && userAgent) {
