@@ -249,13 +249,16 @@
           "description": "Google Consent settings"
         },
         "conversionId": {
-          "type": "string"
+          "type": "string",
+          "description": "Conversion id"
         },
         "conversion": {
-          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversion"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversion",
+          "description": "Google Ads Conversion settings"
         },
         "remarketing": {
-          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAdsRemarketing"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAdsRemarketing",
+          "description": "Google Ads Remarketing settings"
         }
       },
       "additionalProperties": false,
@@ -267,12 +270,18 @@
           "type": "boolean",
           "description": "Enable provider"
         },
-        "conversionLabel": {
-          "type": "string"
-        },
         "serverContainer": {
-          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.ServerContainer",
           "description": "Google Tag Manager server container settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversionTracking": {
+      "properties": {
+        "label": {
+          "type": "string"
         }
       },
       "additionalProperties": false,
@@ -410,6 +419,18 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "github.com.foomo.sesamy-cli.pkg.config.ServerContainer": {
+      "properties": {
+        "packages": {
+          "$ref": "#/$defs/[]*contemplate.PackageConfig"
+        },
+        "settings": {
+          "$ref": "#/$defs/map[string]config.GoogleAdsConversionTracking"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "github.com.foomo.sesamy-cli.pkg.config.Tracify": {
       "properties": {
         "enabled": {
@@ -473,6 +494,12 @@
         }
       },
       "additionalProperties": false,
+      "type": "object"
+    },
+    "map[string]config.GoogleAdsConversionTracking": {
+      "additionalProperties": {
+        "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversionTracking"
+      },
       "type": "object"
     }
   }

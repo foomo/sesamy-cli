@@ -78,6 +78,7 @@ func New(ctx context.Context, l *slog.Logger, accountID string, container config
 		notes:            "Managed by Sesamy. DO NOT EDIT.",
 		folderName:       "Sesamy",
 		clientOptions: []option.ClientOption{
+			option.WithLogger(l),
 			option.WithRequestReason("Sesamy container provisioning"),
 		},
 	}

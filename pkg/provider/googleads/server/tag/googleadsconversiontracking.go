@@ -1,6 +1,7 @@
 package tag
 
 import (
+	"github.com/foomo/sesamy-cli/pkg/config"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"google.golang.org/api/tagmanager/v2"
 )
@@ -9,7 +10,7 @@ func GoogleAdsConversionTrackingName(v string) string {
 	return "GAds Conversion - " + v
 }
 
-func NewGoogleAdsConversionTracking(name string, value, currency, conversionID, conversionLabel *tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+func NewGoogleAdsConversionTracking(name string, value, currency, conversionID *tagmanager.Variable, settings config.GoogleAdsConversionTracking, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	return &tagmanager.Tag{
 		FiringTriggerId: utils.TriggerIDs(triggers),
 		Name:            GoogleAdsConversionTrackingName(name),
@@ -48,7 +49,7 @@ func NewGoogleAdsConversionTracking(name string, value, currency, conversionID, 
 			{
 				Key:   "conversionLabel",
 				Type:  "template",
-				Value: "{{" + conversionLabel.Name + "}}",
+				Value: settings.Label,
 			},
 			{
 				Key:   "rdp",

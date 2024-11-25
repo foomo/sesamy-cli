@@ -31,11 +31,6 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) err
 
 	// conversion
 	if cfg.Conversion.Enabled {
-		conversionLabel, err := tm.UpsertVariable(commonvariable.NewConstant(NameConversionLabelConstant, cfg.Conversion.ConversionLabel))
-		if err != nil {
-			return err
-		}
-
 		value, err := tm.UpsertVariable(variable.NewEventData("value"))
 		if err != nil {
 			return err
@@ -47,7 +42,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) err
 		}
 
 		{ // create tags
-			eventParameters, err := utils.LoadEventParams(cfg.Conversion.ServerContainer)
+			eventParameters, err := utils.LoadEventParams(cfg.Conversion.ServerContainer.Config)
 			if err != nil {
 				return err
 			}
@@ -70,7 +65,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) err
 					return errors.Wrap(err, "failed to upsert event trigger: "+event)
 				}
 
-				if _, err := tm.UpsertTag(servertagx.NewGoogleAdsConversionTracking(event, value, currency, conversionID, conversionLabel, eventTrigger)); err != nil {
+				if _, err := tm.UpsertTag(servertagx.NewGoogleAdsConversionTracking(event, value, currency, conversionID, cfg.Conversion.ServerContainer.Setting(event), eventTrigger)); err != nil {
 					return err
 				}
 			}
