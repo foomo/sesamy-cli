@@ -78,6 +78,10 @@
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Facebook",
           "description": "Facebook provider settings"
         },
+        "microsoftAds": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.MicrosoftAds",
+          "description": "MicrosoftAds provider settings"
+        },
         "emarsys": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Emarsys",
           "description": "Emarsys provider settings"
@@ -419,6 +423,66 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "github.com.foomo.sesamy-cli.pkg.config.MicrosoftAds": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable provider"
+        },
+        "googleConsent": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
+          "description": "Google Consent settings"
+        },
+        "tagId": {
+          "type": "string",
+          "description": "Microsoft Ads UET Tag ID"
+        },
+        "conversion": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.MicrosoftAdsConversion",
+          "description": "Microsoft Ads Conversion settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.MicrosoftAdsConversion": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable provider"
+        },
+        "serverContainer": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.MicrosoftAdsServerContainer",
+          "description": "Google Tag Manager server container settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.MicrosoftAdsConversionTag": {
+      "properties": {
+        "pageType": {
+          "type": "string"
+        },
+        "eventType": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.MicrosoftAdsServerContainer": {
+      "properties": {
+        "packages": {
+          "$ref": "#/$defs/[]*contemplate.PackageConfig"
+        },
+        "settings": {
+          "$ref": "#/$defs/map[string]config.MicrosoftAdsConversionTag"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "github.com.foomo.sesamy-cli.pkg.config.ServerContainer": {
       "properties": {
         "packages": {
@@ -499,6 +563,12 @@
     "map[string]config.GoogleAdsConversionTracking": {
       "additionalProperties": {
         "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversionTracking"
+      },
+      "type": "object"
+    },
+    "map[string]config.MicrosoftAdsConversionTag": {
+      "additionalProperties": {
+        "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.MicrosoftAdsConversionTag"
       },
       "type": "object"
     }
