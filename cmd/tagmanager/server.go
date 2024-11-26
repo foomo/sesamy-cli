@@ -9,6 +9,7 @@ import (
 	googleadsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleads"
 	googleanalyticsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics"
 	googletagmanagerprovider "github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
+	microsoftadsprovider "github.com/foomo/sesamy-cli/pkg/provider/microsoftads"
 	tracifyprovider "github.com/foomo/sesamy-cli/pkg/provider/tracify"
 	umamiprovider "github.com/foomo/sesamy-cli/pkg/provider/umami"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
@@ -106,6 +107,13 @@ func NewServer(root *cobra.Command) {
 				l.Info("🅿️ Running provider", "name", criteoprovider.Name, "tag", criteoprovider.Tag)
 				if err := criteoprovider.Server(l, tm, cfg.Criteo); err != nil {
 					return errors.Wrap(err, "failed to provision criteo")
+				}
+			}
+
+			if cfg.MicrosoftAds.Enabled && pkgcmd.Tag(microsoftadsprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", microsoftadsprovider.Name, "tag", microsoftadsprovider.Tag)
+				if err := microsoftadsprovider.Server(l, tm, cfg.MicrosoftAds); err != nil {
+					return errors.Wrap(err, "failed to provision microsoftads")
 				}
 			}
 

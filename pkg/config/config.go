@@ -21,6 +21,8 @@ type Config struct {
 	ConversionLinker ConversionLinker `json:"conversionLinker" yaml:"conversionLinker"`
 	// Facebook provider settings
 	Facebook Facebook `json:"facebook" yaml:"facebook"`
+	// MicrosoftAds provider settings
+	MicrosoftAds MicrosoftAds `json:"microsoftAds" yaml:"microsoftAds"`
 	// Emarsys provider settings
 	Emarsys Emarsys `json:"emarsys" yaml:"emarsys"`
 	// Hotjar provider settings

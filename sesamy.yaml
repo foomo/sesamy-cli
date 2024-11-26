@@ -164,10 +164,14 @@ googleAds:
   conversion:
     # Enable Google Ads Conversion
     enabled: true
-    # Google Ads Conversion Tracking Label
-    conversionLabel: ''
     # Google Tag Manager server container settings
     serverContainer:
+      # Conversion labels map
+      settings:
+        add_to_cart:
+          label: ''
+        purchase:
+          label: ''
       # Contemplate package config for generated events
       packages:
         - path: github.com/foomo/sesamy-go/pkg/event
@@ -290,6 +294,38 @@ tracify:
           - PageView
           - ViewItem
           - Purchase
+
+
+# --- Microsoft Ads
+microsoftAds:
+  # Enable provider
+  enabled: true
+  # Microsoft UET Tag ID
+  tagId: '123456789'
+  # Microsoft Ads Conversion
+  conversion:
+    # Enable conversion
+    enabled: true
+    # Google Tag Manager server container settings
+    serverContainer:
+      # Conversion labels map
+      settings:
+        add_to_cart:
+          pageType: other
+          eventType: custom
+        page_view:
+          pageType: other
+          eventType: pageLoad
+        purchase:
+          pageType: purchase
+          eventType: custom
+      # Contemplate package config for generated events
+      packages:
+        - path: github.com/foomo/sesamy-go/pkg/event
+          types:
+            - AddToCart
+            - PageView
+            - Purchase
 
 # --- Hotjar
 hotjar:
