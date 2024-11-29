@@ -32,6 +32,9 @@ func LoadEventParams(cfg contemplate.Config) (map[string]map[string]string, erro
 
 func getEventParams(obj types.Object) (map[string]string, error) {
 	ret := map[string]string{}
+	if obj == nil {
+		return ret, nil
+	}
 	if eventStruct := assume.T[*types.Struct](obj.Type().Underlying()); eventStruct != nil {
 		for i := range eventStruct.NumFields() {
 			if eventField := eventStruct.Field(i); eventField.Name() == "Params" {
