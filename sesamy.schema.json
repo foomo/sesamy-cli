@@ -220,8 +220,34 @@
           "description": "Google Consent settings"
         },
         "serverContainer": {
-          "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.FacebookServerContainer",
           "description": "Google Tag Manager server container settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.FacebookConversionAPITag": {
+      "properties": {
+        "extendCookies": {
+          "type": "boolean",
+          "description": "Extend Meta Pixel cookies (fbp/fbc)"
+        },
+        "enableEventEnhancement": {
+          "type": "boolean",
+          "description": "Enable Use of HTTP Only Secure Cookie (gtmeec) to Enhance Event Data"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.FacebookServerContainer": {
+      "properties": {
+        "packages": {
+          "$ref": "#/$defs/[]*contemplate.PackageConfig"
+        },
+        "settings": {
+          "$ref": "#/$defs/map[string]config.FacebookConversionAPITag"
         }
       },
       "additionalProperties": false,
@@ -275,8 +301,20 @@
           "description": "Enable provider"
         },
         "serverContainer": {
-          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.ServerContainer",
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversionServerContainer",
           "description": "Google Tag Manager server container settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversionServerContainer": {
+      "properties": {
+        "packages": {
+          "$ref": "#/$defs/[]*contemplate.PackageConfig"
+        },
+        "settings": {
+          "$ref": "#/$defs/map[string]config.GoogleAdsConversionTracking"
         }
       },
       "additionalProperties": false,
@@ -483,18 +521,6 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "github.com.foomo.sesamy-cli.pkg.config.ServerContainer": {
-      "properties": {
-        "packages": {
-          "$ref": "#/$defs/[]*contemplate.PackageConfig"
-        },
-        "settings": {
-          "$ref": "#/$defs/map[string]config.GoogleAdsConversionTracking"
-        }
-      },
-      "additionalProperties": false,
-      "type": "object"
-    },
     "github.com.foomo.sesamy-cli.pkg.config.Tracify": {
       "properties": {
         "enabled": {
@@ -558,6 +584,12 @@
         }
       },
       "additionalProperties": false,
+      "type": "object"
+    },
+    "map[string]config.FacebookConversionAPITag": {
+      "additionalProperties": {
+        "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.FacebookConversionAPITag"
+      },
       "type": "object"
     },
     "map[string]config.GoogleAdsConversionTracking": {
