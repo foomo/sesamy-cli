@@ -7,7 +7,6 @@ const TracifyTagData = `___INFO___
   "id": "cvt_temp_public_id",
   "version": 1,
   "securityGroups": [],
-  "displayName": "Manual Tracify",
   "displayName": "%s",
   "brand": {
     "id": "brand_dummy",
@@ -115,6 +114,7 @@ const endpoint = hostname + '/api/v1/events';
 const remoteAddress = eventData.ip_override || getRemoteAddress();
 const sessionId = eventData.ga_session_id || eventData.session_id;
 const userAgent = eventData.user_agent || getRequestHeader('User-Agent');
+const pageReferer = eventData.page_referrer;
 const pageLocation = eventData.page_location || getRequestHeader('Referer');
 const timestamp = (eventData['x-sst-system_properties'] || {}).request_start_time_ms || (eventData.timestamp_micros / 1000) || getTimestampMillis();
 
@@ -149,10 +149,12 @@ return sendHttpRequest(endpoint, options, JSON.stringify(body)).then((result) =>
 // --- Utils ---
 
 function mapEventData() {
+  const url = parseUrl(pageLocation);
+
   // https://tracify.dev/events
   const event = {
     // The full URL (domain + path) for which the request is served.
-    url: pageLocation || null,
+    url: pageLocation,
     // The identifier used to indicate on what website the events are occurring.
     // This id is provided by your account representative.
     customer_site_id: data.customerSiteId,
@@ -163,17 +165,24 @@ function mapEventData() {
     // The type of event
     type: '',
     // Data properties specific to the event type sent
-    data: {},
+    data: {
+      origin: url.hostname,
+    },
   };
+
+  // Referrer
+  if (pageReferer) {
+    event.data.Referer = pageReferer;
+  }
 
   // Anonymized email address (optional, if available)
   if (eventData.user_id) {
     event.identity_data[anonymize(eventData.user_id)] = 1;
   }
   // Anonymized session id
-	if (remoteAddress && userAgent) {
+  if (remoteAddress && userAgent) {
     event.identity_data[anonymize(remoteAddress+'|'+userAgent)] = 2;
-	}
+  }
   // Anonymized IP address
   if (remoteAddress) {
     event.identity_data[anonymize(remoteAddress)] = 3;
@@ -183,46 +192,30 @@ function mapEventData() {
     event.identity_data[anonymize(userAgent)] = 4;
   }
 
-  const url = parseUrl(pageLocation);
   switch (eventData.event_name) {
     case 'tracify_page_view': {
       event.type = 'pageview';
-      event.data = {
-        origin: url.hostname,
-      };
       event.data = mapUrlParams(url.searchParams, event.data);
       break;
     }
     case 'tracify_product_view': {
       event.type = 'productview';
-      event.data = {
-        origin: url.hostname,
-      };
       event.data = mapUrlParams(url.searchParams, event.data);
       break;
     }
     // standard evens
     case 'page_view': {
       event.type = 'pageview';
-      event.data = {
-        origin: url.hostname,
-      };
       event.data = mapUrlParams(url.searchParams, event.data);
       break;
     }
     case 'view_item': {
       event.type = 'productview';
-      event.data = {
-        origin: url.hostname,
-      };
       event.data = mapUrlParams(url.searchParams, event.data);
       break;
     }
     case 'add_to_cart': {
       event.type = 'addtocart';
-      event.data = {
-        origin: url.hostname,
-      };
       event.data = mapItems(eventData.items || [], event.data);
       break;
     }
@@ -241,7 +234,6 @@ function mapEventData() {
     case 'conversion': {
       event.type = 'conversion';
       event.data = {
-        origin: url.hostname,
         conversion_id: makeString(eventData.transaction_id),
         currency: eventData.currency,
         cc: eventData.currency, // required due to API bug
@@ -255,14 +247,14 @@ function mapEventData() {
 }
 
 function isConsentGivenOrNotRequired() {
-	if (data.analyticsStorageConsent !== 'required') {
-      return true;
-    }
-	if (eventData.consent_state) {
-      return !!eventData.consent_state.analytics_storage;
-    }
-	const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G101"
-	return xGaGcs[3] === '1';
+  if (data.analyticsStorageConsent !== 'required') {
+    return true;
+  }
+  if (eventData.consent_state) {
+    return !!eventData.consent_state.analytics_storage;
+  }
+  const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G101"
+  return xGaGcs[3] === '1';
 }
 
 function mapItems(items, val) {
