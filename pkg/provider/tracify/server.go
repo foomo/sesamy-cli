@@ -64,7 +64,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Tracify) error
 					return errors.Wrap(err, "failed to upsert event trigger: "+event)
 				}
 
-				if _, err := tm.UpsertTag(servertagx.NewTracify(event, token, customerSiteID, tagTemplate, eventTrigger)); err != nil {
+				if _, err := tm.UpsertTag(servertagx.NewTracify(event, token, customerSiteID, tagTemplate, cfg, eventTrigger)); err != nil {
 					return err
 				}
 			}

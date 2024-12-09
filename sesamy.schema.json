@@ -535,6 +535,10 @@
           "type": "string",
           "description": "Tracify customer site id"
         },
+        "stagingModeEnabled": {
+          "type": "boolean",
+          "description": "Enable stating mode"
+        },
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
           "description": "Google Consent settings"

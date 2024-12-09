@@ -11,6 +11,8 @@ type Tracify struct {
 	Token string `json:"token" yaml:"token"`
 	// Tracify customer site id
 	CustomerSiteID string `json:"customerSiteId" yaml:"customerSiteId"`
+	// Enable stating mode
+	StagingModeEnabled bool `json:"stagingModeEnabled" yaml:"stagingModeEnabled"`
 	// Google Consent settings
 	GoogleConsent GoogleConsent `json:"googleConsent" yaml:"googleConsent"`
 	// Google Tag Manager server container settings
