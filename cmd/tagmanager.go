@@ -12,6 +12,7 @@ func NewTagmanager(root *cobra.Command) *cobra.Command {
 		Short: "Provision Google Tag Manager containers",
 	}
 
+	tagmanager.NewTags(cmd)
 	tagmanager.NewServer(cmd)
 	tagmanager.NewWeb(cmd)
 	root.AddCommand(cmd)
