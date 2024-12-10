@@ -2,15 +2,18 @@ package googleanalytics
 
 import (
 	"github.com/foomo/sesamy-cli/pkg/config"
-	client2 "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/client"
+	googleanalyticsclient "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/client"
 	containertag "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/tag"
-	template2 "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/template"
+	googleanalyticstemplate "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/template"
 	"github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/trigger"
 	"github.com/foomo/sesamy-cli/pkg/provider/googleconsent"
 	googleconsentvariable "github.com/foomo/sesamy-cli/pkg/provider/googleconsent/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	serverclient "github.com/foomo/sesamy-cli/pkg/tagmanager/server/client"
+	servertemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/server/template"
+	servertransformation "github.com/foomo/sesamy-cli/pkg/tagmanager/server/transformation"
 	servertrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/server/trigger"
+	servervariable "github.com/foomo/sesamy-cli/pkg/tagmanager/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
 )
@@ -43,15 +46,30 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitor
 			if _, err = tm.UpsertTrigger(servertrigger.NewClient(NameMeasurementProtocolGA4ClientTrigger, client)); err != nil {
 				return err
 			}
-		}
 
-		if cfg.GoogleGTag.Enabled {
-			template, err := tm.UpsertCustomTemplate(template2.NewGoogleGTagClient(NameGoogleGTagClientTemplate))
+			userDataTemplate, err := tm.UpsertCustomTemplate(servertemplate.NewJSONRequestValue(NameJSONRequestValueTemplate))
 			if err != nil {
 				return err
 			}
 
-			_, err = tm.UpsertClient(client2.NewGoogleGTag(NameGoogleGTagClient, cfg.GoogleGTag, template))
+			userDataVariable, err := tm.UpsertVariable(servervariable.NewMPv2Data("user_data", userDataTemplate))
+			if err != nil {
+				return err
+			}
+
+			_, err = tm.UpsertTransformation(servertransformation.NewMPv2UserData(NameMPv2UserDataTransformation, userDataVariable, client))
+			if err != nil {
+				return err
+			}
+		}
+
+		if cfg.GoogleGTag.Enabled {
+			template, err := tm.UpsertCustomTemplate(googleanalyticstemplate.NewGoogleGTagClient(NameGoogleGTagClientTemplate))
+			if err != nil {
+				return err
+			}
+
+			_, err = tm.UpsertClient(googleanalyticsclient.NewGoogleGTag(NameGoogleGTagClient, cfg.GoogleGTag, template))
 			if err != nil {
 				return err
 			}

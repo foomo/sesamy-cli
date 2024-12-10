@@ -1,6 +1,9 @@
 package tag
 
 import (
+	"strconv"
+
+	"github.com/foomo/sesamy-cli/pkg/config"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"google.golang.org/api/tagmanager/v2"
 )
@@ -9,7 +12,7 @@ func TracifyName(v string) string {
 	return "Tracify - " + v
 }
 
-func NewTracify(name string, token, customerSiteID *tagmanager.Variable, template *tagmanager.CustomTemplate, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+func NewTracify(name string, token, customerSiteID *tagmanager.Variable, template *tagmanager.CustomTemplate, cfg config.Tracify, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	return &tagmanager.Tag{
 		FiringTriggerId: utils.TriggerIDs(triggers),
 		Name:            TracifyName(name),
@@ -28,7 +31,7 @@ func NewTracify(name string, token, customerSiteID *tagmanager.Variable, templat
 			{
 				Key:   "isStagingMode",
 				Type:  "boolean",
-				Value: "false",
+				Value: strconv.FormatBool(cfg.StagingModeEnabled),
 			},
 			{
 				Key:   "token",

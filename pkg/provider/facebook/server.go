@@ -47,7 +47,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Facebook) erro
 	}
 
 	{ // create tags
-		eventParameters, err := utils.LoadEventParams(cfg.ServerContainer)
+		eventParameters, err := utils.LoadEventParams(cfg.ServerContainer.Config)
 		if err != nil {
 			return err
 		}
@@ -70,7 +70,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Facebook) erro
 				return errors.Wrap(err, "failed to upsert event trigger: "+event)
 			}
 
-			if _, err := tm.UpsertTag(servertagx.NewConversionsAPITag(event, pixelID, apiAccessToken, testEventToken, template, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(servertagx.NewConversionsAPITag(event, pixelID, apiAccessToken, testEventToken, cfg.ServerContainer.Setting(event), template, eventTrigger)); err != nil {
 				return err
 			}
 		}
