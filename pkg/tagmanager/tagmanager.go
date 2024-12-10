@@ -31,6 +31,7 @@ type (
 		triggers         map[string]*tagmanager.Trigger
 		tags             map[string]*tagmanager.Tag
 		customTemplates  map[string]*tagmanager.CustomTemplate
+		transformations  map[string]*tagmanager.Transformation
 	}
 	Option func(*TagManager)
 )
@@ -304,6 +305,19 @@ func (t *TagManager) LookupTemplate(name string) (*tagmanager.CustomTemplate, er
 	return elems[name], nil
 }
 
+func (t *TagManager) LookupTransformation(name string) (*tagmanager.Transformation, error) {
+	elems, err := t.LoadTransformations()
+	if err != nil {
+		return nil, err
+	}
+
+	if _, ok := elems[name]; !ok {
+		return nil, ErrNotFound
+	}
+
+	return elems[name], nil
+}
+
 func (t *TagManager) LoadTriggers() (map[string]*tagmanager.Trigger, error) {
 	if t.triggers == nil {
 		t.l.Info("🛄 Loading list", "type", "Trigger")
@@ -384,6 +398,24 @@ func (t *TagManager) LoadCustomTemplates() (map[string]*tagmanager.CustomTemplat
 	return t.customTemplates, nil
 }
 
+func (t *TagManager) LoadTransformations() (map[string]*tagmanager.Transformation, error) {
+	if t.transformations == nil {
+		t.l.Info("🛄 Loading list", "type", "Transformation")
+		r, err := t.Service().Accounts.Containers.Workspaces.Transformations.List(t.WorkspacePath()).Do()
+		if err != nil {
+			return nil, err
+		}
+
+		res := map[string]*tagmanager.Transformation{}
+		for _, value := range r.Transformation {
+			res[value.Name] = value
+		}
+		t.transformations = res
+	}
+
+	return t.transformations, nil
+}
+
 func (t *TagManager) UpsertClient(item *tagmanager.Client) (*tagmanager.Client, error) {
 	l := t.l.With("type", "Client", "name", item.Name)
 
@@ -417,6 +449,41 @@ func (t *TagManager) UpsertClient(item *tagmanager.Client) (*tagmanager.Client, 
 	}
 
 	return t.LookupClient(item.Name)
+}
+
+func (t *TagManager) UpsertTransformation(item *tagmanager.Transformation) (*tagmanager.Transformation, error) {
+	l := t.l.With("type", "Transformation", "name", item.Name)
+
+	folder, err := t.LookupFolder(t.folderName)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to retrieve folder")
+	}
+	item.ParentFolderId = folder.FolderId
+
+	item.Notes = t.Notes(item)
+	item.AccountId = t.AccountID()
+	item.ContainerId = t.ContainerID()
+	item.WorkspaceId = t.WorkspaceID()
+
+	cache, err := t.LookupTransformation(item.Name)
+	if err != nil && !errors.Is(err, ErrNotFound) {
+		return nil, err
+	}
+
+	if cache == nil {
+		l.Info("🚀 New")
+		t.transformations[item.Name], err = t.Service().Accounts.Containers.Workspaces.Transformations.Create(t.WorkspacePath(), item).Do()
+	} else if item.Notes == cache.Notes {
+		l.Info("✅ OK", "id", cache.TransformationId)
+	} else {
+		l.Info("🔄 Update", "id", cache.TransformationId)
+		t.transformations[item.Name], err = t.Service().Accounts.Containers.Workspaces.Transformations.Update(t.WorkspacePath()+"/transformations/"+cache.TransformationId, item).Do()
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return t.LookupTransformation(item.Name)
 }
 
 func (t *TagManager) UpsertFolder(name string) (*tagmanager.Folder, error) {

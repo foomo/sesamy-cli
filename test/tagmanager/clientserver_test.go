@@ -94,6 +94,15 @@ func TestNewClient_Server(t *testing.T) {
 		})
 	}
 
+	{ // --- Transformations ---
+		t.Run("list transformations", func(t *testing.T) {
+			cmd := c.Service().Accounts.Containers.Workspaces.Transformations.List(c.WorkspacePath())
+			if r, err := cmd.Do(); assert.NoError(t, err) {
+				dump(t, r)
+			}
+		})
+	}
+
 	{ // --- Tags ---
 		t.Run("list tags", func(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Tags.List(c.WorkspacePath())
@@ -113,7 +122,7 @@ func TestNewClient_Server(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Templates.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
-				fmt.Println(r.Template[3].TemplateData)
+				fmt.Println(r.Template[8].TemplateData)
 			}
 		})
 	}
