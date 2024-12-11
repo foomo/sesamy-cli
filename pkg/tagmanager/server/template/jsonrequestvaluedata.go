@@ -45,6 +45,10 @@ const logToConsole = require('logToConsole');
 const getRequestBody = require('getRequestBody');
 
 const requestBody = getRequestBody();
+if (requestBody === '') {
+  return null;
+}
+
 const payload = JSON.parse(requestBody);
 const value = payload[data.key] || null;
 
