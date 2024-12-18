@@ -13,7 +13,7 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-// typescriptCmd represents the typescript command
+// NewTypeScript represents the typescript command
 func NewTypeScript(root *cobra.Command) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "typescript",
