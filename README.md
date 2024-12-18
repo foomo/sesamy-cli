@@ -50,8 +50,7 @@ Use "sesamy [command] --help" for more information about a command.
 Add a `sesamy.yaml` configuration
 
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/foomo/sesamy-cli/v0.4.1/sesamy.yaml
-# yaml-language-server: $schema=sesamy.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/foomo/sesamy-cli/refs/heads/main/sesamy.schema.json
 version: '1.0'
 
 # Whether to redact the visitor ip
