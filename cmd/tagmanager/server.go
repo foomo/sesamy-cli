@@ -71,7 +71,7 @@ func NewServer(root *cobra.Command) {
 			if cfg.Umami.Enabled && pkgcmd.Tag(umamiprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", umamiprovider.Name, "tag", umamiprovider.Tag)
 				if err := umamiprovider.Server(tm, cfg.Umami); err != nil {
-					return errors.Wrap(err, "failed to provision umammi")
+					return errors.Wrap(err, "failed to provision umami")
 				}
 			}
 
