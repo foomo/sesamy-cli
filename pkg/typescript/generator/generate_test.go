@@ -75,6 +75,7 @@ export interface Item {
 
 export interface PageView {
 	page_title?: string;
+	page_referrer?: string;
 	page_location?: string;
 }
 `
