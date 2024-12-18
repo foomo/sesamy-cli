@@ -2,6 +2,7 @@ package tagmanager
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"time"
@@ -161,7 +162,6 @@ func (t *TagManager) LookupClient(name string) (*tagmanager.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -192,7 +192,6 @@ func (t *TagManager) LookupFolder(name string) (*tagmanager.Folder, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -222,7 +221,6 @@ func (t *TagManager) LookupVariable(name string) (*tagmanager.Variable, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -253,7 +251,6 @@ func (t *TagManager) GetBuiltInVariable(typeName string) (*tagmanager.BuiltInVar
 	if err != nil {
 		return nil, err
 	}
-
 	if _, ok := elems[typeName]; !ok {
 		return nil, ErrNotFound
 	}
@@ -284,7 +281,6 @@ func (t *TagManager) LookupTrigger(name string) (*tagmanager.Trigger, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -297,7 +293,6 @@ func (t *TagManager) LookupTemplate(name string) (*tagmanager.CustomTemplate, er
 	if err != nil {
 		return nil, err
 	}
-
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -310,7 +305,6 @@ func (t *TagManager) LookupTransformation(name string) (*tagmanager.Transformati
 	if err != nil {
 		return nil, err
 	}
-
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -341,7 +335,6 @@ func (t *TagManager) LookupTag(name string) (*tagmanager.Tag, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -372,7 +365,6 @@ func (t *TagManager) CustomTemplate(name string) (*tagmanager.CustomTemplate, er
 	if err != nil {
 		return nil, err
 	}
-
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -445,9 +437,11 @@ func (t *TagManager) UpsertClient(item *tagmanager.Client) (*tagmanager.Client, 
 		t.clients[item.Name], err = t.Service().Accounts.Containers.Workspaces.Clients.Update(t.WorkspacePath()+"/clients/"+cache.ClientId, item).Do()
 	}
 	if err != nil {
+		if out, err := json.MarshalIndent(item, "", "  "); err == nil {
+			l.Debug(string(out))
+		}
 		return nil, err
 	}
-
 	return t.LookupClient(item.Name)
 }
 
@@ -480,9 +474,11 @@ func (t *TagManager) UpsertTransformation(item *tagmanager.Transformation) (*tag
 		t.transformations[item.Name], err = t.Service().Accounts.Containers.Workspaces.Transformations.Update(t.WorkspacePath()+"/transformations/"+cache.TransformationId, item).Do()
 	}
 	if err != nil {
+		if out, err := json.MarshalIndent(item, "", "  "); err == nil {
+			l.Debug(string(out))
+		}
 		return nil, err
 	}
-
 	return t.LookupTransformation(item.Name)
 }
 
@@ -513,9 +509,11 @@ func (t *TagManager) UpsertFolder(name string) (*tagmanager.Folder, error) {
 		t.folders[name], err = t.Service().Accounts.Containers.Workspaces.Folders.Update(t.WorkspacePath()+"/folders/"+cache.FolderId, item).Do()
 	}
 	if err != nil {
+		if out, err := json.MarshalIndent(item, "", "  "); err == nil {
+			l.Debug(string(out))
+		}
 		return nil, err
 	}
-
 	return t.LookupFolder(name)
 }
 
@@ -548,9 +546,11 @@ func (t *TagManager) UpsertVariable(item *tagmanager.Variable) (*tagmanager.Vari
 		t.variables[item.Name], err = t.Service().Accounts.Containers.Workspaces.Variables.Update(t.WorkspacePath()+"/variables/"+cache.VariableId, item).Do()
 	}
 	if err != nil {
+		if out, err := json.MarshalIndent(item, "", "  "); err == nil {
+			l.Debug(string(out))
+		}
 		return nil, err
 	}
-
 	return t.LookupVariable(item.Name)
 }
 
@@ -609,6 +609,9 @@ func (t *TagManager) UpsertTrigger(item *tagmanager.Trigger) (*tagmanager.Trigge
 		t.triggers[item.Name], err = t.Service().Accounts.Containers.Workspaces.Triggers.Update(t.WorkspacePath()+"/triggers/"+cache.TriggerId, item).Do()
 	}
 	if err != nil {
+		if out, err := json.MarshalIndent(item, "", "  "); err == nil {
+			l.Debug(string(out))
+		}
 		return nil, err
 	}
 
@@ -644,9 +647,11 @@ func (t *TagManager) UpsertTag(item *tagmanager.Tag) (*tagmanager.Tag, error) {
 		t.tags[item.Name], err = t.Service().Accounts.Containers.Workspaces.Tags.Update(t.WorkspacePath()+"/tags/"+cache.TagId, item).Do()
 	}
 	if err != nil {
+		if out, err := json.MarshalIndent(item, "", "  "); err == nil {
+			l.Debug(string(out))
+		}
 		return nil, err
 	}
-
 	return t.LookupTag(item.Name)
 }
 
@@ -672,8 +677,10 @@ func (t *TagManager) UpsertCustomTemplate(item *tagmanager.CustomTemplate) (*tag
 		t.customTemplates[item.Name], err = t.Service().Accounts.Containers.Workspaces.Templates.Update(t.WorkspacePath()+"/templates/"+cache.TemplateId, item).Do()
 	}
 	if err != nil {
+		if out, err := json.MarshalIndent(item, "", "  "); err == nil {
+			l.Debug(string(out))
+		}
 		return nil, err
 	}
-
 	return t.CustomTemplate(item.Name)
 }
