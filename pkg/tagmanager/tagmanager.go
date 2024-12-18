@@ -162,6 +162,7 @@ func (t *TagManager) LookupClient(name string) (*tagmanager.Client, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -192,6 +193,7 @@ func (t *TagManager) LookupFolder(name string) (*tagmanager.Folder, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -221,6 +223,7 @@ func (t *TagManager) LookupVariable(name string) (*tagmanager.Variable, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -251,6 +254,7 @@ func (t *TagManager) GetBuiltInVariable(typeName string) (*tagmanager.BuiltInVar
 	if err != nil {
 		return nil, err
 	}
+
 	if _, ok := elems[typeName]; !ok {
 		return nil, ErrNotFound
 	}
@@ -281,6 +285,7 @@ func (t *TagManager) LookupTrigger(name string) (*tagmanager.Trigger, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -293,6 +298,7 @@ func (t *TagManager) LookupTemplate(name string) (*tagmanager.CustomTemplate, er
 	if err != nil {
 		return nil, err
 	}
+
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -305,6 +311,7 @@ func (t *TagManager) LookupTransformation(name string) (*tagmanager.Transformati
 	if err != nil {
 		return nil, err
 	}
+
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -335,6 +342,7 @@ func (t *TagManager) LookupTag(name string) (*tagmanager.Tag, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -365,6 +373,7 @@ func (t *TagManager) CustomTemplate(name string) (*tagmanager.CustomTemplate, er
 	if err != nil {
 		return nil, err
 	}
+
 	if _, ok := elems[name]; !ok {
 		return nil, ErrNotFound
 	}
@@ -442,6 +451,7 @@ func (t *TagManager) UpsertClient(item *tagmanager.Client) (*tagmanager.Client, 
 		}
 		return nil, err
 	}
+
 	return t.LookupClient(item.Name)
 }
 
@@ -514,6 +524,7 @@ func (t *TagManager) UpsertFolder(name string) (*tagmanager.Folder, error) {
 		}
 		return nil, err
 	}
+
 	return t.LookupFolder(name)
 }
 
@@ -551,6 +562,7 @@ func (t *TagManager) UpsertVariable(item *tagmanager.Variable) (*tagmanager.Vari
 		}
 		return nil, err
 	}
+
 	return t.LookupVariable(item.Name)
 }
 
