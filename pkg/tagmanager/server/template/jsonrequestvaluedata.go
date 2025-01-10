@@ -39,10 +39,14 @@ ___TEMPLATE_PARAMETERS___
 
 ___SANDBOXED_JS_FOR_SERVER___
 
-// Enter your template code here.
 const JSON = require('JSON');
 const logToConsole = require('logToConsole');
 const getRequestBody = require('getRequestBody');
+const getRequestHeader = require('getRequestHeader');
+
+if (getRequestHeader('content-type') !== 'application/json') {
+  return null;
+}
 
 const requestBody = getRequestBody();
 if (requestBody === '') {

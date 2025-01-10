@@ -50,15 +50,16 @@ const logToConsole = require('logToConsole');
 const getRequestBody = require('getRequestBody');
 const getCookieValues = require('getCookieValues');
 const getAllEventData = require('getAllEventData');
+const getRequestHeader = require('getRequestHeader');
 
 // --- config ---
 
+const eventData = getAllEventData();
 const consentType = data.consentType;
 
 // --- GA4 ---
 
-const eventData = getAllEventData();
-if (eventData['x-ga-gcs'] !== undefined) {
+if (eventData['x-ga-gcs']) {
   const gcs = eventData['x-ga-gcs'];
   switch (consentType) {
     case "ad_storage":
@@ -70,19 +71,33 @@ if (eventData['x-ga-gcs'] !== undefined) {
   }
 }
 
-// --- MPv2 ---
-
-const requestBody = JSON.parse(getRequestBody());
-
-if (requestBody._consent !== undefined) {
-  const consent = requestBody.consent;
+if (eventData['x-ga-gcd']) {
+  const gcd = eventData['x-ga-gcd'];
   switch (consentType) {
     case "ad_storage":
-      return (consent.ad_storage === "GRANTED") ? 'granted' : 'denied';
+      return (gcd.substring(2, 3) === "1") ? 'granted' : 'denied';
     case "analytics_storage":
-      return (consent.analytics_storage === "GRANTED") ? 'granted' : 'denied';
+      return (gcd.substring(3, 4) === "1") ? 'granted' : 'denied';
     default:
       return 'denied';
+  }
+}
+
+// --- MPv2 ---
+
+let requestBody = getRequestBody();
+if (requestBody && getRequestHeader('content-type') === 'application/json') {
+  requestBody = JSON.parse(requestBody);
+  if (requestBody._consent) {
+    const consent = requestBody.consent;
+    switch (consentType) {
+      case "ad_storage":
+        return (consent.ad_storage === "GRANTED") ? 'granted' : 'denied';
+      case "analytics_storage":
+        return (consent.analytics_storage === "GRANTED") ? 'granted' : 'denied';
+      default:
+        return 'denied';
+    }
   }
 }
 
