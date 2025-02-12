@@ -26,9 +26,6 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
 		settings := map[string]string{
 			"server_container_url": "https://{{Page Hostname}}",
 		}
-		if cfg.DebugMode {
-			settings["debug_mode"] = "true"
-		}
 		if !cfg.SendPageView {
 			settings["send_page_view"] = "false"
 		}

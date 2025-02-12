@@ -55,6 +55,9 @@ version: '1.0'
 
 # Whether to redact the visitor ip
 redactVisitorIp: true
+# Enable region specific settings
+# https://developers.google.com/tag-platform/tag-manager/server-side/enable-region-specific-settings
+enableGeoResolution: true
 
 # --- Google API settings
 googleApi:
@@ -90,8 +93,6 @@ googleTagManager:
 googleTag:
   # A tag ID is an identifier that you put on your page to load a given Google tag
   tagId: G-PZ5ELRCR31
-  # Enable debug mode for all user devices
-  debugMode: false
   # Whether a page_view should be sent on initial load
   sendPageView: true
   # TypeScript settings
@@ -163,20 +164,20 @@ googleTag:
 googleAnalytics:
   # Enable provider
   enabled: true
-  # Google GTag.js settings
-  googleGTag:
-    # Provision custom client
-    enabled: true
-    # Client priority
-    priority: 10
-    # Patch ecommerce items
-    ecommerceItems: true
   # Google Consent settings
   googleConsent:
     # Enable consent mode
     enabled: true
     # Consent mode name
     mode: analytics_storage
+  # Google GTag.js override settings
+  googleGTagJSOverride:
+    # Provision custom client
+    enabled: true
+    # Client priority
+    priority: 10
+    # Patch ecommerce items
+    ecommerceItems: true
   # Google Tag Manager web container settings
   webContainer:
     # Contemplate package config for generated events

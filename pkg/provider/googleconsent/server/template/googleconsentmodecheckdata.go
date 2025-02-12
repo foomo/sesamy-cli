@@ -59,25 +59,34 @@ const consentType = data.consentType;
 
 // --- GA4 ---
 
-if (eventData['x-ga-gcs']) {
-  const gcs = eventData['x-ga-gcs'];
+if (eventData['x-ga-gcd']) {
+  const gcd = eventData['x-ga-gcd'];
+  const isGranted = function(v) {
+    return v === 't' || v === 'r' || v === 'n' || v === 'v';
+  };
   switch (consentType) {
     case "ad_storage":
-      return (gcs.substring(2, 3) === "1") ? 'granted' : 'denied';
+      return isGranted(gcd.substring(2, 3)) ? 'granted' : 'denied';
     case "analytics_storage":
-      return (gcs.substring(3, 4) === "1") ? 'granted' : 'denied';
+      return isGranted(gcd.substring(4, 5)) ? 'granted' : 'denied';
+    case "ad_user_data":
+      return isGranted(gcd.substring(6, 7)) ? 'granted' : 'denied';
+    case "ad_personalization":
+      return isGranted(gcd.substring(8, 9)) ? 'granted' : 'denied';
     default:
       return 'denied';
   }
 }
 
-if (eventData['x-ga-gcd']) {
-  const gcd = eventData['x-ga-gcd'];
+if (eventData['x-ga-gcs']) {
+  const gcs = eventData['x-ga-gcs'];
   switch (consentType) {
     case "ad_storage":
-      return (gcd.substring(2, 3) === "1") ? 'granted' : 'denied';
+      return (gcs.substring(2, 3) === "1") ? 'granted' : 'denied';
+    case "ad_user_data":
+      return (gcs.substring(2, 3) === "1") ? 'granted' : 'denied';
     case "analytics_storage":
-      return (gcd.substring(3, 4) === "1") ? 'granted' : 'denied';
+      return (gcs.substring(3, 4) === "1") ? 'granted' : 'denied';
     default:
       return 'denied';
   }
@@ -88,13 +97,23 @@ if (eventData['x-ga-gcd']) {
 let requestBody = getRequestBody();
 if (requestBody && getRequestHeader('content-type') === 'application/json') {
   requestBody = JSON.parse(requestBody);
-  if (requestBody._consent) {
+  if (requestBody.consent) {
     const consent = requestBody.consent;
     switch (consentType) {
       case "ad_storage":
-        return (consent.ad_storage === "GRANTED") ? 'granted' : 'denied';
+        return (consent.ad_storage && consent.ad_storage.toUpperCase() === "GRANTED") ? 'granted' : 'denied';
+      case "ad_user_data":
+        return (consent.ad_user_data && consent.ad_user_data.toUpperCase() === "GRANTED") ? 'granted' : 'denied';
+      case "ad_personalization":
+        return (consent.ad_personalization && consent.ad_personalization.toUpperCase() === "GRANTED") ? 'granted' : 'denied';
       case "analytics_storage":
-        return (consent.analytics_storage === "GRANTED") ? 'granted' : 'denied';
+        return (consent.analytics_storage && consent.analytics_storage.toUpperCase() === "GRANTED") ? 'granted' : 'denied';
+      case "functionality_storage":
+        return (consent.functionality_storage && consent.functionality_storage.toUpperCase() === "GRANTED") ? 'granted' : 'denied';
+      case "personalization_storage":
+        return (consent.personalization_storage && consent.personalization_storage.toUpperCase() === "GRANTED") ? 'granted' : 'denied';
+      case "security_storage":
+        return (consent.security_storage && consent.security_storage.toUpperCase() === "GRANTED") ? 'granted' : 'denied';
       default:
         return 'denied';
     }
@@ -122,7 +141,7 @@ if (cookiebotCookie !== undefined) {
 logToConsole('[FAILURE]', {
   eventData: eventData,
   request: requestBody,
-  cookie: cookiebotCookie,
+  cookiebot: cookiebotCookie,
 });
 
 return 'denied';

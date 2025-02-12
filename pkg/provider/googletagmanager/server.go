@@ -2,11 +2,12 @@ package googletagmanager
 
 import (
 	"github.com/foomo/sesamy-cli/pkg/config"
+	"github.com/foomo/sesamy-cli/pkg/provider/googletagmanager/server/client"
+	"github.com/foomo/sesamy-cli/pkg/provider/googletagmanager/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
-	containerclient "github.com/foomo/sesamy-cli/pkg/tagmanager/server/client"
 )
 
-func Server(tm *tagmanager.TagManager, cfg config.GoogleTagManager) error {
+func Server(tm *tagmanager.TagManager, cfg config.GoogleTagManager, enableGeoResolution bool) error {
 	{ // create folder
 		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
 			return err
@@ -22,7 +23,12 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleTagManager) error {
 	}
 
 	{ // create client
-		if _, err := tm.UpsertClient(containerclient.NewGoogleTagManagerWebContainer(NameGoogleTagManagerWebContainerClient, cfg.WebContainer.TagID)); err != nil {
+		visitorRegion, err := tm.UpsertVariable(variable.NewVisitorRegion(NameGoogleTagManagerVisitorRegion))
+		if err != nil {
+			return err
+		}
+
+		if _, err := tm.UpsertClient(client.NewGoogleTagManagerWebContainer(NameGoogleTagManagerWebContainerClient, cfg.WebContainer.TagID, enableGeoResolution, visitorRegion)); err != nil {
 			return err
 		}
 	}
