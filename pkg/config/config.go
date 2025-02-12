@@ -5,6 +5,9 @@ type Config struct {
 	Version string `json:"version" yaml:"version" jsonschema:"required"`
 	// Globally redact visitor ip
 	RedactVisitorIP bool `json:"redactVisitorIp" yaml:"redactVisitorIp"`
+	// Enable region specific settings
+	// https://developers.google.com/tag-platform/tag-manager/server-side/enable-region-specific-settings
+	EnableGeoResolution bool `json:"enableGeoResolution" yaml:"enableGeoResolution"`
 	// Google Tag settings
 	GoogleTag GoogleTag `json:"googleTag" yaml:"googleTag"`
 	// Google API settings

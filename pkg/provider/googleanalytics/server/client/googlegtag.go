@@ -8,7 +8,7 @@ import (
 	"google.golang.org/api/tagmanager/v2"
 )
 
-func NewGoogleGTag(name string, cfg config.GoogleGTag, template *tagmanager.CustomTemplate) *tagmanager.Client {
+func NewGoogleGTag(name string, cfg config.GoogleAnalyticsGTagJSOverride, template *tagmanager.CustomTemplate) *tagmanager.Client {
 	return &tagmanager.Client{
 		Name:     name,
 		Priority: cfg.Priority,

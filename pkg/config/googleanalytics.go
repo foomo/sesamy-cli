@@ -6,11 +6,13 @@ import (
 
 type GoogleAnalytics struct {
 	// Enable provider
-	Enabled    bool       `json:"enabled" yaml:"enabled"`
-	GoogleGTag GoogleGTag `json:"googleGTag" yaml:"googleGTag"`
+	Enabled bool `json:"enabled" yaml:"enabled"`
 	// Google Consent settings
-	GoogleConsent GoogleConsent      `json:"googleConsent" yaml:"googleConsent"`
-	WebContainer  contemplate.Config `json:"webContainer" yaml:"webContainer"`
+	GoogleConsent GoogleConsent `json:"googleConsent" yaml:"googleConsent"`
+	// GTag.js override configuration
+	GoogleGTagJSOverride GoogleAnalyticsGTagJSOverride `json:"googleGTagJSOverride" yaml:"googleGTagJSOverride"`
+	// Google Tag Manager web container settings
+	WebContainer contemplate.Config `json:"webContainer" yaml:"webContainer"`
 	// Google Tag Manager server container settings
 	ServerContainer contemplate.Config `json:"serverContainer" yaml:"serverContainer"`
 }

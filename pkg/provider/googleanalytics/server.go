@@ -8,8 +8,9 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/trigger"
 	"github.com/foomo/sesamy-cli/pkg/provider/googleconsent"
 	googleconsentvariable "github.com/foomo/sesamy-cli/pkg/provider/googleconsent/server/variable"
+	"github.com/foomo/sesamy-cli/pkg/provider/googletag"
+	"github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
-	serverclient "github.com/foomo/sesamy-cli/pkg/tagmanager/server/client"
 	servertemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/server/template"
 	servertransformation "github.com/foomo/sesamy-cli/pkg/tagmanager/server/transformation"
 	servertrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/server/trigger"
@@ -18,7 +19,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitorIP bool) error {
+func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitorIP, enableGeoResolution bool) error {
 	{ // create folder
 		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
 			return err
@@ -29,17 +30,28 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitor
 
 	{ // create clients
 		{
-			client, err := tm.UpsertClient(serverclient.NewGoogleAnalyticsGA4(NameGoogleAnalyticsGA4Client))
+			measurementID, err := tm.LookupVariable(googletag.NameGoogleTagMeasurementID)
 			if err != nil {
 				return err
 			}
+
+			visitorRegion, err := tm.LookupVariable(googletagmanager.NameGoogleTagManagerVisitorRegion)
+			if err != nil {
+				return err
+			}
+
+			client, err := tm.UpsertClient(googleanalyticsclient.NewGoogleAnalyticsGA4(NameGoogleAnalyticsGA4Client, enableGeoResolution, visitorRegion, measurementID))
+			if err != nil {
+				return err
+			}
+
 			if _, err = tm.UpsertTrigger(servertrigger.NewClient(NameGoogleAnalyticsGA4ClientTrigger, client)); err != nil {
 				return err
 			}
 		}
 
 		{
-			client, err := tm.UpsertClient(serverclient.NewMeasurementProtocolGA4(NameMeasurementProtocolGA4Client))
+			client, err := tm.UpsertClient(googleanalyticsclient.NewMeasurementProtocolGA4(NameMeasurementProtocolGA4Client))
 			if err != nil {
 				return err
 			}
@@ -63,13 +75,13 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitor
 			}
 		}
 
-		if cfg.GoogleGTag.Enabled {
+		if cfg.GoogleGTagJSOverride.Enabled {
 			template, err := tm.UpsertCustomTemplate(googleanalyticstemplate.NewGoogleGTagClient(NameGoogleGTagClientTemplate))
 			if err != nil {
 				return err
 			}
 
-			_, err = tm.UpsertClient(googleanalyticsclient.NewGoogleGTag(NameGoogleGTagClient, cfg.GoogleGTag, template))
+			_, err = tm.UpsertClient(googleanalyticsclient.NewGoogleGTag(NameGoogleGTagClient, cfg.GoogleGTagJSOverride, template))
 			if err != nil {
 				return err
 			}

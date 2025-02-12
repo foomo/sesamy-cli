@@ -46,7 +46,7 @@ func NewWeb(root *cobra.Command) {
 
 			if pkgcmd.Tag(googletagprovider.Tag, tags) {
 				if err := googletagprovider.Web(tm, cfg.GoogleTag); err != nil {
-					return errors.Wrap(err, "failed to provision google provider")
+					return errors.Wrap(err, "failed to provision google tag provider")
 				}
 			}
 

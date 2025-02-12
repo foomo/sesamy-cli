@@ -8,6 +8,7 @@ import (
 	facebookprovider "github.com/foomo/sesamy-cli/pkg/provider/facebook"
 	googleadsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleads"
 	googleanalyticsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics"
+	googletagprovider "github.com/foomo/sesamy-cli/pkg/provider/googletag"
 	googletagmanagerprovider "github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
 	microsoftadsprovider "github.com/foomo/sesamy-cli/pkg/provider/microsoftads"
 	tracifyprovider "github.com/foomo/sesamy-cli/pkg/provider/tracify"
@@ -48,15 +49,21 @@ func NewServer(root *cobra.Command) {
 				return err
 			}
 
+			if pkgcmd.Tag(googletagprovider.Tag, tags) {
+				if err := googletagprovider.Server(tm, cfg.GoogleTag); err != nil {
+					return errors.Wrap(err, "failed to provision google tag provider")
+				}
+			}
+
 			if pkgcmd.Tag(googletagmanagerprovider.Tag, tags) {
-				if err := googletagmanagerprovider.Server(tm, cfg.GoogleTagManager); err != nil {
+				if err := googletagmanagerprovider.Server(tm, cfg.GoogleTagManager, cfg.EnableGeoResolution); err != nil {
 					return errors.Wrap(err, "failed to provision google tag manager")
 				}
 			}
 
 			if cfg.GoogleAnalytics.Enabled && pkgcmd.Tag(googleanalyticsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googleanalyticsprovider.Name, "tag", googleanalyticsprovider.Tag)
-				if err := googleanalyticsprovider.Server(tm, cfg.GoogleAnalytics, cfg.RedactVisitorIP); err != nil {
+				if err := googleanalyticsprovider.Server(tm, cfg.GoogleAnalytics, cfg.RedactVisitorIP, cfg.EnableGeoResolution); err != nil {
 					return errors.Wrap(err, "failed to provision google analytics")
 				}
 			}
