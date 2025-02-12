@@ -4,7 +4,27 @@ import (
 	"google.golang.org/api/tagmanager/v2"
 )
 
-func NewMPv2UserData(name string, variable *tagmanager.Variable, client *tagmanager.Client) *tagmanager.Transformation {
+func NewMPv2UserData(name string, variables map[string]*tagmanager.Variable, client *tagmanager.Client) *tagmanager.Transformation {
+	var list []*tagmanager.Parameter
+	for k, v := range variables {
+		list = append(list, &tagmanager.Parameter{
+			IsWeakReference: false,
+			Map: []*tagmanager.Parameter{
+				{
+					Key:   "paramName",
+					Type:  "template",
+					Value: k,
+				},
+				{
+					Key:   "paramValue",
+					Type:  "template",
+					Value: "{{" + v.Name + "}}",
+				},
+			},
+			Type: "map",
+		})
+	}
+
 	return &tagmanager.Transformation{
 		Name: name,
 		Parameter: []*tagmanager.Parameter{
@@ -23,25 +43,8 @@ func NewMPv2UserData(name string, variable *tagmanager.Variable, client *tagmana
 				Type: "template",
 			},
 			{
-				Key: "augmentEventTable",
-				List: []*tagmanager.Parameter{
-					{
-						IsWeakReference: false,
-						Map: []*tagmanager.Parameter{
-							{
-								Key:   "paramName",
-								Type:  "template",
-								Value: "user_data",
-							},
-							{
-								Key:   "paramValue",
-								Type:  "template",
-								Value: "{{" + variable.Name + "}}",
-							},
-						},
-						Type: "map",
-					},
-				},
+				Key:  "augmentEventTable",
+				List: list,
 				Type: "list",
 			},
 			{

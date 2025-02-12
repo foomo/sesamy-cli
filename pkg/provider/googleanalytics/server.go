@@ -17,6 +17,7 @@ import (
 	servervariable "github.com/foomo/sesamy-cli/pkg/tagmanager/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
+	api "google.golang.org/api/tagmanager/v2"
 )
 
 func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitorIP, enableGeoResolution bool) error {
@@ -69,7 +70,15 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitor
 				return err
 			}
 
-			_, err = tm.UpsertTransformation(servertransformation.NewMPv2UserData(NameMPv2UserDataTransformation, userDataVariable, client))
+			debugModeVariable, err := tm.UpsertVariable(servervariable.NewMPv2Data("debug_mode", userDataTemplate))
+			if err != nil {
+				return err
+			}
+
+			_, err = tm.UpsertTransformation(servertransformation.NewMPv2UserData(NameMPv2UserDataTransformation, map[string]*api.Variable{
+				"user_data":  userDataVariable,
+				"debug_mode": debugModeVariable,
+			}, client))
 			if err != nil {
 				return err
 			}
