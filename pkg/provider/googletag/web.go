@@ -23,11 +23,20 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
 	}
 
 	{ // setup google tag
-		settings := map[string]string{
+		configSettings := map[string]string{
 			"server_container_url": "https://{{Page Hostname}}",
 		}
 		if !cfg.SendPageView {
-			settings["send_page_view"] = "false"
+			configSettings["send_page_view"] = "false"
+		}
+
+		eventSettings := map[string]*api.Variable{}
+		for k, v := range cfg.DataLayerVariables {
+			dlv, err := tm.UpsertVariable(variable.NewDataLayerVariable(v))
+			if err != nil {
+				return err
+			}
+			eventSettings[k] = dlv
 		}
 
 		tagID, err := tm.UpsertVariable(commonvariable.NewConstant(NameGoogleTagID, cfg.TagID))
@@ -35,11 +44,11 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
 			return err
 		}
 
-		settingsVariable, err := tm.UpsertVariable(containervariable.NewGoogleTagConfigurationSettings(NameGoogleTagSettings, settings))
+		settingsVariable, err := tm.UpsertVariable(containervariable.NewGoogleTagConfigurationSettings(NameGoogleTagSettings, configSettings))
 		if err != nil {
 			return err
 		}
-		if _, err = tm.UpsertTag(webtag.NewGoogleTag(NameGoogleTag, tagID, settingsVariable)); err != nil {
+		if _, err = tm.UpsertTag(webtag.NewGoogleTag(NameGoogleTag, tagID, settingsVariable, eventSettings)); err != nil {
 			return err
 		}
 	}
@@ -62,11 +71,9 @@ func CreateWebEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (
 			return nil, err
 		}
 
-		variables := make(map[string]*api.Variable, len(parameters))
-		for parameterName, parameterValue := range parameters {
-			if variables[parameterName], err = tm.UpsertVariable(variable.NewDataLayerVariable(parameterValue)); err != nil {
-				return nil, err
-			}
+		variables, err := CreateWebDatalayerVariables(tm, parameters)
+		if err != nil {
+			return nil, err
 		}
 
 		if _, err := tm.UpsertVariable(containervariable.NewGoogleTagEventSettings(event, variables)); err != nil {
@@ -75,4 +82,18 @@ func CreateWebEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (
 	}
 
 	return eventParameters, nil
+}
+
+func CreateWebDatalayerVariables(tm *tagmanager.TagManager, parameters map[string]string) (map[string]*api.Variable, error) {
+	previousFolderName := tm.FolderName()
+	tm.SetFolderName("Sesamy - " + Name)
+	defer tm.SetFolderName(previousFolderName)
+	var err error
+	variables := make(map[string]*api.Variable, len(parameters))
+	for parameterName, parameterValue := range parameters {
+		if variables[parameterName], err = tm.UpsertVariable(variable.NewDataLayerVariable(parameterValue)); err != nil {
+			return nil, err
+		}
+	}
+	return variables, nil
 }

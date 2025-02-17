@@ -188,6 +188,14 @@
           "type": "string",
           "description": "Emarsys merchant id"
         },
+        "testMode": {
+          "type": "boolean",
+          "description": "Enable test mode"
+        },
+        "debugMode": {
+          "type": "boolean",
+          "description": "Enable debug mode"
+        },
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
           "description": "Google Consent settings"
@@ -413,6 +421,10 @@
           "type": "boolean",
           "description": "Whether a page_view should be sent on initial load"
         },
+        "dataLayerVariables": {
+          "$ref": "#/$defs/map[string]string",
+          "description": "Data layer variables to be added to the event settings"
+        },
         "typeScript": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.TypeScript",
           "description": "TypeScript settings"
@@ -609,6 +621,12 @@
     "map[string]config.MicrosoftAdsConversionTag": {
       "additionalProperties": {
         "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.MicrosoftAdsConversionTag"
+      },
+      "type": "object"
+    },
+    "map[string]string": {
+      "additionalProperties": {
+        "type": "string"
       },
       "type": "object"
     }

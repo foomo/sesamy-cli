@@ -70,7 +70,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Emarsys) error
 					return errors.Wrap(err, "failed to upsert event trigger: "+event)
 				}
 
-				if _, err := tm.UpsertTag(servertagx.NewEmarsys(event, merchantID, tagTemplate, eventTrigger)); err != nil {
+				if _, err := tm.UpsertTag(servertagx.NewEmarsys(event, merchantID, cfg.TestMode, cfg.DebugMode, tagTemplate, eventTrigger)); err != nil {
 					return err
 				}
 			}
