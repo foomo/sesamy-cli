@@ -2,6 +2,42 @@
 
 The emarsys server side web extend provider makes use of the [Web Extend Command](https://dev.emarsys.com/docs/web-extend-reference/a1a185e5fbb6b-web-extend-command-implementation).
 
+## Concept
+
+Using Tag Manger, it's not really possible to send only one `go` call, so what we do instead,
+is sending multiple calls, ensuring to provide the same `sessionId`, `visitorId` & `pageViewId`.
+
+So instead of doing e.g. this:
+
+```javascript
+// The usual commands to identify visitors and report cart contents.
+ScarabQueue.push(['cart', [
+    {item: 'item_1', price: 19.9, quantity: 1},
+    {item: 'item_2', price: 29.7, quantity: 3}
+]]);
+// Passing on item ID to report product view. Item ID should match the value listed in the Product Catalog
+ScarabQueue.push(['view', 'item_3']);
+// Firing the ScarabQueue. Should be the last call on the page, called only once.
+ScarabQueue.push(['go']);
+```
+
+We are doing this on the server side:
+
+```javascript
+// The usual commands to identify visitors and report cart contents.
+ScarabQueue.push(['cart', [
+    {item: 'item_1', price: 19.9, quantity: 1},
+    {item: 'item_2', price: 29.7, quantity: 3}
+]]);
+// Firing the ScarabQueue. Should be the last call on the page, called only once.
+ScarabQueue.push(['go']);
+
+// Passing on item ID to report product view. Item ID should match the value listed in the Product Catalog
+ScarabQueue.push(['view', 'item_3']);
+// Firing the ScarabQueue. Should be the last call on the page, called only once.
+ScarabQueue.push(['go']);
+```
+
 ## Initialization
 
 Since we need to trigger multiple commands, we need to ensure we're always sending the same `sessionId`, `visitorId` & `pageViewId` for all calls.
@@ -21,7 +57,7 @@ sequenceDiagram
 
 ## Commands
 
-### Cart
+#### Cart
 
 NOTE: The default `page_view` event does not contain the `items` so we need to enrich them in the `collect` service.
 
@@ -50,7 +86,7 @@ ScarabQueue.push(['cart', [
 ScarabQueue.push(['go']);
 ```
 
-### View
+#### View
 
 ```mermaid
 sequenceDiagram
@@ -72,7 +108,7 @@ ScarabQueue.push(['view', 'item_3']);
 ScarabQueue.push(['go']);
 ```
 
-## Category
+#### Category
 
 ```mermaid
 sequenceDiagram
@@ -94,7 +130,7 @@ ScarabQueue.push(['category', 'Bikes > Road Bikes']);
 ScarabQueue.push(['go']);
 ```
 
-## Purchase
+#### Purchase
 
 ```mermaid
 sequenceDiagram
