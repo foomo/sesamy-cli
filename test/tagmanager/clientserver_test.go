@@ -122,7 +122,7 @@ func TestNewClient_Server(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Templates.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
 				dump(t, r)
-				fmt.Println(r.Template[8].TemplateData)
+				fmt.Println(r.Template[5].TemplateData)
 			}
 		})
 	}

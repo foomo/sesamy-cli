@@ -42,7 +42,6 @@ const logToConsole = require('logToConsole');
 const generateRandom = require('generateRandom');
 const getCookieValues = require('getCookieValues');
 const encodeUriComponent = require('encodeUriComponent');
-const createArgumentsQueue = require('createArgumentsQueue');
 
 // --- Config
 
@@ -56,16 +55,14 @@ logToConsole(JSON.stringify({
   pageViewId: pageViewId,
 }));
 
-const gtag = createArgumentsQueue('gtag', 'dataLayer');
-
 // set page view id
-gtag('set', 'emarsys', { page_view_id: pageViewId });
-let query = [];
-if (sessionId) query.push('s='+encodeUriComponent(sessionId));
-if (sessionId) query.push('s='+encodeUriComponent(sessionId));
-if (pageViewId) query.push('pv='+encodeUriComponent(pageViewId));
+gtagSet({emarsys: {page_view_id: pageViewId}});
 
 // call emarsys client
+let query = [];
+if (sessionId) query.push('s='+encodeUriComponent(sessionId));
+if (visitorId) query.push('vi='+encodeUriComponent(visitorId));
+if (pageViewId) query.push('pv='+encodeUriComponent(pageViewId));
 sendPixel("/gtag/js/emarsys?"+query.join('&'));
 
 // Call data.gtmOnSuccess when the tag is finished.
@@ -146,103 +143,6 @@ ___WEB_PERMISSIONS___
           "value": {
             "type": 1,
             "string": "any"
-          }
-        }
-      ]
-    },
-    "isRequired": true
-  },
-  {
-    "instance": {
-      "key": {
-        "publicId": "access_globals",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "keys",
-          "value": {
-            "type": 2,
-            "listItem": [
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "key"
-                  },
-                  {
-                    "type": 1,
-                    "string": "read"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  },
-                  {
-                    "type": 1,
-                    "string": "execute"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "gtag"
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": false
-                  }
-                ]
-              },
-              {
-                "type": 3,
-                "mapKey": [
-                  {
-                    "type": 1,
-                    "string": "key"
-                  },
-                  {
-                    "type": 1,
-                    "string": "read"
-                  },
-                  {
-                    "type": 1,
-                    "string": "write"
-                  },
-                  {
-                    "type": 1,
-                    "string": "execute"
-                  }
-                ],
-                "mapValue": [
-                  {
-                    "type": 1,
-                    "string": "dataLayer"
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": true
-                  },
-                  {
-                    "type": 8,
-                    "boolean": false
-                  }
-                ]
-              }
-            ]
           }
         }
       ]

@@ -274,8 +274,8 @@ func TestNewClient_Web(t *testing.T) {
 		t.Run("list templates", func(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Templates.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
-				// dump(t, r)
-				fmt.Println(r.Template[0].TemplateData)
+				dump(t, r)
+				fmt.Println(r.Template[2].TemplateData)
 			}
 		})
 	}

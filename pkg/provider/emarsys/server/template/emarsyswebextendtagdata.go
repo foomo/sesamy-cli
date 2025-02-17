@@ -81,9 +81,10 @@ ___SANDBOXED_JS_FOR_SERVER___
 
 const Math = require('Math');
 const JSON = require('JSON');
+const setCookie = require('setCookie');
 const sendHttpGet = require('sendHttpGet');
 const setResponseBody = require('setResponseBody');
-const setResponseStatus = require('setResponseStatus');
+const getRemoteAddress = require('getRemoteAddress');
 const encodeUriComponent = require('encodeUriComponent');
 const getAllEventData = require('getAllEventData');
 const getRequestHeader = require('getRequestHeader');
@@ -99,22 +100,32 @@ const merchantUrl = 'https://recommender.scarabresearch.com/merchants/'+data.mer
 // --- Consent ---
 
 if (!isConsentGivenOrNotRequired()) {
-	return data.gtmOnSuccess();
+  return data.gtmOnSuccess();
 }
 
 // --- Main ---
 
 const mappedData = mapEventData();
+const cookieList = ["s", "cdv", "xp", "fc"];
+const headerList = ["referer", "user-agent"];
+const requestUrl = merchantUrl+'?'+serializeData(mappedData);
+const requestOptions = {
+  headers: generateRequestHeaders(headerList, cookieList),
+  timeout: 500,
+};
 
-return sendHttpGet(merchantUrl+'?'+serializeData(mappedData)).then((result) => {
+return sendHttpGet(requestUrl, requestOptions).then((result) => {
   if (result.statusCode >= 200 && result.statusCode < 300) {
-	data.gtmOnSuccess();
+    if (result.headers['set-cookie']) {
+      setResponseCookies(result.headers['set-cookie']);
+    }
+    data.gtmOnSuccess();
   } else {
     logToConsole('[FAILURE]', {
       request: mappedData,
       eventData: eventData,
     });
-	data.gtmOnFailure();
+    data.gtmOnFailure();
   }
 });
 
@@ -122,10 +133,11 @@ return sendHttpGet(merchantUrl+'?'+serializeData(mappedData)).then((result) => {
 
 function mapEventData() {
   const mappedData = {
+    email: eventData.emarsys_email || null,
     customerId: eventData.user_id || null,
     sessionId: getCookieValues('emarsys_s')[0] || eventData.ga_session_id,
-    pageViewId: eventData.page_view_id || generatePageViewId(),
-    isNewPageView: !eventData.page_view_id,
+    pageViewId: eventData.emarsys_page_view_id || generatePageViewId(),
+    isNewPageView: !eventData.emarsys_page_view_id,
     visitorId: getCookieValues('emarsys_cdv')[0] || eventData.client_id,
     referrer: eventData.page_referrer || null,
     orderId: null,
@@ -136,27 +148,12 @@ function mapEventData() {
   };
 
   switch (eventData.event_name) {
-		// custom events
-    case 'emarsys_cart': {
+    case 'page_view': {
       mappedData.cart = serializeItems(eventData.items || []);
       break;
     }
-    case 'emarsys_category': {
-      mappedData.category = eventData.item_list_id;
-      break;
-    }
-    case 'emarsys_purchase': {
-      mappedData.orderId = eventData.transaction_id;
-      mappedData.order = serializeItems(eventData.items || []);
-      break;
-    }
-    case 'emarsys_view': {
-      mappedData.view = serializeItem(eventData.items[0] || {});
-      break;
-    }
-    // standard ecommerce evens
-    case 'view_cart': {
-      mappedData.cart = serializeItems(eventData.items || []);
+    case 'view_item': {
+      mappedData.view = serializeItem(eventData.items[0] || {}, false);
       break;
     }
     case 'view_item_list': {
@@ -166,10 +163,12 @@ function mapEventData() {
     case 'purchase': {
       mappedData.orderId = eventData.transaction_id;
       mappedData.order = serializeItems(eventData.items || []);
-      break;
-    }
-    case 'view_item': {
-      mappedData.view = serializeItem(eventData.items[0] || {});
+			if (eventData.tax) {
+				mappedData.order[0].price += eventData.tax;
+			}
+			if (eventData.shipping) {
+				mappedData.order[0].price += eventData.shipping;
+			}
       break;
     }
   }
@@ -179,20 +178,20 @@ function mapEventData() {
 function serializeItems(items) {
   const ret = [];
   items.forEach((item) => {
-    ret.push(serializeItem(item));
+    ret.push(serializeItem(item, true));
   });
   return ret.join('|');
 }
 
-function serializeItem(item) {
+function serializeItem(item, full) {
   const ret = [];
   if (item.item_id) {
     ret.push('i:'+item.item_id);
   }
-  if (item.price) {
+  if (full && item.price) {
     ret.push('p:'+item.price);
   }
-  if (item.quantity) {
+  if (full && item.quantity) {
     ret.push('q:'+item.quantity);
   }
   return ret.join(',');
@@ -206,6 +205,9 @@ function serializeData(mappedData) {
 
   if (mappedData.isNewPageView) {
     slist.push("xp=1");
+  }
+  if (mappedData.email) {
+    slist.push("eh=" + encodeUriComponent(mappedData.email));
   }
   if (mappedData.customerId) {
     slist.push("ci=" + encodeUriComponent(mappedData.customerId));
@@ -250,14 +252,59 @@ function generatePageViewId() {
 }
 
 function isConsentGivenOrNotRequired() {
-	if (data.adStorageConsent !== 'required') {
-      return true;
+  if (data.adStorageConsent !== 'required') {
+    return true;
+  }
+  if (eventData.consent_state) {
+    return !!eventData.consent_state.ad_storage;
+  }
+  const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G110"
+  return xGaGcs[2] === '1';
+}
+
+function setResponseCookies(cookieList) {
+  for (let i = 0; i < cookieList.length; i++) {
+    let cookieArray = cookieList[i].split("; ").map((pair) => pair.split("="));
+    let cookieJSON = "";
+
+    for (let j = 1; j < cookieArray.length; j++) {
+      if (j === 1) cookieJSON += "{";
+      if (cookieArray[j].length > 1) cookieJSON += '"' + cookieArray[j][0] + '": "' + cookieArray[j][1] + '"';
+      else cookieJSON += '"' + cookieArray[j][0] + '": ' + true;
+      if (j + 1 < cookieArray.length) cookieJSON += ",";
+      else cookieJSON += "}";
     }
-	if (eventData.consent_state) {
-      return !!eventData.consent_state.ad_storage;
+
+    setCookie(cookieArray[0][0], cookieArray[0][1], JSON.parse(cookieJSON));
+  }
+}
+
+function generateRequestHeaders(headerList, cookieList) {
+  let headers = {};
+  let cookies = [];
+
+  for (let i = 0; i < headerList.length; i++) {
+    let headerName = headerList[i];
+    let headerValue = getRequestHeader(headerName);
+    if (headerValue) {
+      headers[headerName] = getRequestHeader(headerName);
     }
-	const xGaGcs = eventData['x-ga-gcs'] || ''; // x-ga-gcs is a string like "G110"
-	return xGaGcs[2] === '1';
+  }
+
+  headers.cookie = "";
+
+  for (let i = 0; i < cookieList.length; i++) {
+    let cookieName = cookieList[i];
+    let cookieValue = getCookieValues(cookieName);
+    if (cookieValue && cookieValue.length) {
+      cookies.push(cookieName + "=" + cookieValue[0]);
+    }
+  }
+
+  headers.cookie = cookies.join("; ");
+  headers["X-Forwarded-For"] = getRemoteAddress();
+
+  return headers;
 }
 
 
@@ -390,6 +437,75 @@ ___SERVER_PERMISSIONS___
           }
         }
       ]
+    },
+    "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "set_cookies",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "allowedCookies",
+          "value": {
+            "type": 2,
+            "listItem": [
+              {
+                "type": 3,
+                "mapKey": [
+                  {
+                    "type": 1,
+                    "string": "name"
+                  },
+                  {
+                    "type": 1,
+                    "string": "domain"
+                  },
+                  {
+                    "type": 1,
+                    "string": "path"
+                  },
+                  {
+                    "type": 1,
+                    "string": "secure"
+                  },
+                  {
+                    "type": 1,
+                    "string": "session"
+                  }
+                ],
+                "mapValue": [
+                  {
+                    "type": 1,
+                    "string": "*"
+                  },
+                  {
+                    "type": 1,
+                    "string": "*"
+                  },
+                  {
+                    "type": 1,
+                    "string": "*"
+                  },
+                  {
+                    "type": 1,
+                    "string": "any"
+                  },
+                  {
+                    "type": 1,
+                    "string": "any"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "clientAnnotations": {
+      "isEditedByUser": true
     },
     "isRequired": true
   }

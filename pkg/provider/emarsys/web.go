@@ -32,6 +32,12 @@ func Web(tm *tagmanager.TagManager, cfg config.Emarsys) error {
 		}
 	}
 
+	if _, err := googletag.CreateWebDatalayerVariables(tm, map[string]string{
+		"emarsys_page_view_id": "emarsys.page_view_id",
+	}); err != nil {
+		return err
+	}
+
 	{ // create event tags
 		tagID, err := tm.LookupVariable(googletag.NameGoogleTagID)
 		if err != nil {
