@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	"go/types"
 	"log/slog"
+	"maps"
 	"slices"
 	"strings"
 
@@ -14,7 +15,6 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/code"
 	"github.com/foomo/sesamy-cli/pkg/typescript"
 	"github.com/stoewer/go-strcase"
-	"golang.org/x/exp/maps"
 )
 
 const FallbackType = "any"
@@ -119,7 +119,7 @@ func (p *Package) renderTypeBasic(typeName string, typeObject types.Object) {
 		}
 	}
 
-	names := maps.Keys(res)
+	names := slices.AppendSeq(make([]string, 0, len(res)), maps.Keys(res))
 	slices.Sort(names)
 
 	typeValues := &strings.Builder{}

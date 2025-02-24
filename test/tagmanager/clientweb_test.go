@@ -1,7 +1,6 @@
 package tagmanager_test
 
 import (
-	"context"
 	"fmt"
 	"log/slog"
 	"os"
@@ -24,7 +23,7 @@ func TestNewClient_Web(t *testing.T) {
 	require.NoError(t, godotenv.Load("../../.env"))
 
 	c, err := tagmanager.New(
-		context.TODO(),
+		t.Context(),
 		slog.New(slog.NewTextHandler(os.Stdout, nil)),
 		os.Getenv("TEST_ACCOUNT_ID"),
 		config.GoogleTagManagerContainer{

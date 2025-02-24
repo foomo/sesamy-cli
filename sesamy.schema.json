@@ -436,14 +436,20 @@
     "github.com.foomo.sesamy-cli.pkg.config.GoogleTagManager": {
       "properties": {
         "accountId": {
-          "type": "string"
+          "type": "string",
+          "description": "Google Tag Manager account id"
         },
         "webContainer": {
-          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerContainer"
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerContainer",
+          "description": "Google Tag Manager web container settings"
         },
         "serverContainer": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerContainer",
           "description": "Google Tag Manager server container settings"
+        },
+        "serverVariables": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerServerContainerVariables",
+          "description": "Google Tag Manager server container variables"
         }
       },
       "additionalProperties": false,
@@ -452,13 +458,30 @@
     "github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerContainer": {
       "properties": {
         "tagId": {
-          "type": "string"
+          "type": "string",
+          "description": "The container tag id"
         },
         "containerId": {
-          "type": "string"
+          "type": "string",
+          "description": "The container id"
         },
         "workspaceId": {
-          "type": "string"
+          "type": "string",
+          "description": "The workspace id that should be used by the api"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerServerContainerVariables": {
+      "properties": {
+        "eventData": {
+          "$ref": "#/$defs/[]string",
+          "description": "List of event data variables"
+        },
+        "lookupTables": {
+          "$ref": "#/$defs/map[string]config.LookupTable",
+          "description": "Map of lookup table variables"
         }
       },
       "additionalProperties": false,
@@ -472,6 +495,20 @@
         },
         "siteId": {
           "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.LookupTable": {
+      "properties": {
+        "input": {
+          "type": "string",
+          "description": "Input source"
+        },
+        "table": {
+          "$ref": "#/$defs/map[string]string",
+          "description": "Table mapping"
         }
       },
       "additionalProperties": false,
@@ -615,6 +652,12 @@
     "map[string]config.GoogleAdsConversionTracking": {
       "additionalProperties": {
         "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversionTracking"
+      },
+      "type": "object"
+    },
+    "map[string]config.LookupTable": {
+      "additionalProperties": {
+        "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.LookupTable"
       },
       "type": "object"
     },

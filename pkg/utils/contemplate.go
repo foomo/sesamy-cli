@@ -21,7 +21,7 @@ func LoadEventParams(cfg contemplate.Config) (map[string]map[string]string, erro
 		for _, typ := range cfgPkg.Types {
 			eventParams, err := getEventParams(pkg.LookupScopeType(typ))
 			if err != nil {
-				return nil, err
+				return nil, errors.Wrap(err, "failed to load event params: "+typ)
 			}
 			ret[strcase.SnakeCase(typ)] = eventParams
 		}
@@ -32,6 +32,15 @@ func LoadEventParams(cfg contemplate.Config) (map[string]map[string]string, erro
 
 func getEventParams(obj types.Object) (map[string]string, error) {
 	ret := map[string]string{}
+	if obj == nil {
+		return nil, errors.New("obj is nil")
+	}
+	if obj.Type() == nil {
+		return nil, errors.New("object is not a type: " + obj.String())
+	}
+	if obj.Type().Underlying() == nil {
+		return nil, errors.New("underlying object is not a type: " + obj.Type().String())
+	}
 	if eventStruct := assume.T[*types.Struct](obj.Type().Underlying()); eventStruct != nil {
 		for i := range eventStruct.NumFields() {
 			if eventField := eventStruct.Field(i); eventField.Name() == "Params" {

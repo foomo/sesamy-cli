@@ -1,4 +1,4 @@
-package facebook
+package microsoftads
 
 const (
 	Tag                        = "mads"
