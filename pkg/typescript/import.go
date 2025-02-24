@@ -2,10 +2,9 @@ package typescript
 
 import (
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
-
-	"golang.org/x/exp/maps"
 )
 
 type Import struct {
@@ -46,7 +45,7 @@ func (i *Import) SetDefault(v string) {
 }
 
 func (i *Import) Modules() []string {
-	ret := maps.Keys(i.modules)
+	ret := slices.AppendSeq(make([]string, 0, len(i.modules)), maps.Keys(i.modules))
 	slices.Sort(ret)
 	return ret
 }

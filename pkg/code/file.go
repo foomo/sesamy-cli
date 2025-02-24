@@ -1,10 +1,9 @@
 package code
 
 import (
+	"maps"
 	"slices"
 	"strings"
-
-	"golang.org/x/exp/maps"
 )
 
 const (
@@ -62,7 +61,7 @@ func (f *File) AddSection(id int) {
 func (f *File) String() string {
 	b := &strings.Builder{}
 
-	sections := maps.Keys(f.Sections)
+	sections := slices.AppendSeq(make([]int, 0, len(f.Sections)), maps.Keys(f.Sections))
 	slices.Sort(sections)
 
 	for _, id := range sections {

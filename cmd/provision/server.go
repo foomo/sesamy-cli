@@ -1,4 +1,4 @@
-package tagmanager
+package provision
 
 import (
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
@@ -15,6 +15,7 @@ import (
 	umamiprovider "github.com/foomo/sesamy-cli/pkg/provider/umami"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	"github.com/pkg/errors"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -26,6 +27,7 @@ func NewServer(root *cobra.Command) {
 		Short: "Provision Google Tag Manager Server Container",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			l := pkgcmd.Logger()
+			l.Info("☕ Provisioning Server Container")
 
 			tags, err := cmd.Flags().GetStringSlice("tags")
 			if err != nil {
@@ -121,6 +123,24 @@ func NewServer(root *cobra.Command) {
 				l.Info("🅿️ Running provider", "name", microsoftadsprovider.Name, "tag", microsoftadsprovider.Tag)
 				if err := microsoftadsprovider.Server(l, tm, cfg.MicrosoftAds); err != nil {
 					return errors.Wrap(err, "failed to provision microsoftads")
+				}
+			}
+
+			if missed := tm.Missed(); len(tags) == 0 && len(missed) > 0 {
+				tree := pterm.TreeNode{
+					Text: "♻️ Missed resources (potentially garbage)",
+				}
+				for k, i := range missed {
+					child := pterm.TreeNode{
+						Text: k,
+					}
+					for _, s := range i {
+						child.Children = append(child.Children, pterm.TreeNode{Text: s})
+					}
+					tree.Children = append(tree.Children, child)
+				}
+				if err := pterm.DefaultTree.WithRoot(tree).Render(); err != nil {
+					l.Warn("failed to render missed resources", "error", err)
 				}
 			}
 

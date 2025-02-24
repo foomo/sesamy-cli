@@ -1,4 +1,4 @@
-package facebook
+package microsoftads
 
 import (
 	"log/slog"

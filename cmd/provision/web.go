@@ -1,4 +1,4 @@
-package tagmanager
+package provision
 
 import (
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
@@ -10,6 +10,7 @@ import (
 	hotjarprovider "github.com/foomo/sesamy-cli/pkg/provider/hotjar"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	"github.com/pkg/errors"
+	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -21,6 +22,7 @@ func NewWeb(root *cobra.Command) {
 		Short: "Provision Google Tag Manager Web Container",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			l := pkgcmd.Logger()
+			l.Info("☕ Provisioning Web Container")
 
 			tags, err := cmd.Flags().GetStringSlice("tags")
 			if err != nil {
@@ -45,38 +47,62 @@ func NewWeb(root *cobra.Command) {
 			}
 
 			if pkgcmd.Tag(googletagprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", googletagprovider.Name, "tag", googletagprovider.Tag)
 				if err := googletagprovider.Web(tm, cfg.GoogleTag); err != nil {
 					return errors.Wrap(err, "failed to provision google tag provider")
 				}
 			}
 
 			if cfg.GoogleAnalytics.Enabled && pkgcmd.Tag(googleanaylticsprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", googleanaylticsprovider.Name, "tag", googleanaylticsprovider.Tag)
 				if err := googleanaylticsprovider.Web(tm, cfg.GoogleAnalytics); err != nil {
 					return errors.Wrap(err, "failed to provision google analytics provider")
 				}
 			}
 
 			if cfg.Emarsys.Enabled && pkgcmd.Tag(emarsysprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", emarsysprovider.Name, "tag", emarsysprovider.Tag)
 				if err := emarsysprovider.Web(tm, cfg.Emarsys); err != nil {
 					return errors.Wrap(err, "failed to provision emarsys provider")
 				}
 			}
 
 			if cfg.Hotjar.Enabled && pkgcmd.Tag(hotjarprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", hotjarprovider.Name, "tag", hotjarprovider.Tag)
 				if err := hotjarprovider.Web(tm, cfg.Hotjar); err != nil {
 					return errors.Wrap(err, "failed to provision hotjar provider")
 				}
 			}
 
 			if cfg.Criteo.Enabled && pkgcmd.Tag(criteoprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", criteoprovider.Name, "tag", criteoprovider.Tag)
 				if err := criteoprovider.Web(l, tm, cfg.Criteo); err != nil {
 					return errors.Wrap(err, "failed to provision criteo provider")
 				}
 			}
 
 			if cfg.Cookiebot.Enabled && pkgcmd.Tag(cookiebotprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", cookiebotprovider.Name, "tag", cookiebotprovider.Tag)
 				if err := cookiebotprovider.Web(tm, cfg.Cookiebot); err != nil {
 					return errors.Wrap(err, "failed to provision cookiebot provider")
+				}
+			}
+
+			if missed := tm.Missed(); len(tags) == 0 && len(missed) > 0 {
+				tree := pterm.TreeNode{
+					Text: "♻️ Missed resources (potentially garbage)",
+				}
+				for k, i := range missed {
+					child := pterm.TreeNode{
+						Text: k,
+					}
+					for _, s := range i {
+						child.Children = append(child.Children, pterm.TreeNode{Text: s})
+					}
+					tree.Children = append(tree.Children, child)
+				}
+				if err := pterm.DefaultTree.WithRoot(tree).Render(); err != nil {
+					l.Warn("failed to render missed resources", "error", err)
 				}
 			}
 
