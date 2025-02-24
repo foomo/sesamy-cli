@@ -14,7 +14,9 @@ func init() {
 	root = NewRoot()
 	NewConfig(root)
 	NewVersion(root)
-	NewTagmanager(root)
+	NewTags(root)
+	NewList(root)
+	NewProvision(root)
 	NewTypeScript(root)
 	cobra.OnInitialize(pkgcmd.InitConfig)
 }
