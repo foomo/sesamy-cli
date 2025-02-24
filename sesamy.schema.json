@@ -447,7 +447,7 @@
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerContainer",
           "description": "Google Tag Manager server container settings"
         },
-        "serverVariables": {
+        "serverContainerVariables": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerServerContainerVariables",
           "description": "Google Tag Manager server container variables"
         }
@@ -506,9 +506,13 @@
           "type": "string",
           "description": "Input source"
         },
-        "table": {
+        "keyTable": {
           "$ref": "#/$defs/map[string]string",
-          "description": "Table mapping"
+          "description": "Key value data map"
+        },
+        "valueTable": {
+          "$ref": "#/$defs/map[string]string",
+          "description": "Vaule key data map"
         }
       },
       "additionalProperties": false,
