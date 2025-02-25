@@ -451,6 +451,10 @@
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerContainer",
           "description": "Google Tag Manager server container settings"
         },
+        "webContainerVariables": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerWebContainerVariables",
+          "description": "Google Tag Manager web container variables"
+        },
         "serverContainerVariables": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerServerContainerVariables",
           "description": "Google Tag Manager server container variables"
@@ -480,6 +484,20 @@
     "github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerServerContainerVariables": {
       "properties": {
         "eventData": {
+          "$ref": "#/$defs/[]string",
+          "description": "List of event data variables"
+        },
+        "lookupTables": {
+          "$ref": "#/$defs/map[string]config.LookupTable",
+          "description": "Map of lookup table variables"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleTagManagerWebContainerVariables": {
+      "properties": {
+        "dataLayer": {
           "$ref": "#/$defs/[]string",
           "description": "List of event data variables"
         },
