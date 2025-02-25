@@ -7,6 +7,7 @@ import (
 	emarsysprovider "github.com/foomo/sesamy-cli/pkg/provider/emarsys"
 	googleanaylticsprovider "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics"
 	googletagprovider "github.com/foomo/sesamy-cli/pkg/provider/googletag"
+	googletagmanagerprovider "github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
 	hotjarprovider "github.com/foomo/sesamy-cli/pkg/provider/hotjar"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	"github.com/pkg/errors"
@@ -50,6 +51,12 @@ func NewWeb(root *cobra.Command) {
 				l.Info("🅿️ Running provider", "name", googletagprovider.Name, "tag", googletagprovider.Tag)
 				if err := googletagprovider.Web(tm, cfg.GoogleTag); err != nil {
 					return errors.Wrap(err, "failed to provision google tag provider")
+				}
+			}
+
+			if pkgcmd.Tag(googletagmanagerprovider.Tag, tags) {
+				if err := googletagmanagerprovider.Web(tm, cfg.GoogleTagManager); err != nil {
+					return errors.Wrap(err, "failed to provision google tag manager")
 				}
 			}
 

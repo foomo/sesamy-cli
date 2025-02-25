@@ -4,13 +4,13 @@ import (
 	"google.golang.org/api/tagmanager/v2"
 )
 
-func DataLayerVariableName(v string) string {
+func DataLayerName(v string) string {
 	return "dlv." + v
 }
 
-func NewDataLayerVariable(name string) *tagmanager.Variable {
+func NewDataLayer(name string) *tagmanager.Variable {
 	return &tagmanager.Variable{
-		Name: DataLayerVariableName(name),
+		Name: DataLayerName(name),
 		Parameter: []*tagmanager.Parameter{
 			{
 				Key:   "dataLayerVersion",

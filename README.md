@@ -88,6 +88,15 @@ googleTagManager:
     containerId: '175348980'
     # The workspace id that should be used by the api
     workspaceId: '10'
+  # Web container variables
+  webContainerVariables:
+    dataLayer:
+      - link_url
+    lookupTables:
+      link_url_conversion_label:
+        input: '{{dlv.link_url}}'
+        valueTable:
+          123456: 'https://foomo.org/'
   # Server container variables
   serverContainerVariables:
     eventData:
