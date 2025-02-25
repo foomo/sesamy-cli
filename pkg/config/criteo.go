@@ -11,6 +11,8 @@ type Criteo struct {
 	CallerID string `json:"callerId" yaml:"callerId"`
 	// Criteo partner id
 	PartnerID string `json:"partnerId" yaml:"partnerId"`
+	// Criteo application id
+	ApplicationID string `json:"applicationId" yaml:"applicationId"`
 	// Google Consent settings
 	GoogleConsent GoogleConsent `json:"googleConsent" yaml:"googleConsent"`
 	// Google Tag Manager server container settings

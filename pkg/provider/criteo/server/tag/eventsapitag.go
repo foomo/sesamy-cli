@@ -9,7 +9,7 @@ func EventsAPITagName(v string) string {
 	return "Criteo - " + v
 }
 
-func NewEventsAPITag(name string, callerID, partnerID *tagmanager.Variable, template *tagmanager.CustomTemplate, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+func NewEventsAPITag(name string, callerID, partnerID, applicationID *tagmanager.Variable, template *tagmanager.CustomTemplate, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	return &tagmanager.Tag{
 		FiringTriggerId: utils.TriggerIDs(triggers),
 		Name:            EventsAPITagName(name),
@@ -34,8 +34,14 @@ func NewEventsAPITag(name string, callerID, partnerID *tagmanager.Variable, temp
 				Value: "false",
 			},
 			{
-				Key:  "applicationId",
-				Type: "template",
+				Key:   "callerId",
+				Type:  "template",
+				Value: "{{" + callerID.Name + "}}",
+			},
+			{
+				Key:   "applicationId",
+				Type:  "template",
+				Value: "{{" + applicationID.Name + "}}",
 			},
 		},
 		Type: utils.TemplateType(template),
