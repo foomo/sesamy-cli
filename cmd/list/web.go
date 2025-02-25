@@ -16,6 +16,7 @@ func NewWeb(root *cobra.Command) {
 			"built-in-variables",
 			"folders",
 			"gtag-config",
+			"status",
 			"tags",
 			"templates",
 			"templates-data",
