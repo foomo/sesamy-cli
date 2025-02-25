@@ -36,6 +36,15 @@ googleTagManager:
     containerId: '175348980'
     # The workspace id that should be used by the api
     workspaceId: '10'
+  # Server container variables
+  serverContainerVariables:
+    eventData:
+      - link_url
+    lookupTables:
+      link_url_conversion_label:
+        input: '{{event.link_url}}'
+        valueTable:
+          123456: 'https://foomo.org/'
 
 # --- Google Tag settings
 googleTag:
@@ -218,6 +227,30 @@ umami:
       types:
       - PageView
       - SelectItem
+
+# --- Criteo
+criteo:
+  # Enable provider
+  enabled: true
+  # Criteo caller id
+  callerId: 123
+  # Criteo partner id
+  partnerId: 123456
+  # Criteo applicaiton id
+  applicationId: com.foomo
+  # Google Tag Manager server container settings
+  serverContainer:
+    # Contemplate package config for generated events
+    packages:
+      - path: github.com/foomo/sesamy-go/pkg/event
+        types:
+          - AddToCart
+          - BeginCheckout
+          - PageView
+          - Purchase
+          - ViewItem
+          - ViewItemList
+          - ViewCart
 
 # --- Facebook
 # https://developers.facebook.com/docs/marketing-api/conversions-api/guides/gtm-server-side

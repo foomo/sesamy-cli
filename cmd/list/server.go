@@ -17,6 +17,7 @@ func NewServer(root *cobra.Command) {
 			"clients",
 			"folders",
 			"gtag-config",
+			"status",
 			"tags",
 			"templates",
 			"templates-data",

@@ -34,6 +34,8 @@ func dump(i interface{ MarshalJSON() ([]byte, error) }, err error) error {
 
 func list(l *slog.Logger, tm *tagmanager.TagManager, resource string) error {
 	switch resource {
+	case "status":
+		return dump(tm.Service().Accounts.Containers.Workspaces.GetStatus(tm.WorkspacePath()).Do())
 	case "clients":
 		return dump(tm.Service().Accounts.Containers.Workspaces.Clients.List(tm.WorkspacePath()).Do())
 	case "tags":

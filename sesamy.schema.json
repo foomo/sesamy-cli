@@ -166,6 +166,10 @@
           "type": "string",
           "description": "Criteo partner id"
         },
+        "applicationId": {
+          "type": "string",
+          "description": "Criteo application id"
+        },
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
           "description": "Google Consent settings"

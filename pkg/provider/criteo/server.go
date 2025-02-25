@@ -42,6 +42,11 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error 
 			return err
 		}
 
+		applicationID, err := tm.UpsertVariable(commonvariable.NewConstant(NameApplicationID, cfg.ApplicationID))
+		if err != nil {
+			return err
+		}
+
 		eventParameters, err := utils.LoadEventParams(cfg.ServerContainer)
 		if err != nil {
 			return err
@@ -65,7 +70,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error 
 				return errors.Wrap(err, "failed to upsert event trigger: "+event)
 			}
 
-			if _, err := tm.UpsertTag(servertagx.NewEventsAPITag(event, callerID, partnerID, template, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(servertagx.NewEventsAPITag(event, callerID, partnerID, applicationID, template, eventTrigger)); err != nil {
 				return err
 			}
 		}
