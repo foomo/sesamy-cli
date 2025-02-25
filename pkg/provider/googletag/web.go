@@ -32,7 +32,7 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
 
 		eventSettings := map[string]*api.Variable{}
 		for k, v := range cfg.DataLayerVariables {
-			dlv, err := tm.UpsertVariable(variable.NewDataLayerVariable(v))
+			dlv, err := tm.UpsertVariable(variable.NewDataLayer(v))
 			if err != nil {
 				return err
 			}
@@ -91,7 +91,7 @@ func CreateWebDatalayerVariables(tm *tagmanager.TagManager, parameters map[strin
 	var err error
 	variables := make(map[string]*api.Variable, len(parameters))
 	for parameterName, parameterValue := range parameters {
-		if variables[parameterName], err = tm.UpsertVariable(variable.NewDataLayerVariable(parameterValue)); err != nil {
+		if variables[parameterName], err = tm.UpsertVariable(variable.NewDataLayer(parameterValue)); err != nil {
 			return nil, err
 		}
 	}

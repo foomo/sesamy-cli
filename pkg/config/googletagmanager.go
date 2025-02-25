@@ -7,6 +7,8 @@ type GoogleTagManager struct {
 	WebContainer GoogleTagManagerContainer `json:"webContainer" yaml:"webContainer"`
 	// Google Tag Manager server container settings
 	ServerContainer GoogleTagManagerContainer `json:"serverContainer" yaml:"serverContainer"`
+	// Google Tag Manager web container variables
+	WebContaienrVariables GoogleTagManagerWebContainerVariables `json:"webContainerVariables" yaml:"webContainerVariables"`
 	// Google Tag Manager server container variables
 	ServerContaienrVariables GoogleTagManagerServerContainerVariables `json:"serverContainerVariables" yaml:"serverContainerVariables"`
 }
