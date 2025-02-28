@@ -9,7 +9,7 @@
 ### Description
 _[Provide a detailed explanation of the changes you have made. Include the reasons behind these changes and any relevant context. Link any related issues.]_
 
-### Related Issue
+### Related Issues
 _[If this pull request addresses an issue, please link to it here (e.g., Fixes #123).]_
 
 ### Checklist
