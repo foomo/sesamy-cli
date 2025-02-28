@@ -415,7 +415,7 @@ You might need to increase your Google Tag Manager API quotas, since they are li
 
 ## How to Contribute
 
-Make a pull request...
+Please refer to the [CONTRIBUTING](.gihub/CONTRIBUTING.md) details and follow the [CODE_OF_CONDUCT](.gihub/CODE_OF_CONDUCT.md) and [SECURITY](.github/SECURITY.md) guidelines.
 
 ## License
 
