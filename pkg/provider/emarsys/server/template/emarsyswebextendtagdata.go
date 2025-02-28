@@ -153,22 +153,25 @@ function mapEventData() {
       break;
     }
     case 'view_item': {
+      mappedData.cart = serializeItems(eventData.items || []);
       mappedData.view = serializeItem(eventData.items[0] || {}, false);
       break;
     }
     case 'view_item_list': {
+      mappedData.cart = serializeItems(eventData.items || []);
       mappedData.category = eventData.item_list_id;
       break;
     }
     case 'purchase': {
+      mappedData.cart = [];
       mappedData.orderId = eventData.transaction_id;
       mappedData.order = serializeItems(eventData.items || []);
-			if (eventData.tax) {
-				mappedData.order[0].price += eventData.tax;
-			}
-			if (eventData.shipping) {
-				mappedData.order[0].price += eventData.shipping;
-			}
+      if (eventData.tax) {
+        mappedData.order[0].price += eventData.tax;
+      }
+      if (eventData.shipping) {
+        mappedData.order[0].price += eventData.shipping;
+      }
       break;
     }
   }
