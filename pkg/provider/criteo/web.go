@@ -11,12 +11,9 @@ import (
 )
 
 func Web(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	template, err := tm.LookupTemplate(NameCriteoUserIdentificationTemplate)
@@ -28,17 +25,17 @@ func Web(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error {
 	}
 
 	{ // setup criteo
-		callerID, err := tm.UpsertVariable(commonvariable.NewConstant(NameCallerID, cfg.CallerID))
+		callerID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameCallerID, cfg.CallerID))
 		if err != nil {
 			return err
 		}
 
-		partnerID, err := tm.UpsertVariable(commonvariable.NewConstant(NamePartnerID, cfg.PartnerID))
+		partnerID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NamePartnerID, cfg.PartnerID))
 		if err != nil {
 			return err
 		}
 
-		if _, err = tm.UpsertTag(client.NewUserIdentification(NameCriteoUserIdentificationTag, callerID, partnerID, template)); err != nil {
+		if _, err = tm.UpsertTag(folder, client.NewUserIdentification(NameCriteoUserIdentificationTag, callerID, partnerID, template)); err != nil {
 			return err
 		}
 	}

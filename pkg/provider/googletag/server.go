@@ -7,16 +7,13 @@ import (
 )
 
 func Server(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	{ // create constants
-		if _, err := tm.UpsertVariable(commonvariable.NewConstant(NameGoogleTagMeasurementID, cfg.TagID)); err != nil {
+		if _, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameGoogleTagMeasurementID, cfg.TagID)); err != nil {
 			return err
 		}
 	}

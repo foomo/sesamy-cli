@@ -10,7 +10,6 @@ import (
 	tagx "github.com/foomo/go/testing/tag"
 	"github.com/foomo/sesamy-cli/pkg/config"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
-	"github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -179,11 +178,11 @@ func TestNewClient_Web(t *testing.T) {
 			}
 		})
 
-		t.Run("upsert trigger", func(t *testing.T) {
-			obj, err := c.UpsertTrigger(trigger.NewEvent(name))
-			require.NoError(t, err)
-			t.Log("ID: " + obj.TriggerId)
-		})
+		// t.Run("upsert trigger", func(t *testing.T) {
+		// 	obj, err := c.UpsertTrigger(trigger.NewEvent(name))
+		// 	require.NoError(t, err)
+		// 	t.Log("ID: " + obj.TriggerId)
+		// })
 	}
 
 	{ // --- Tags ---

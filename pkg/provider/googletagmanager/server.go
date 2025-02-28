@@ -10,12 +10,9 @@ import (
 )
 
 func Server(tm *tagmanager.TagManager, cfg config.GoogleTagManager, enableGeoResolution bool) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	{ // enable build in variables
@@ -25,24 +22,24 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleTagManager, enableGeoRes
 	}
 
 	{ // create client
-		visitorRegion, err := tm.UpsertVariable(variable.NewVisitorRegion(NameGoogleTagManagerVisitorRegion))
+		visitorRegion, err := tm.UpsertVariable(folder, variable.NewVisitorRegion(NameGoogleTagManagerVisitorRegion))
 		if err != nil {
 			return err
 		}
 
-		if _, err := tm.UpsertClient(client.NewGoogleTagManagerWebContainer(NameGoogleTagManagerWebContainerClient, cfg.WebContainer.TagID, enableGeoResolution, visitorRegion)); err != nil {
+		if _, err := tm.UpsertClient(folder, client.NewGoogleTagManagerWebContainer(NameGoogleTagManagerWebContainerClient, cfg.WebContainer.TagID, enableGeoResolution, visitorRegion)); err != nil {
 			return err
 		}
 	}
 
 	{ // create variables
 		for _, value := range cfg.ServerContaienrVariables.EventData {
-			if _, err := tm.UpsertVariable(servervariable.NewEventData(value)); err != nil {
+			if _, err := tm.UpsertVariable(folder, servervariable.NewEventData(value)); err != nil {
 				return err
 			}
 		}
 		for key, value := range cfg.ServerContaienrVariables.LookupTables {
-			if _, err := tm.UpsertVariable(commonvariable.NewLookupTable(key, value)); err != nil {
+			if _, err := tm.UpsertVariable(folder, commonvariable.NewLookupTable(key, value)); err != nil {
 				return err
 			}
 		}

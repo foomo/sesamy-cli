@@ -7,15 +7,9 @@ import (
 )
 
 func ServerEnsure(tm *tagmanager.TagManager) error {
-	folderName := tm.FolderName()
-	defer tm.SetFolderName(folderName)
-
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	{ // create clients
@@ -23,10 +17,10 @@ func ServerEnsure(tm *tagmanager.TagManager) error {
 		if err != nil {
 			return err
 		}
-		if _, err = tm.UpsertVariable(variable.NewGoogleConsentModeAdStorage(consentTemplate)); err != nil {
+		if _, err = tm.UpsertVariable(folder, variable.NewGoogleConsentModeAdStorage(consentTemplate)); err != nil {
 			return err
 		}
-		if _, err = tm.UpsertVariable(variable.NewGoogleConsentModeAnalyticsStorage(consentTemplate)); err != nil {
+		if _, err = tm.UpsertVariable(folder, variable.NewGoogleConsentModeAnalyticsStorage(consentTemplate)); err != nil {
 			return err
 		}
 	}

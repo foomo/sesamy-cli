@@ -17,16 +17,13 @@ import (
 )
 
 func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Emarsys) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	{ // conversion
-		merchantID, err := tm.UpsertVariable(commonvariable.NewConstant(NameMerchantIDConstant, cfg.MerchantID))
+		merchantID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameMerchantIDConstant, cfg.MerchantID))
 		if err != nil {
 			return err
 		}
@@ -41,7 +38,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Emarsys) error
 			return err
 		}
 
-		_, err = tm.UpsertClient(serverclientx.NewEmarsys(NameServerEmarsysClient, cfg, clientTemplate))
+		_, err = tm.UpsertClient(folder, serverclientx.NewEmarsys(NameServerEmarsysClient, cfg, clientTemplate))
 		if err != nil {
 			return err
 		}
@@ -65,12 +62,12 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Emarsys) error
 					eventTriggerOpts = append(eventTriggerOpts, trigger.EmarsysEventWithConsentMode(consentVariable))
 				}
 
-				eventTrigger, err := tm.UpsertTrigger(trigger.NewEmarsysEvent(event, eventTriggerOpts...))
+				eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewEmarsysEvent(event, eventTriggerOpts...))
 				if err != nil {
 					return errors.Wrap(err, "failed to upsert event trigger: "+event)
 				}
 
-				if _, err := tm.UpsertTag(servertagx.NewEmarsys(event, merchantID, cfg.TestMode, cfg.DebugMode, tagTemplate, eventTrigger)); err != nil {
+				if _, err := tm.UpsertTag(folder, servertagx.NewEmarsys(event, merchantID, cfg.TestMode, cfg.DebugMode, tagTemplate, eventTrigger)); err != nil {
 					return err
 				}
 			}

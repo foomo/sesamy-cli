@@ -15,12 +15,9 @@ import (
 )
 
 func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	template, err := tm.LookupTemplate(NameCriteoEventsAPITemplate)
@@ -32,17 +29,17 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error 
 	}
 
 	{ // create tags
-		callerID, err := tm.UpsertVariable(commonvariable.NewConstant(NameCallerID, cfg.CallerID))
+		callerID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameCallerID, cfg.CallerID))
 		if err != nil {
 			return err
 		}
 
-		partnerID, err := tm.UpsertVariable(commonvariable.NewConstant(NamePartnerID, cfg.PartnerID))
+		partnerID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NamePartnerID, cfg.PartnerID))
 		if err != nil {
 			return err
 		}
 
-		applicationID, err := tm.UpsertVariable(commonvariable.NewConstant(NameApplicationID, cfg.ApplicationID))
+		applicationID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameApplicationID, cfg.ApplicationID))
 		if err != nil {
 			return err
 		}
@@ -65,12 +62,12 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error 
 				eventTriggerOpts = append(eventTriggerOpts, trigger.CriteoEventWithConsentMode(consentVariable))
 			}
 
-			eventTrigger, err := tm.UpsertTrigger(trigger.NewCriteoEvent(event, eventTriggerOpts...))
+			eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewCriteoEvent(event, eventTriggerOpts...))
 			if err != nil {
 				return errors.Wrap(err, "failed to upsert event trigger: "+event)
 			}
 
-			if _, err := tm.UpsertTag(servertagx.NewEventsAPITag(event, callerID, partnerID, applicationID, template, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(folder, servertagx.NewEventsAPITag(event, callerID, partnerID, applicationID, template, eventTrigger)); err != nil {
 				return err
 			}
 		}

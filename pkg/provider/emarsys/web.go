@@ -13,12 +13,9 @@ import (
 )
 
 func Web(tm *tagmanager.TagManager, cfg config.Emarsys) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	{ // create initialization tag
@@ -27,7 +24,7 @@ func Web(tm *tagmanager.TagManager, cfg config.Emarsys) error {
 			return err
 		}
 
-		if _, err = tm.UpsertTag(tag.NewEmarsysInitialization(NameWebEmarsysInitalizationTag, tagTemplate)); err != nil {
+		if _, err = tm.UpsertTag(folder, tag.NewEmarsysInitialization(NameWebEmarsysInitalizationTag, tagTemplate)); err != nil {
 			return err
 		}
 	}
@@ -60,7 +57,7 @@ func Web(tm *tagmanager.TagManager, cfg config.Emarsys) error {
 				return errors.Wrap(err, "failed to lookup google tag event setting: "+event)
 			}
 
-			if _, err := tm.UpsertTag(containertag.NewGoogleAnalyticsEvent(event, tagID, eventSettings, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(folder, containertag.NewGoogleAnalyticsEvent(event, tagID, eventSettings, eventTrigger)); err != nil {
 				return err
 			}
 		}

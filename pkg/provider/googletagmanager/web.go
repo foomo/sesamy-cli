@@ -8,22 +8,19 @@ import (
 )
 
 func Web(tm *tagmanager.TagManager, cfg config.GoogleTagManager) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	{ // create variables
 		for _, value := range cfg.WebContaienrVariables.DataLayer {
-			if _, err := tm.UpsertVariable(variable.NewDataLayer(value)); err != nil {
+			if _, err := tm.UpsertVariable(folder, variable.NewDataLayer(value)); err != nil {
 				return err
 			}
 		}
 		for key, value := range cfg.WebContaienrVariables.LookupTables {
-			if _, err := tm.UpsertVariable(commonvariable.NewLookupTable(key, value)); err != nil {
+			if _, err := tm.UpsertVariable(folder, commonvariable.NewLookupTable(key, value)); err != nil {
 				return err
 			}
 		}

@@ -2,13 +2,13 @@ package tagmanager
 
 import (
 	"context"
+	"crypto/md5" //nolint: gosec //just a checksum
 	"encoding/json"
 	"fmt"
 	"log/slog"
 	"time"
 
 	"github.com/foomo/sesamy-cli/pkg/config"
-	"github.com/mitchellh/hashstructure/v2"
 	"github.com/pkg/errors"
 	"google.golang.org/api/option"
 	"google.golang.org/api/tagmanager/v2"
@@ -16,11 +16,11 @@ import (
 
 type (
 	TagManager struct {
-		l                *slog.Logger
-		notes            string
-		accountID        string
-		container        config.GoogleTagManagerContainer
-		folderName       string
+		l         *slog.Logger
+		notes     string
+		accountID string
+		container config.GoogleTagManagerContainer
+		// folderName       string
 		clientOptions    []option.ClientOption
 		requestThrottler *time.Ticker
 		// cache
@@ -86,11 +86,11 @@ func WithNotes(v string) Option {
 	}
 }
 
-func WithFolderName(v string) Option {
-	return func(o *TagManager) {
-		o.folderName = v
-	}
-}
+// func WithFolderName(v string) Option {
+// 	return func(o *TagManager) {
+// 		o.folderName = v
+// 	}
+// }
 
 func WithRequestQuota(v int) Option {
 	return func(o *TagManager) {
@@ -116,8 +116,8 @@ func New(ctx context.Context, l *slog.Logger, accountID string, container config
 		accountID:        accountID,
 		container:        container,
 		requestThrottler: time.NewTicker((100 * time.Second) / time.Duration(15)),
-		notes:            "Managed by Sesamy. DO NOT EDIT.",
-		folderName:       "Sesamy",
+		notes:            "DO NOT EDIT!\n\nManaged by Sesamy",
+		// folderName:       "Sesamy",
 		clientOptions: []option.ClientOption{
 			option.WithLogger(l),
 			option.WithRequestReason("Sesamy container provisioning"),
@@ -198,13 +198,13 @@ func (t *TagManager) WorkspaceID() string {
 	return t.container.WorkspaceID
 }
 
-func (t *TagManager) FolderName() string {
-	return t.folderName
-}
+// func (t *TagManager) FolderName() string {
+// 	return t.folderName
+// }
 
-func (t *TagManager) SetFolderName(v string) {
-	t.folderName = v
-}
+// func (t *TagManager) SetFolderName(v string) {
+// 	t.folderName = v
+// }
 
 func (t *TagManager) Service() *tagmanager.Service {
 	if t.requestThrottler != nil {
@@ -228,10 +228,10 @@ func (t *TagManager) WorkspacePath() string {
 func (t *TagManager) Notes(v any) string {
 	var hash string
 	if v != nil {
-		if value, err := hashstructure.Hash(v, hashstructure.FormatV2, nil); err != nil {
-			t.l.Warn("failed to hash struct:", "error", err)
+		if out, err := json.Marshal(v); err != nil {
+			t.l.Warn("failed to marshal tag manager", "error", err)
 		} else {
-			hash = fmt.Sprintf(" [%d]", value)
+			hash = fmt.Sprintf(" - %x", md5.Sum(out)) //nolint: gosec //just a checksum
 		}
 	}
 	return t.notes + hash
@@ -501,13 +501,9 @@ func (t *TagManager) LoadTransformations() (*AccessedMap[*tagmanager.Transformat
 	return t.transformations, nil
 }
 
-func (t *TagManager) UpsertClient(item *tagmanager.Client) (*tagmanager.Client, error) {
+func (t *TagManager) UpsertClient(folder *tagmanager.Folder, item *tagmanager.Client) (*tagmanager.Client, error) {
 	l := t.l.With("type", "Client", "name", item.Name)
 
-	folder, err := t.LookupFolder(t.folderName)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to retrieve folder")
-	}
 	item.ParentFolderId = folder.FolderId
 
 	item.Notes = t.Notes(item)
@@ -542,13 +538,9 @@ func (t *TagManager) UpsertClient(item *tagmanager.Client) (*tagmanager.Client, 
 	return t.LookupClient(item.Name)
 }
 
-func (t *TagManager) UpsertTransformation(item *tagmanager.Transformation) (*tagmanager.Transformation, error) {
+func (t *TagManager) UpsertTransformation(folder *tagmanager.Folder, item *tagmanager.Transformation) (*tagmanager.Transformation, error) {
 	l := t.l.With("type", "Transformation", "name", item.Name)
 
-	folder, err := t.LookupFolder(t.folderName)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to retrieve folder")
-	}
 	item.ParentFolderId = folder.FolderId
 
 	item.Notes = t.Notes(item)
@@ -621,13 +613,9 @@ func (t *TagManager) UpsertFolder(name string) (*tagmanager.Folder, error) {
 	return t.LookupFolder(name)
 }
 
-func (t *TagManager) UpsertVariable(item *tagmanager.Variable) (*tagmanager.Variable, error) {
+func (t *TagManager) UpsertVariable(folder *tagmanager.Folder, item *tagmanager.Variable) (*tagmanager.Variable, error) {
 	l := t.l.With("type", "Variable", "name", item.Name)
 
-	folder, err := t.LookupFolder(t.folderName)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to retrieve folder")
-	}
 	item.ParentFolderId = folder.FolderId
 
 	item.Notes = t.Notes(item)
@@ -688,13 +676,9 @@ func (t *TagManager) EnableBuiltInVariable(typeName string) (*tagmanager.BuiltIn
 	return t.GetBuiltInVariable(typeName)
 }
 
-func (t *TagManager) UpsertTrigger(item *tagmanager.Trigger) (*tagmanager.Trigger, error) {
+func (t *TagManager) UpsertTrigger(folder *tagmanager.Folder, item *tagmanager.Trigger) (*tagmanager.Trigger, error) {
 	l := t.l.With("type", "Trigger", "name", item.Name)
 
-	folder, err := t.LookupFolder(t.folderName)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to retrieve folder")
-	}
 	item.ParentFolderId = folder.FolderId
 
 	item.Notes = t.Notes(item)
@@ -729,13 +713,9 @@ func (t *TagManager) UpsertTrigger(item *tagmanager.Trigger) (*tagmanager.Trigge
 	return t.LookupTrigger(item.Name)
 }
 
-func (t *TagManager) UpsertTag(item *tagmanager.Tag) (*tagmanager.Tag, error) {
+func (t *TagManager) UpsertTag(folder *tagmanager.Folder, item *tagmanager.Tag) (*tagmanager.Tag, error) {
 	l := t.l.With("type", "Tag", "name", item.Name)
 
-	folder, err := t.LookupFolder(t.folderName)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to retrieve folder")
-	}
 	item.ParentFolderId = folder.FolderId
 
 	item.Notes = t.Notes(item)
