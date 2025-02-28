@@ -11,12 +11,9 @@ import (
 )
 
 func Server(tm *tagmanager.TagManager, cfg config.ConversionLinker) error {
-	{
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	var eventTriggerOpts []trigger.ConversionLinkerEventOption
@@ -31,12 +28,12 @@ func Server(tm *tagmanager.TagManager, cfg config.ConversionLinker) error {
 		eventTriggerOpts = append(eventTriggerOpts, trigger.ConversionLinkerEventWithConsentMode(consentVariable))
 	}
 
-	eventTrigger, err := tm.UpsertTrigger(trigger.NewConversionLinkerEvent(NameConversionLinkerTrigger, eventTriggerOpts...))
+	eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewConversionLinkerEvent(NameConversionLinkerTrigger, eventTriggerOpts...))
 	if err != nil {
 		return errors.Wrap(err, "failed to upsert event trigger: "+NameConversionLinkerTrigger)
 	}
 
-	if _, err := tm.UpsertTag(containertag.NewConversionLinker(Name, eventTrigger)); err != nil {
+	if _, err := tm.UpsertTag(folder, containertag.NewConversionLinker(Name, eventTrigger)); err != nil {
 		return err
 	}
 

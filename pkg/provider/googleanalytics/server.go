@@ -21,12 +21,9 @@ import (
 )
 
 func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitorIP, enableGeoResolution bool) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	{ // create clients
@@ -41,22 +38,22 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitor
 				return err
 			}
 
-			client, err := tm.UpsertClient(googleanalyticsclient.NewGoogleAnalyticsGA4(NameGoogleAnalyticsGA4Client, enableGeoResolution, visitorRegion, measurementID))
+			client, err := tm.UpsertClient(folder, googleanalyticsclient.NewGoogleAnalyticsGA4(NameGoogleAnalyticsGA4Client, enableGeoResolution, visitorRegion, measurementID))
 			if err != nil {
 				return err
 			}
 
-			if _, err = tm.UpsertTrigger(servertrigger.NewClient(NameGoogleAnalyticsGA4ClientTrigger, client)); err != nil {
+			if _, err = tm.UpsertTrigger(folder, servertrigger.NewClient(NameGoogleAnalyticsGA4ClientTrigger, client)); err != nil {
 				return err
 			}
 		}
 
 		{
-			client, err := tm.UpsertClient(googleanalyticsclient.NewMeasurementProtocolGA4(NameMeasurementProtocolGA4Client))
+			client, err := tm.UpsertClient(folder, googleanalyticsclient.NewMeasurementProtocolGA4(NameMeasurementProtocolGA4Client))
 			if err != nil {
 				return err
 			}
-			if _, err = tm.UpsertTrigger(servertrigger.NewClient(NameMeasurementProtocolGA4ClientTrigger, client)); err != nil {
+			if _, err = tm.UpsertTrigger(folder, servertrigger.NewClient(NameMeasurementProtocolGA4ClientTrigger, client)); err != nil {
 				return err
 			}
 
@@ -65,17 +62,17 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitor
 				return err
 			}
 
-			userDataVariable, err := tm.UpsertVariable(servervariable.NewMPv2Data("user_data", userDataTemplate))
+			userDataVariable, err := tm.UpsertVariable(folder, servervariable.NewMPv2Data("user_data", userDataTemplate))
 			if err != nil {
 				return err
 			}
 
-			debugModeVariable, err := tm.UpsertVariable(servervariable.NewMPv2Data("debug_mode", userDataTemplate))
+			debugModeVariable, err := tm.UpsertVariable(folder, servervariable.NewMPv2Data("debug_mode", userDataTemplate))
 			if err != nil {
 				return err
 			}
 
-			_, err = tm.UpsertTransformation(servertransformation.NewMPv2UserData(NameMPv2UserDataTransformation, map[string]*api.Variable{
+			_, err = tm.UpsertTransformation(folder, servertransformation.NewMPv2UserData(NameMPv2UserDataTransformation, map[string]*api.Variable{
 				"user_data":  userDataVariable,
 				"debug_mode": debugModeVariable,
 			}, client))
@@ -90,7 +87,7 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitor
 				return err
 			}
 
-			_, err = tm.UpsertClient(googleanalyticsclient.NewGoogleGTag(NameGoogleGTagClient, cfg.GoogleGTagJSOverride, template))
+			_, err = tm.UpsertClient(folder, googleanalyticsclient.NewGoogleGTag(NameGoogleGTagClient, cfg.GoogleGTagJSOverride, template))
 			if err != nil {
 				return err
 			}
@@ -116,12 +113,12 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitor
 				eventTriggerOpts = append(eventTriggerOpts, trigger.GoogleAnalyticsEventWithConsentMode(consentVariable))
 			}
 
-			eventTrigger, err := tm.UpsertTrigger(trigger.NewGoogleAnalyticsEvent(event, eventTriggerOpts...))
+			eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewGoogleAnalyticsEvent(event, eventTriggerOpts...))
 			if err != nil {
 				return errors.Wrap(err, "failed to upsert event trigger: "+event)
 			}
 
-			if _, err := tm.UpsertTag(containertag.NewGoogleAnalytics(event, redactVisitorIP, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(folder, containertag.NewGoogleAnalytics(event, redactVisitorIP, eventTrigger)); err != nil {
 				return errors.Wrap(err, "failed to upsert google analytics ga4 tag: "+event)
 			}
 		}

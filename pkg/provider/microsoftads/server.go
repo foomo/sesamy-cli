@@ -16,15 +16,12 @@ import (
 )
 
 func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.MicrosoftAds) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
-	tagID, err := tm.UpsertVariable(commonvariable.NewConstant(NameTagIDConstant, cfg.TagID))
+	tagID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameTagIDConstant, cfg.TagID))
 	if err != nil {
 		return err
 	}
@@ -54,12 +51,12 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.MicrosoftAds) 
 					eventTriggerOpts = append(eventTriggerOpts, trigger.ConversionEventWithConsentMode(consentVariable))
 				}
 
-				eventTrigger, err := tm.UpsertTrigger(trigger.NewConversionEvent(event, eventTriggerOpts...))
+				eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewConversionEvent(event, eventTriggerOpts...))
 				if err != nil {
 					return errors.Wrap(err, "failed to upsert event trigger: "+event)
 				}
 
-				if _, err := tm.UpsertTag(servertagx.NewConversion(event, tagID, tagTemplate, cfg.Conversion.ServerContainer.Setting(event), eventTrigger)); err != nil {
+				if _, err := tm.UpsertTag(folder, servertagx.NewConversion(event, tagID, tagTemplate, cfg.Conversion.ServerContainer.Setting(event), eventTrigger)); err != nil {
 					return err
 				}
 			}

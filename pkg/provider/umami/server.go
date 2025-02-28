@@ -13,12 +13,9 @@ import (
 )
 
 func Server(tm *tagmanager.TagManager, cfg config.Umami) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	template, err := tm.UpsertCustomTemplate(containertemplate.NewUmami(Name))
@@ -45,12 +42,12 @@ func Server(tm *tagmanager.TagManager, cfg config.Umami) error {
 				eventTriggerOpts = append(eventTriggerOpts, trigger.UmamiEventWithConsentMode(consentVariable))
 			}
 
-			eventTrigger, err := tm.UpsertTrigger(trigger.NewUmamiEvent(event, eventTriggerOpts...))
+			eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewUmamiEvent(event, eventTriggerOpts...))
 			if err != nil {
 				return errors.Wrap(err, "failed to upsert event trigger: "+event)
 			}
 
-			if _, err := tm.UpsertTag(containertag.NewUmami(event, cfg, template, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(folder, containertag.NewUmami(event, cfg, template, eventTrigger)); err != nil {
 				return err
 			}
 		}

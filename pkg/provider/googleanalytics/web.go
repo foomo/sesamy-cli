@@ -11,12 +11,9 @@ import (
 )
 
 func Web(tm *tagmanager.TagManager, cfg config.GoogleAnalytics) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	{ // create event tags
@@ -41,7 +38,7 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleAnalytics) error {
 				return errors.Wrap(err, "failed to lookup google tag event setting: "+event)
 			}
 
-			if _, err := tm.UpsertTag(containertag.NewGoogleAnalyticsEvent(event, tagID, eventSettings, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(folder, containertag.NewGoogleAnalyticsEvent(event, tagID, eventSettings, eventTrigger)); err != nil {
 				return err
 			}
 		}

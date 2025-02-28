@@ -8,21 +8,18 @@ import (
 )
 
 func Web(tm *tagmanager.TagManager, cfg config.Hotjar) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	{ // setup hotjar
-		siteID, err := tm.UpsertVariable(commonvariable.NewConstant(NameSiteID, cfg.SiteID))
+		siteID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameSiteID, cfg.SiteID))
 		if err != nil {
 			return err
 		}
 
-		if _, err = tm.UpsertTag(client.NewHotjar(NameHotjarTag, siteID)); err != nil {
+		if _, err = tm.UpsertTag(folder, client.NewHotjar(NameHotjarTag, siteID)); err != nil {
 			return err
 		}
 	}

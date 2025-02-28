@@ -15,25 +15,22 @@ import (
 )
 
 func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Facebook) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
-	}
-
-	pixelID, err := tm.UpsertVariable(commonvariable.NewConstant(NamePixelIDConstant, cfg.PixelID))
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
 	if err != nil {
 		return err
 	}
 
-	apiAccessToken, err := tm.UpsertVariable(commonvariable.NewConstant(NameAPIAcessTokenConstant, cfg.APIAccessToken))
+	pixelID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NamePixelIDConstant, cfg.PixelID))
 	if err != nil {
 		return err
 	}
 
-	testEventToken, err := tm.UpsertVariable(commonvariable.NewConstant(NameTestEventTokenConstant, cfg.TestEventToken))
+	apiAccessToken, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameAPIAcessTokenConstant, cfg.APIAccessToken))
+	if err != nil {
+		return err
+	}
+
+	testEventToken, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameTestEventTokenConstant, cfg.TestEventToken))
 	if err != nil {
 		return err
 	}
@@ -65,12 +62,12 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Facebook) erro
 				eventTriggerOpts = append(eventTriggerOpts, trigger.FacebookEventWithConsentMode(consentVariable))
 			}
 
-			eventTrigger, err := tm.UpsertTrigger(trigger.NewFacebookEvent(event, eventTriggerOpts...))
+			eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewFacebookEvent(event, eventTriggerOpts...))
 			if err != nil {
 				return errors.Wrap(err, "failed to upsert event trigger: "+event)
 			}
 
-			if _, err := tm.UpsertTag(servertagx.NewConversionsAPITag(event, pixelID, apiAccessToken, testEventToken, cfg.ServerContainer.Setting(event), template, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(folder, servertagx.NewConversionsAPITag(event, pixelID, apiAccessToken, testEventToken, cfg.ServerContainer.Setting(event), template, eventTrigger)); err != nil {
 				return err
 			}
 		}

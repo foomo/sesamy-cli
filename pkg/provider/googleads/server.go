@@ -16,27 +16,24 @@ import (
 )
 
 func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
-	conversionID, err := tm.UpsertVariable(commonvariable.NewConstant(NameConversionIDConstant, cfg.ConversionID))
+	conversionID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameConversionIDConstant, cfg.ConversionID))
 	if err != nil {
 		return err
 	}
 
 	// conversion
 	if cfg.Conversion.Enabled {
-		value, err := tm.UpsertVariable(variable.NewEventData("value"))
+		value, err := tm.UpsertVariable(folder, variable.NewEventData("value"))
 		if err != nil {
 			return err
 		}
 
-		currency, err := tm.UpsertVariable(variable.NewEventData("currency"))
+		currency, err := tm.UpsertVariable(folder, variable.NewEventData("currency"))
 		if err != nil {
 			return err
 		}
@@ -60,12 +57,12 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) err
 					eventTriggerOpts = append(eventTriggerOpts, trigger.GoogleAdsEventWithConsentMode(consentVariable))
 				}
 
-				eventTrigger, err := tm.UpsertTrigger(trigger.NewGoogleAdsEvent(event, eventTriggerOpts...))
+				eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewGoogleAdsEvent(event, eventTriggerOpts...))
 				if err != nil {
 					return errors.Wrap(err, "failed to upsert event trigger: "+event)
 				}
 
-				if _, err := tm.UpsertTag(servertagx.NewGoogleAdsConversionTracking(event, value, currency, conversionID, cfg.Conversion.ServerContainer.Setting(event), eventTrigger)); err != nil {
+				if _, err := tm.UpsertTag(folder, servertagx.NewGoogleAdsConversionTracking(event, value, currency, conversionID, cfg.Conversion.ServerContainer.Setting(event), eventTrigger)); err != nil {
 					return err
 				}
 			}
@@ -85,12 +82,12 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) err
 				eventTriggerOpts = append(eventTriggerOpts, trigger.GoogleAdsRemarketingEventWithConsentMode(consentVariable))
 			}
 
-			eventTrigger, err := tm.UpsertTrigger(trigger.NewGoogleAdsRemarketingEvent(NameGoogleAdsRemarketingTrigger, eventTriggerOpts...))
+			eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewGoogleAdsRemarketingEvent(NameGoogleAdsRemarketingTrigger, eventTriggerOpts...))
 			if err != nil {
 				return errors.Wrap(err, "failed to upsert event trigger: "+NameGoogleAdsRemarketingTrigger)
 			}
 
-			if _, err := tm.UpsertTag(servertagx.NewGoogleAdsRemarketing(NameGoogleAdsRemarketingTag, conversionID, cfg.Remarketing, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(folder, servertagx.NewGoogleAdsRemarketing(NameGoogleAdsRemarketingTag, conversionID, cfg.Remarketing, eventTrigger)); err != nil {
 				return err
 			}
 		}

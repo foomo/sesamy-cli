@@ -14,12 +14,9 @@ import (
 )
 
 func Web(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Sesamy - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	if err != nil {
+		return err
 	}
 
 	{ // setup google tag
@@ -32,23 +29,23 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
 
 		eventSettings := map[string]*api.Variable{}
 		for k, v := range cfg.DataLayerVariables {
-			dlv, err := tm.UpsertVariable(variable.NewDataLayer(v))
+			dlv, err := tm.UpsertVariable(folder, variable.NewDataLayer(v))
 			if err != nil {
 				return err
 			}
 			eventSettings[k] = dlv
 		}
 
-		tagID, err := tm.UpsertVariable(commonvariable.NewConstant(NameGoogleTagID, cfg.TagID))
+		tagID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameGoogleTagID, cfg.TagID))
 		if err != nil {
 			return err
 		}
 
-		settingsVariable, err := tm.UpsertVariable(containervariable.NewGoogleTagConfigurationSettings(NameGoogleTagSettings, configSettings))
+		settingsVariable, err := tm.UpsertVariable(folder, containervariable.NewGoogleTagConfigurationSettings(NameGoogleTagSettings, configSettings))
 		if err != nil {
 			return err
 		}
-		if _, err = tm.UpsertTag(webtag.NewGoogleTag(NameGoogleTag, tagID, settingsVariable, eventSettings)); err != nil {
+		if _, err = tm.UpsertTag(folder, webtag.NewGoogleTag(NameGoogleTag, tagID, settingsVariable, eventSettings)); err != nil {
 			return err
 		}
 	}
@@ -57,9 +54,10 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
 }
 
 func CreateWebEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (map[string]map[string]string, error) {
-	previousFolderName := tm.FolderName()
-	tm.SetFolderName("Sesamy - " + Name)
-	defer tm.SetFolderName(previousFolderName)
+	folder, err := tm.LookupFolder("Sesamy - " + Name)
+	if err != nil {
+		return nil, err
+	}
 
 	eventParameters, err := utils.LoadEventParams(cfg)
 	if err != nil {
@@ -67,7 +65,7 @@ func CreateWebEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (
 	}
 
 	for event, parameters := range eventParameters {
-		if _, err = tm.UpsertTrigger(commontrigger.NewEvent(event)); err != nil {
+		if _, err = tm.UpsertTrigger(folder, commontrigger.NewEvent(event)); err != nil {
 			return nil, err
 		}
 
@@ -76,7 +74,7 @@ func CreateWebEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (
 			return nil, err
 		}
 
-		if _, err := tm.UpsertVariable(containervariable.NewGoogleTagEventSettings(event, variables)); err != nil {
+		if _, err := tm.UpsertVariable(folder, containervariable.NewGoogleTagEventSettings(event, variables)); err != nil {
 			return nil, err
 		}
 	}
@@ -85,13 +83,14 @@ func CreateWebEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (
 }
 
 func CreateWebDatalayerVariables(tm *tagmanager.TagManager, parameters map[string]string) (map[string]*api.Variable, error) {
-	previousFolderName := tm.FolderName()
-	tm.SetFolderName("Sesamy - " + Name)
-	defer tm.SetFolderName(previousFolderName)
-	var err error
+	folder, err := tm.LookupFolder("Sesamy - " + Name)
+	if err != nil {
+		return nil, err
+	}
+
 	variables := make(map[string]*api.Variable, len(parameters))
 	for parameterName, parameterValue := range parameters {
-		if variables[parameterName], err = tm.UpsertVariable(variable.NewDataLayer(parameterValue)); err != nil {
+		if variables[parameterName], err = tm.UpsertVariable(folder, variable.NewDataLayer(parameterValue)); err != nil {
 			return nil, err
 		}
 	}

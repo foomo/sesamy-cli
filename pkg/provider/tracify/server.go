@@ -16,21 +16,18 @@ import (
 )
 
 func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Tracify) error {
-	{ // create folder
-		if folder, err := tm.UpsertFolder("Tracify - " + Name); err != nil {
-			return err
-		} else {
-			tm.SetFolderName(folder.Name)
-		}
+	folder, err := tm.UpsertFolder("Tracify - " + Name)
+	if err != nil {
+		return err
 	}
 
 	{ // conversion
-		token, err := tm.UpsertVariable(commonvariable.NewConstant(NameTokenConstant, cfg.Token))
+		token, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameTokenConstant, cfg.Token))
 		if err != nil {
 			return err
 		}
 
-		customerSiteID, err := tm.UpsertVariable(commonvariable.NewConstant(NameCustomerSiteIDConstant, cfg.CustomerSiteID))
+		customerSiteID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameCustomerSiteIDConstant, cfg.CustomerSiteID))
 		if err != nil {
 			return err
 		}
@@ -59,12 +56,12 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Tracify) error
 					eventTriggerOpts = append(eventTriggerOpts, trigger.TracifyEventWithConsentMode(consentVariable))
 				}
 
-				eventTrigger, err := tm.UpsertTrigger(trigger.NewTracifyEvent(event, eventTriggerOpts...))
+				eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewTracifyEvent(event, eventTriggerOpts...))
 				if err != nil {
 					return errors.Wrap(err, "failed to upsert event trigger: "+event)
 				}
 
-				if _, err := tm.UpsertTag(servertagx.NewTracify(event, token, customerSiteID, tagTemplate, cfg, eventTrigger)); err != nil {
+				if _, err := tm.UpsertTag(folder, servertagx.NewTracify(event, token, customerSiteID, tagTemplate, cfg, eventTrigger)); err != nil {
 					return err
 				}
 			}
