@@ -1,32 +1,30 @@
 package variable
 
 import (
-	"sort"
+	"maps"
+	"slices"
 
 	"google.golang.org/api/tagmanager/v2"
 )
 
 func NewGoogleTagConfigurationSettings(name string, variables map[string]string) *tagmanager.Variable {
-	parameters := make([]string, 0, len(variables))
-	for k := range variables {
-		parameters = append(parameters, k)
-	}
-	sort.Strings(parameters)
+	variableKeys := slices.AppendSeq(make([]string, 0, len(variables)), maps.Keys(variables))
+	slices.Sort(variableKeys)
 
-	list := make([]*tagmanager.Parameter, len(parameters))
-	for i, parameter := range parameters {
+	list := make([]*tagmanager.Parameter, len(variables))
+	for i, k := range variableKeys {
 		list[i] = &tagmanager.Parameter{
 			Type: "map",
 			Map: []*tagmanager.Parameter{
 				{
 					Key:   "parameter",
 					Type:  "template",
-					Value: parameter,
+					Value: k,
 				},
 				{
 					Key:   "parameterValue",
 					Type:  "template",
-					Value: variables[parameter],
+					Value: variables[k],
 				},
 			},
 		}

@@ -1,13 +1,19 @@
 package transformation
 
 import (
+	"maps"
+	"slices"
+
 	"google.golang.org/api/tagmanager/v2"
 )
 
 func NewMPv2UserData(name string, variables map[string]*tagmanager.Variable, client *tagmanager.Client) *tagmanager.Transformation {
-	var list []*tagmanager.Parameter
-	for k, v := range variables {
-		list = append(list, &tagmanager.Parameter{
+	variableKeys := slices.AppendSeq(make([]string, 0, len(variables)), maps.Keys(variables))
+	slices.Sort(variableKeys)
+
+	list := make([]*tagmanager.Parameter, len(variables))
+	for i, k := range variableKeys {
+		list[i] = &tagmanager.Parameter{
 			IsWeakReference: false,
 			Map: []*tagmanager.Parameter{
 				{
@@ -18,11 +24,11 @@ func NewMPv2UserData(name string, variables map[string]*tagmanager.Variable, cli
 				{
 					Key:   "paramValue",
 					Type:  "template",
-					Value: "{{" + v.Name + "}}",
+					Value: "{{" + variables[k].Name + "}}",
 				},
 			},
 			Type: "map",
-		})
+		}
 	}
 
 	return &tagmanager.Transformation{
