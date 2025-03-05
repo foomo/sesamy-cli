@@ -61,6 +61,8 @@ googleTag:
   tagId: G-PZ5ELRCR31
   # Whether a page_view should be sent on initial load
   sendPageView: true
+  # Optional custom server container url
+  serverContainerUrl: ''
   # Data layer variables to be added to the event settings
   dataLayerVariables:
     emarsys_page_view_id: emarsys.page_view_id

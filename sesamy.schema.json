@@ -425,6 +425,10 @@
           "type": "boolean",
           "description": "Whether a page_view should be sent on initial load"
         },
+        "serverContainerUrl": {
+          "type": "string",
+          "description": "Optional custom server container url"
+        },
         "dataLayerVariables": {
           "$ref": "#/$defs/map[string]string",
           "description": "Data layer variables to be added to the event settings"
