@@ -26,6 +26,9 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
 		if !cfg.SendPageView {
 			configSettings["send_page_view"] = "false"
 		}
+		if cfg.ServerContainerURL != "" {
+			configSettings["server_container_url"] = cfg.ServerContainerURL
+		}
 
 		eventSettings := map[string]*api.Variable{}
 		for k, v := range cfg.DataLayerVariables {

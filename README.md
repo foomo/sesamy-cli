@@ -113,6 +113,8 @@ googleTag:
   tagId: G-PZ5ELRCR31
   # Whether a page_view should be sent on initial load
   sendPageView: true
+  # Optional custom server container url
+  serverContainerUrl: ''
   # TypeScript settings
   typeScript:
     # Target directory for generate files
