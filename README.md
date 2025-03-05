@@ -33,7 +33,9 @@ Available Commands:
   completion  Generate the autocompletion script for the specified shell
   config      Print config
   help        Help about any command
-  tagmanager  Provision Google Tag Manager containers
+  list        List Google Tag Manager containers
+  provision   Provision Google Tag Manager containers
+  tags        Print out all available tags
   typescript  Generate typescript events
   version     Print version
 
