@@ -1,6 +1,7 @@
 package criteo
 
 import (
+	"context"
 	"errors"
 	"log/slog"
 
@@ -10,7 +11,7 @@ import (
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
 )
 
-func Web(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error {
+func Web(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error {
 	folder, err := tm.UpsertFolder("Sesamy - " + Name)
 	if err != nil {
 		return err

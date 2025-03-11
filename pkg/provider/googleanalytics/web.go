@@ -1,6 +1,8 @@
 package googleanalytics
 
 import (
+	"context"
+
 	"github.com/foomo/sesamy-cli/pkg/config"
 	containertag "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/web/tag"
 	"github.com/foomo/sesamy-cli/pkg/provider/googletag"
@@ -10,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Web(tm *tagmanager.TagManager, cfg config.GoogleAnalytics) error {
+func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleAnalytics) error {
 	folder, err := tm.UpsertFolder("Sesamy - " + Name)
 	if err != nil {
 		return err
@@ -22,7 +24,7 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleAnalytics) error {
 			return err
 		}
 
-		eventParameters, err := googletag.CreateWebEventTriggers(tm, cfg.WebContainer)
+		eventParameters, err := googletag.CreateWebEventTriggers(ctx, tm, cfg.WebContainer)
 		if err != nil {
 			return err
 		}

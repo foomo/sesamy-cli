@@ -1,13 +1,15 @@
 package googletagmanager
 
 import (
+	"context"
+
 	"github.com/foomo/sesamy-cli/pkg/config"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager/web/variable"
 )
 
-func Web(tm *tagmanager.TagManager, cfg config.GoogleTagManager) error {
+func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleTagManager) error {
 	folder, err := tm.UpsertFolder("Sesamy - " + Name)
 	if err != nil {
 		return err

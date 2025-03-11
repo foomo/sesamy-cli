@@ -49,48 +49,48 @@ func NewWeb(root *cobra.Command) {
 
 			if pkgcmd.Tag(googletagprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googletagprovider.Name, "tag", googletagprovider.Tag)
-				if err := googletagprovider.Web(tm, cfg.GoogleTag); err != nil {
+				if err := googletagprovider.Web(cmd.Context(), tm, cfg.GoogleTag); err != nil {
 					return errors.Wrap(err, "failed to provision google tag provider")
 				}
 			}
 
 			if pkgcmd.Tag(googletagmanagerprovider.Tag, tags) {
-				if err := googletagmanagerprovider.Web(tm, cfg.GoogleTagManager); err != nil {
+				if err := googletagmanagerprovider.Web(cmd.Context(), tm, cfg.GoogleTagManager); err != nil {
 					return errors.Wrap(err, "failed to provision google tag manager")
 				}
 			}
 
 			if cfg.GoogleAnalytics.Enabled && pkgcmd.Tag(googleanaylticsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googleanaylticsprovider.Name, "tag", googleanaylticsprovider.Tag)
-				if err := googleanaylticsprovider.Web(tm, cfg.GoogleAnalytics); err != nil {
+				if err := googleanaylticsprovider.Web(cmd.Context(), tm, cfg.GoogleAnalytics); err != nil {
 					return errors.Wrap(err, "failed to provision google analytics provider")
 				}
 			}
 
 			if cfg.Emarsys.Enabled && pkgcmd.Tag(emarsysprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", emarsysprovider.Name, "tag", emarsysprovider.Tag)
-				if err := emarsysprovider.Web(tm, cfg.Emarsys); err != nil {
+				if err := emarsysprovider.Web(cmd.Context(), tm, cfg.Emarsys); err != nil {
 					return errors.Wrap(err, "failed to provision emarsys provider")
 				}
 			}
 
 			if cfg.Hotjar.Enabled && pkgcmd.Tag(hotjarprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", hotjarprovider.Name, "tag", hotjarprovider.Tag)
-				if err := hotjarprovider.Web(tm, cfg.Hotjar); err != nil {
+				if err := hotjarprovider.Web(cmd.Context(), tm, cfg.Hotjar); err != nil {
 					return errors.Wrap(err, "failed to provision hotjar provider")
 				}
 			}
 
 			if cfg.Criteo.Enabled && pkgcmd.Tag(criteoprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", criteoprovider.Name, "tag", criteoprovider.Tag)
-				if err := criteoprovider.Web(l, tm, cfg.Criteo); err != nil {
+				if err := criteoprovider.Web(cmd.Context(), l, tm, cfg.Criteo); err != nil {
 					return errors.Wrap(err, "failed to provision criteo provider")
 				}
 			}
 
 			if cfg.Cookiebot.Enabled && pkgcmd.Tag(cookiebotprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", cookiebotprovider.Name, "tag", cookiebotprovider.Tag)
-				if err := cookiebotprovider.Web(tm, cfg.Cookiebot); err != nil {
+				if err := cookiebotprovider.Web(cmd.Context(), tm, cfg.Cookiebot); err != nil {
 					return errors.Wrap(err, "failed to provision cookiebot provider")
 				}
 			}

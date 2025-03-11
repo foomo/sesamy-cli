@@ -1,17 +1,16 @@
 module github.com/foomo/sesamy-cli
 
-go 1.24.0
+go 1.24.1
 
 require (
 	github.com/alecthomas/chroma v0.10.0
 	github.com/fatih/structtag v1.2.0
 	github.com/foomo/go v0.0.3
-	github.com/foomo/gocontemplate v0.1.4
+	github.com/foomo/gocontemplate v0.1.5-0.20250311112556-59522235bcc6
 	github.com/foomo/sesamy-go v0.8.1
 	github.com/invopop/jsonschema v0.13.0
 	github.com/itchyny/json2yaml v0.1.4
 	github.com/joho/godotenv v1.5.1
-	github.com/mitchellh/hashstructure/v2 v2.0.2
 	github.com/mitchellh/mapstructure v1.5.1-0.20220423185008-bf980b35cac4
 	github.com/pkg/errors v0.9.1
 	github.com/pterm/pterm v0.12.80
@@ -20,7 +19,6 @@ require (
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.10.0
 	github.com/wissance/stringFormatter v1.3.0
-	golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa
 	google.golang.org/api v0.222.0
 )
 
@@ -71,6 +69,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.34.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.33.0 // indirect
+	golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa // indirect
 	golang.org/x/mod v0.23.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/oauth2 v0.26.0 // indirect

@@ -1,6 +1,8 @@
 package googleanalytics
 
 import (
+	"context"
+
 	"github.com/foomo/sesamy-cli/pkg/config"
 	googleanalyticsclient "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/client"
 	containertag "github.com/foomo/sesamy-cli/pkg/provider/googleanalytics/server/tag"
@@ -20,7 +22,7 @@ import (
 	api "google.golang.org/api/tagmanager/v2"
 )
 
-func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitorIP, enableGeoResolution bool) error {
+func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitorIP, enableGeoResolution bool) error {
 	folder, err := tm.UpsertFolder("Sesamy - " + Name)
 	if err != nil {
 		return err
@@ -95,7 +97,7 @@ func Server(tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitor
 	}
 
 	{ // create tags
-		eventParameters, err := utils.LoadEventParams(cfg.ServerContainer)
+		eventParameters, err := utils.LoadEventParams(ctx, cfg.ServerContainer)
 		if err != nil {
 			return err
 		}

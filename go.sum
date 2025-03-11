@@ -44,8 +44,8 @@ github.com/felixge/httpsnoop v1.0.4 h1:NFTV2Zj1bL4mc9sqWACXbQFVBBg2W3GPvqp8/ESS2
 github.com/felixge/httpsnoop v1.0.4/go.mod h1:m8KPJKqk1gH5J9DgRY2ASl2lWCfGKXixSwevea8zH2U=
 github.com/foomo/go v0.0.3 h1:5pGzcPC78dImuBTT7nsZZnH+GIQUylbCtMkFEH26uZk=
 github.com/foomo/go v0.0.3/go.mod h1:x6g64wiQusqaFElnh5rlk9unCgLKmfUWy0YFLejJxio=
-github.com/foomo/gocontemplate v0.1.4 h1:MYSsoltno9pNMU5NwALd7PNSQ1XjN1tpqMGWAhCUETc=
-github.com/foomo/gocontemplate v0.1.4/go.mod h1:BH8eODDwlqWhasSl86avbtMN3Zfgt4pWwr8/PBPM5v0=
+github.com/foomo/gocontemplate v0.1.5-0.20250311112556-59522235bcc6 h1:jrBMdYBr/7r0oU4LVJ+8nqvRw4FR/W93KFHy2NpB9nY=
+github.com/foomo/gocontemplate v0.1.5-0.20250311112556-59522235bcc6/go.mod h1:VOYIvxPPAT7HxrderRexS0EttcT8pyfSRkCMvS8rtxA=
 github.com/foomo/gostandards v0.2.0 h1:Ryd7TI9yV3Xk5B84DcUDB7KcL3LzQ8NS+TVOrFxTYfA=
 github.com/foomo/gostandards v0.2.0/go.mod h1:XQx7Ur6vyvxaIe2cQvAthuhPYDe+d2soibqVcXDXOh4=
 github.com/foomo/sesamy-go v0.8.1 h1:5m1ySZB5gW9Dymz8MFggU8DXs7F1AAcV6WW2ieX9DPI=
@@ -106,8 +106,6 @@ github.com/mailru/easyjson v0.9.0/go.mod h1:1+xMtQp2MRNVL/V1bOzuP3aP8VNwRW55fQUt
 github.com/mattn/go-runewidth v0.0.13/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
 github.com/mattn/go-runewidth v0.0.16 h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6TULQc=
 github.com/mattn/go-runewidth v0.0.16/go.mod h1:Jdepj2loyihRzMpdS35Xk/zdY8IAYHsh153qUoGf23w=
-github.com/mitchellh/hashstructure/v2 v2.0.2 h1:vGKWl0YJqUNxE8d+h8f6NJLcCJrgbhC4NcD46KavDd4=
-github.com/mitchellh/hashstructure/v2 v2.0.2/go.mod h1:MG3aRVU/N29oo/V/IhBX8GR/zz4kQkprJgF2EVszyDE=
 github.com/mitchellh/mapstructure v1.5.1-0.20220423185008-bf980b35cac4 h1:BpfhmLKZf+SjVanKKhCgf3bg+511DmU9eDQTen7LLbY=
 github.com/mitchellh/mapstructure v1.5.1-0.20220423185008-bf980b35cac4/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
 github.com/pelletier/go-toml/v2 v2.2.3 h1:YmeHyLY8mFWbdkNWwpr+qIL2bEqT0o95WSdkNHvL12M=

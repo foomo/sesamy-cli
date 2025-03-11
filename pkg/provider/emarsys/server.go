@@ -1,6 +1,7 @@
 package emarsys
 
 import (
+	"context"
 	"log/slog"
 
 	"github.com/foomo/sesamy-cli/pkg/config"
@@ -16,7 +17,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Emarsys) error {
+func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.Emarsys) error {
 	folder, err := tm.UpsertFolder("Sesamy - " + Name)
 	if err != nil {
 		return err
@@ -44,7 +45,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Emarsys) error
 		}
 
 		{ // create tags
-			eventParameters, err := utils.LoadEventParams(cfg.ServerContainer)
+			eventParameters, err := utils.LoadEventParams(ctx, cfg.ServerContainer)
 			if err != nil {
 				return err
 			}

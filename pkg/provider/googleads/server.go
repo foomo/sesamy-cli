@@ -1,6 +1,7 @@
 package googleads
 
 import (
+	"context"
 	"log/slog"
 
 	"github.com/foomo/sesamy-cli/pkg/config"
@@ -15,7 +16,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) error {
+func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) error {
 	folder, err := tm.UpsertFolder("Sesamy - " + Name)
 	if err != nil {
 		return err
@@ -39,7 +40,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) err
 		}
 
 		{ // create tags
-			eventParameters, err := utils.LoadEventParams(cfg.Conversion.ServerContainer.Config)
+			eventParameters, err := utils.LoadEventParams(ctx, cfg.Conversion.ServerContainer.Config)
 			if err != nil {
 				return err
 			}

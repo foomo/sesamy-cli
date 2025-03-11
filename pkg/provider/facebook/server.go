@@ -1,6 +1,7 @@
 package facebook
 
 import (
+	"context"
 	"log/slog"
 
 	"github.com/foomo/sesamy-cli/pkg/config"
@@ -14,7 +15,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Facebook) error {
+func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.Facebook) error {
 	folder, err := tm.UpsertFolder("Sesamy - " + Name)
 	if err != nil {
 		return err
@@ -44,7 +45,7 @@ func Server(l *slog.Logger, tm *tagmanager.TagManager, cfg config.Facebook) erro
 	}
 
 	{ // create tags
-		eventParameters, err := utils.LoadEventParams(cfg.ServerContainer.Config)
+		eventParameters, err := utils.LoadEventParams(ctx, cfg.ServerContainer.Config)
 		if err != nil {
 			return err
 		}
