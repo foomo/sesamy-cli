@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"go/types"
 
 	"github.com/foomo/gocontemplate/pkg/assume"
@@ -9,8 +10,8 @@ import (
 	"github.com/stoewer/go-strcase"
 )
 
-func LoadEventParams(cfg contemplate.Config) (map[string]map[string]string, error) {
-	parser, err := contemplate.Load(&cfg)
+func LoadEventParams(ctx context.Context, cfg contemplate.Config) (map[string]map[string]string, error) {
+	parser, err := contemplate.Load(ctx, &cfg)
 	if err != nil {
 		return nil, err
 	}

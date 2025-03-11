@@ -1,13 +1,15 @@
 package cookiebot
 
 import (
+	"context"
+
 	"github.com/foomo/sesamy-cli/pkg/config"
 	"github.com/foomo/sesamy-cli/pkg/provider/cookiebot/web/tag"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	"github.com/pkg/errors"
 )
 
-func Web(tm *tagmanager.TagManager, cfg config.Cookiebot) error {
+func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.Cookiebot) error {
 	folder, err := tm.UpsertFolder("Sesamy - " + Name)
 	if err != nil {
 		return err

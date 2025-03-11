@@ -65,7 +65,7 @@ func NewServer(root *cobra.Command) {
 
 			if cfg.GoogleAnalytics.Enabled && pkgcmd.Tag(googleanalyticsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googleanalyticsprovider.Name, "tag", googleanalyticsprovider.Tag)
-				if err := googleanalyticsprovider.Server(tm, cfg.GoogleAnalytics, cfg.RedactVisitorIP, cfg.EnableGeoResolution); err != nil {
+				if err := googleanalyticsprovider.Server(cmd.Context(), tm, cfg.GoogleAnalytics, cfg.RedactVisitorIP, cfg.EnableGeoResolution); err != nil {
 					return errors.Wrap(err, "failed to provision google analytics")
 				}
 			}
@@ -79,49 +79,49 @@ func NewServer(root *cobra.Command) {
 
 			if cfg.Umami.Enabled && pkgcmd.Tag(umamiprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", umamiprovider.Name, "tag", umamiprovider.Tag)
-				if err := umamiprovider.Server(tm, cfg.Umami); err != nil {
+				if err := umamiprovider.Server(cmd.Context(), tm, cfg.Umami); err != nil {
 					return errors.Wrap(err, "failed to provision umami")
 				}
 			}
 
 			if cfg.Facebook.Enabled && pkgcmd.Tag(facebookprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", facebookprovider.Name, "tag", facebookprovider.Tag)
-				if err := facebookprovider.Server(l, tm, cfg.Facebook); err != nil {
+				if err := facebookprovider.Server(cmd.Context(), l, tm, cfg.Facebook); err != nil {
 					return errors.Wrap(err, "failed to provision facebook")
 				}
 			}
 
 			if cfg.GoogleAds.Enabled && pkgcmd.Tag(googleadsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googleadsprovider.Name, "tag", googleadsprovider.Tag)
-				if err := googleadsprovider.Server(l, tm, cfg.GoogleAds); err != nil {
+				if err := googleadsprovider.Server(cmd.Context(), l, tm, cfg.GoogleAds); err != nil {
 					return errors.Wrap(err, "failed to provision google ads")
 				}
 			}
 
 			if cfg.Emarsys.Enabled && pkgcmd.Tag(emarsysprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", emarsysprovider.Name, "tag", emarsysprovider.Tag)
-				if err := emarsysprovider.Server(l, tm, cfg.Emarsys); err != nil {
+				if err := emarsysprovider.Server(cmd.Context(), l, tm, cfg.Emarsys); err != nil {
 					return errors.Wrap(err, "failed to provision emarsys")
 				}
 			}
 
 			if cfg.Tracify.Enabled && pkgcmd.Tag(tracifyprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", tracifyprovider.Name, "tag", tracifyprovider.Tag)
-				if err := tracifyprovider.Server(l, tm, cfg.Tracify); err != nil {
+				if err := tracifyprovider.Server(cmd.Context(), l, tm, cfg.Tracify); err != nil {
 					return errors.Wrap(err, "failed to provision tracify")
 				}
 			}
 
 			if cfg.Criteo.Enabled && pkgcmd.Tag(criteoprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", criteoprovider.Name, "tag", criteoprovider.Tag)
-				if err := criteoprovider.Server(l, tm, cfg.Criteo); err != nil {
+				if err := criteoprovider.Server(cmd.Context(), l, tm, cfg.Criteo); err != nil {
 					return errors.Wrap(err, "failed to provision criteo")
 				}
 			}
 
 			if cfg.MicrosoftAds.Enabled && pkgcmd.Tag(microsoftadsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", microsoftadsprovider.Name, "tag", microsoftadsprovider.Tag)
-				if err := microsoftadsprovider.Server(l, tm, cfg.MicrosoftAds); err != nil {
+				if err := microsoftadsprovider.Server(cmd.Context(), l, tm, cfg.MicrosoftAds); err != nil {
 					return errors.Wrap(err, "failed to provision microsoftads")
 				}
 			}

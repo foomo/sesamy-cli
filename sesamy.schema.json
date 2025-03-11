@@ -17,6 +17,9 @@
     },
     "github.com.foomo.gocontemplate.pkg.contemplate.Config": {
       "properties": {
+        "directory": {
+          "type": "string"
+        },
         "packages": {
           "$ref": "#/$defs/[]*contemplate.PackageConfig"
         }
@@ -259,6 +262,9 @@
     },
     "github.com.foomo.sesamy-cli.pkg.config.FacebookServerContainer": {
       "properties": {
+        "directory": {
+          "type": "string"
+        },
         "packages": {
           "$ref": "#/$defs/[]*contemplate.PackageConfig"
         },
@@ -326,6 +332,9 @@
     },
     "github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversionServerContainer": {
       "properties": {
+        "directory": {
+          "type": "string"
+        },
         "packages": {
           "$ref": "#/$defs/[]*contemplate.PackageConfig"
         },
@@ -594,6 +603,9 @@
     },
     "github.com.foomo.sesamy-cli.pkg.config.MicrosoftAdsServerContainer": {
       "properties": {
+        "directory": {
+          "type": "string"
+        },
         "packages": {
           "$ref": "#/$defs/[]*contemplate.PackageConfig"
         },
@@ -636,6 +648,9 @@
     },
     "github.com.foomo.sesamy-cli.pkg.config.TypeScript": {
       "properties": {
+        "directory": {
+          "type": "string"
+        },
         "packages": {
           "$ref": "#/$defs/[]*contemplate.PackageConfig"
         },

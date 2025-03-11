@@ -27,7 +27,7 @@ func NewTypeScript(root *cobra.Command) *cobra.Command {
 				return err
 			}
 
-			ctpl, err := contemplate.Load(&cfg.GoogleTag.TypeScript.Config)
+			ctpl, err := contemplate.Load(cmd.Context(), &cfg.GoogleTag.TypeScript.Config)
 			if err != nil {
 				return err
 			}

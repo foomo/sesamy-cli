@@ -338,7 +338,7 @@ func TestGenerate(t *testing.T) {
 			},
 		},
 	}
-	ctpl, err := contemplate.Load(cfg)
+	ctpl, err := contemplate.Load(t.Context(), cfg)
 	require.NoError(t, err)
 
 	l := slog.New(slog.NewTextHandler(io.Discard, nil))

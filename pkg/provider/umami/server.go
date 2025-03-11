@@ -1,6 +1,8 @@
 package umami
 
 import (
+	"context"
+
 	"github.com/foomo/sesamy-cli/pkg/config"
 	"github.com/foomo/sesamy-cli/pkg/provider/googleconsent"
 	googleconsentvariable "github.com/foomo/sesamy-cli/pkg/provider/googleconsent/server/variable"
@@ -12,7 +14,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func Server(tm *tagmanager.TagManager, cfg config.Umami) error {
+func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.Umami) error {
 	folder, err := tm.UpsertFolder("Sesamy - " + Name)
 	if err != nil {
 		return err
@@ -24,7 +26,7 @@ func Server(tm *tagmanager.TagManager, cfg config.Umami) error {
 	}
 
 	{ // create tags
-		eventParameters, err := utils.LoadEventParams(cfg.ServerContainer)
+		eventParameters, err := utils.LoadEventParams(ctx, cfg.ServerContainer)
 		if err != nil {
 			return err
 		}

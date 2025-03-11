@@ -1,6 +1,8 @@
 package googletag
 
 import (
+	"context"
+
 	"github.com/foomo/gocontemplate/pkg/contemplate"
 	"github.com/foomo/sesamy-cli/pkg/config"
 	webtag "github.com/foomo/sesamy-cli/pkg/provider/googletag/web/tag"
@@ -13,7 +15,7 @@ import (
 	api "google.golang.org/api/tagmanager/v2"
 )
 
-func Web(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
+func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleTag) error {
 	folder, err := tm.UpsertFolder("Sesamy - " + Name)
 	if err != nil {
 		return err
@@ -56,13 +58,13 @@ func Web(tm *tagmanager.TagManager, cfg config.GoogleTag) error {
 	return nil
 }
 
-func CreateWebEventTriggers(tm *tagmanager.TagManager, cfg contemplate.Config) (map[string]map[string]string, error) {
+func CreateWebEventTriggers(ctx context.Context, tm *tagmanager.TagManager, cfg contemplate.Config) (map[string]map[string]string, error) {
 	folder, err := tm.LookupFolder("Sesamy - " + Name)
 	if err != nil {
 		return nil, err
 	}
 
-	eventParameters, err := utils.LoadEventParams(cfg)
+	eventParameters, err := utils.LoadEventParams(ctx, cfg)
 	if err != nil {
 		return nil, err
 	}
