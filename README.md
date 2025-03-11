@@ -121,6 +121,8 @@ googleTag:
   typeScript:
     # Target directory for generate files
     outputPath: path/to/target
+    # Path to the go.mod file
+    directory: .
     # Contemplate package config for generated events
     packages:
       - path: github.com/foomo/sesamy-go/pkg/event
@@ -202,6 +204,8 @@ googleAnalytics:
     ecommerceItems: true
   # Google Tag Manager web container settings
   webContainer:
+    # Path to the go.mod file
+    directory: .
     # Contemplate package config for generated events
     packages:
       - path: github.com/foomo/sesamy-go/pkg/event
@@ -210,6 +214,8 @@ googleAnalytics:
           - SelectItem
   # Google Tag Manager server container settings
   serverContainer:
+    # Path to the go.mod file
+    directory: .
     # Contemplate package config for generated events
     packages:
       - path: github.com/foomo/sesamy-go/pkg/event
@@ -243,6 +249,8 @@ googleAds:
     conversionLabel: ''
     # Google Tag Manager server container settings
     serverContainer:
+      # Path to the go.mod file
+      directory: .
       # Contemplate package config for generated events
       packages:
         - path: github.com/foomo/sesamy-go/pkg/event
@@ -279,6 +287,8 @@ umami:
     mode: analytics_storage
   # Google Tag Manager server container settings
   serverContainer:
+    # Path to the go.mod file
+    directory: .
     # Contemplate package config for generated events
     packages:
       - path: github.com/foomo/sesamy-go/pkg/event
@@ -297,6 +307,8 @@ criteo:
   applicationId: com.foomo
   # Google Tag Manager server container settings
   serverContainer:
+    # Path to the go.mod file
+    directory: .
     # Contemplate package config for generated events
     packages:
       - path: github.com/foomo/sesamy-go/pkg/event
@@ -328,6 +340,8 @@ facebook:
     # Consent mode name
     mode: ad_storage
   serverContainer:
+    # Path to the go.mod file
+    directory: .
     # Contemplate package config for generated events
     packages:
       - path: github.com/foomo/sesamy-go/pkg/event
@@ -356,6 +370,8 @@ emarsys:
     mode: analytics_storage
   # Google Tag Manager server container settings
   serverContainer:
+    # Path to the go.mod file
+    directory: .
     # Contemplate package config for generated events
     packages:
       - path: github.com/foomo/sesamy-go/pkg/event
@@ -380,6 +396,8 @@ tracify:
     mode: analytics_storage
   # Google Tag Manager server container settings
   serverContainer:
+    # Path to the go.mod file
+    directory: .
     # Contemplate package config for generated events
     packages:
       - path: github.com/foomo/sesamy-go/pkg/event
