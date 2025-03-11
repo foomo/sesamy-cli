@@ -11,12 +11,16 @@ import (
 )
 
 func LoadEventParams(ctx context.Context, cfg contemplate.Config) (map[string]map[string]string, error) {
+	ret := map[string]map[string]string{}
+	if len(cfg.Packages) == 0 {
+		return ret, nil
+	}
+
 	parser, err := contemplate.Load(ctx, &cfg)
 	if err != nil {
 		return nil, err
 	}
 
-	ret := map[string]map[string]string{}
 	for _, cfgPkg := range cfg.Packages {
 		pkg := parser.Package(cfgPkg.Path)
 		for _, typ := range cfgPkg.Types {
