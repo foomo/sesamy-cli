@@ -6,7 +6,7 @@ require (
 	github.com/alecthomas/chroma v0.10.0
 	github.com/fatih/structtag v1.2.0
 	github.com/foomo/go v0.0.3
-	github.com/foomo/gocontemplate v0.1.5-0.20250311112556-59522235bcc6
+	github.com/foomo/gocontemplate v0.2.0
 	github.com/foomo/sesamy-go v0.8.1
 	github.com/invopop/jsonschema v0.13.0
 	github.com/itchyny/json2yaml v0.1.4
