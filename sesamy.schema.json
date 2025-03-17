@@ -9,6 +9,12 @@
       },
       "type": "array"
     },
+    "[]config.CookiebotRegionSetting": {
+      "items": {
+        "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.CookiebotRegionSetting"
+      },
+      "type": "array"
+    },
     "[]string": {
       "items": {
         "type": "string"
@@ -137,19 +143,58 @@
           "description": "Enable provider"
         },
         "templateName": {
-          "type": "string"
+          "type": "string",
+          "description": "Name of the manually installed Cookiebot CMP tag template"
         },
         "cookiebotId": {
-          "type": "string"
+          "type": "string",
+          "description": "Create an account on Cookiebot.com and copy 'Domain Group ID' from the tab 'Your Scripts' in Cookiebot"
         },
         "cdnRegion": {
-          "type": "string"
+          "type": "string",
+          "description": "Select which CDN region Cookiebot uses"
         },
         "urlPassthrough": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "When using URL passthrough, a few query parameters may be appended to links as users navigate through pages on your website"
         },
         "advertiserConsentModeEnabled": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "If enabled, Google will deduce ad_storage, ad_user_data and ad_personalization data from the TC string."
+        },
+        "regionSettings": {
+          "$ref": "#/$defs/[]config.CookiebotRegionSetting",
+          "description": "Default Consent state"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.CookiebotRegionSetting": {
+      "properties": {
+        "region": {
+          "type": "string",
+          "description": "Region (leave blank to apply globally)"
+        },
+        "preferences": {
+          "type": "string",
+          "description": "Default consent for functionality_storage and personalization_storage"
+        },
+        "statistics": {
+          "type": "string",
+          "description": "Default consent for analytics_storage"
+        },
+        "marketing": {
+          "type": "string",
+          "description": "Default consent for ad_storage"
+        },
+        "adUserData": {
+          "type": "string",
+          "description": "Default consent ad_user_data"
+        },
+        "adPersonalization": {
+          "type": "string",
+          "description": "Default consent ad_personalization"
         }
       },
       "additionalProperties": false,

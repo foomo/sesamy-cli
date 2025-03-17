@@ -429,6 +429,20 @@ cookiebot:
   urlPassthrough: false
   # Enable advertiser consent mode
   advertiserConsentModeEnabled: false
+  # Default Consent state
+  regionSettings:
+      # Region (leave blank to apply globally)
+    - region: ''
+      # Default consent for functionality_storage and personalization_storage
+      preferences: denied
+      # Default consent for analytics_storage
+      statistics: denied
+      # Default consent for ad_storage
+      marketing: denied
+      # Default consent ad_user_data
+      adUserData: denied
+      # Default consent ad_personalization
+      adPersonalization: denied
 ```
 
 ## Caveats
