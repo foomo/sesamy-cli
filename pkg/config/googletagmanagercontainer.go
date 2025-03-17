@@ -7,4 +7,6 @@ type GoogleTagManagerContainer struct {
 	ContainerID string `json:"containerId" yaml:"containerId"`
 	// (Optional) The workspace id that should be used by the api
 	WorkspaceID string `json:"workspaceId" yaml:"workspaceId"`
+	// (Optional) The workspace name that should be used by the api
+	Workspace string `json:"workspace" yaml:"workspace"`
 }

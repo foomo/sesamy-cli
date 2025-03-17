@@ -24,6 +24,7 @@ func NewWeb(root *cobra.Command) {
 			"transformations",
 			"triggers",
 			"variables",
+			"workspaces",
 			"zones",
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {

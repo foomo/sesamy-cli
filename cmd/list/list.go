@@ -37,6 +37,8 @@ func list(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, resour
 	switch resource {
 	case "environments":
 		return dump(tm.Service().Accounts.Containers.Environments.List(tm.ContainerPath()).Context(ctx).Do())
+	case "workspaces":
+		return dump(tm.Service().Accounts.Containers.Workspaces.List(tm.ContainerPath()).Context(ctx).Do())
 	case "status":
 		return dump(tm.Service().Accounts.Containers.Workspaces.GetStatus(tm.WorkspacePath()).Context(ctx).Do())
 	case "clients":
