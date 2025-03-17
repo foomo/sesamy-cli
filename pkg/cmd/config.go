@@ -6,7 +6,7 @@ import (
 	"log/slog"
 
 	"github.com/foomo/sesamy-cli/pkg/config"
-	"github.com/mitchellh/mapstructure"
+	"github.com/go-viper/mapstructure/v2"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
