@@ -17,23 +17,23 @@ import (
 )
 
 func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.Tracify) error {
-	folder, err := tm.UpsertFolder("Tracify - " + Name)
+	folder, err := tm.UpsertFolder(ctx, "Tracify - "+Name)
 	if err != nil {
 		return err
 	}
 
 	{ // conversion
-		token, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameTokenConstant, cfg.Token))
+		token, err := tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NameTokenConstant, cfg.Token))
 		if err != nil {
 			return err
 		}
 
-		customerSiteID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameCustomerSiteIDConstant, cfg.CustomerSiteID))
+		customerSiteID, err := tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NameCustomerSiteIDConstant, cfg.CustomerSiteID))
 		if err != nil {
 			return err
 		}
 
-		tagTemplate, err := tm.UpsertCustomTemplate(template.NewTracifyTag(NameTracifyServerTagTemplate))
+		tagTemplate, err := tm.UpsertCustomTemplate(ctx, template.NewTracifyTag(NameTracifyServerTagTemplate))
 		if err != nil {
 			return err
 		}
@@ -47,22 +47,22 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 			for event := range eventParameters {
 				var eventTriggerOpts []trigger.TracifyEventOption
 				if cfg.GoogleConsent.Enabled {
-					if err := googleconsent.ServerEnsure(tm); err != nil {
+					if err := googleconsent.ServerEnsure(ctx, tm); err != nil {
 						return err
 					}
-					consentVariable, err := tm.LookupVariable(googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
+					consentVariable, err := tm.LookupVariable(ctx, googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
 					if err != nil {
 						return err
 					}
 					eventTriggerOpts = append(eventTriggerOpts, trigger.TracifyEventWithConsentMode(consentVariable))
 				}
 
-				eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewTracifyEvent(event, eventTriggerOpts...))
+				eventTrigger, err := tm.UpsertTrigger(ctx, folder, trigger.NewTracifyEvent(event, eventTriggerOpts...))
 				if err != nil {
 					return errors.Wrap(err, "failed to upsert event trigger: "+event)
 				}
 
-				if _, err := tm.UpsertTag(folder, servertagx.NewTracify(event, token, customerSiteID, tagTemplate, cfg, eventTrigger)); err != nil {
+				if _, err := tm.UpsertTag(ctx, folder, servertagx.NewTracify(event, token, customerSiteID, tagTemplate, cfg, eventTrigger)); err != nil {
 					return err
 				}
 			}

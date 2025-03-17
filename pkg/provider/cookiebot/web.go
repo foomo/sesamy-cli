@@ -10,18 +10,18 @@ import (
 )
 
 func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.Cookiebot) error {
-	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
 	if err != nil {
 		return err
 	}
 
 	{ // create event tags
-		temmplate, err := tm.LookupTemplate(cfg.TemplateName)
+		temmplate, err := tm.LookupTemplate(ctx, cfg.TemplateName)
 		if err != nil {
 			return errors.Wrapf(err, "Failed to lookup `%s`, please install the `%s` gallery tag template first (%s)", cfg.TemplateName, "Cookiebot CMP", "https://tagmanager.google.com/gallery/#/owners/cybotcorp/templates/gtm-templates-cookiebot-cmp")
 		}
 
-		if _, err := tm.UpsertTag(folder, tag.NewCookiebotInitialization(NameCookiebotTag, cfg, temmplate)); err != nil {
+		if _, err := tm.UpsertTag(ctx, folder, tag.NewCookiebotInitialization(NameCookiebotTag, cfg, temmplate)); err != nil {
 			return err
 		}
 	}

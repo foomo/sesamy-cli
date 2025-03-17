@@ -16,12 +16,12 @@ import (
 )
 
 func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error {
-	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
 	if err != nil {
 		return err
 	}
 
-	template, err := tm.LookupTemplate(NameCriteoEventsAPITemplate)
+	template, err := tm.LookupTemplate(ctx, NameCriteoEventsAPITemplate)
 	if err != nil {
 		if errors.Is(err, tagmanager.ErrNotFound) {
 			l.Warn("Please install the 'Criteo Events API' template manually first")
@@ -30,17 +30,17 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 	}
 
 	{ // create tags
-		callerID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameCallerID, cfg.CallerID))
+		callerID, err := tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NameCallerID, cfg.CallerID))
 		if err != nil {
 			return err
 		}
 
-		partnerID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NamePartnerID, cfg.PartnerID))
+		partnerID, err := tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NamePartnerID, cfg.PartnerID))
 		if err != nil {
 			return err
 		}
 
-		applicationID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameApplicationID, cfg.ApplicationID))
+		applicationID, err := tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NameApplicationID, cfg.ApplicationID))
 		if err != nil {
 			return err
 		}
@@ -53,22 +53,22 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 		for event := range eventParameters {
 			var eventTriggerOpts []trigger.CriteoEventOption
 			if cfg.GoogleConsent.Enabled {
-				if err := googleconsent.ServerEnsure(tm); err != nil {
+				if err := googleconsent.ServerEnsure(ctx, tm); err != nil {
 					return err
 				}
-				consentVariable, err := tm.LookupVariable(googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
+				consentVariable, err := tm.LookupVariable(ctx, googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
 				if err != nil {
 					return err
 				}
 				eventTriggerOpts = append(eventTriggerOpts, trigger.CriteoEventWithConsentMode(consentVariable))
 			}
 
-			eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewCriteoEvent(event, eventTriggerOpts...))
+			eventTrigger, err := tm.UpsertTrigger(ctx, folder, trigger.NewCriteoEvent(event, eventTriggerOpts...))
 			if err != nil {
 				return errors.Wrap(err, "failed to upsert event trigger: "+event)
 			}
 
-			if _, err := tm.UpsertTag(folder, servertagx.NewEventsAPITag(event, callerID, partnerID, applicationID, template, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(ctx, folder, servertagx.NewEventsAPITag(event, callerID, partnerID, applicationID, template, eventTrigger)); err != nil {
 				return err
 			}
 		}

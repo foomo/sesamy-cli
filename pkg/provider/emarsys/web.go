@@ -15,30 +15,30 @@ import (
 )
 
 func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.Emarsys) error {
-	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
 	if err != nil {
 		return err
 	}
 
 	{ // create initialization tag
-		tagTemplate, err := tm.UpsertCustomTemplate(template.NewEmarsysInitializationTag(NameWebEmarsysInitalizationTagTemplate))
+		tagTemplate, err := tm.UpsertCustomTemplate(ctx, template.NewEmarsysInitializationTag(NameWebEmarsysInitalizationTagTemplate))
 		if err != nil {
 			return err
 		}
 
-		if _, err = tm.UpsertTag(folder, tag.NewEmarsysInitialization(NameWebEmarsysInitalizationTag, tagTemplate)); err != nil {
+		if _, err = tm.UpsertTag(ctx, folder, tag.NewEmarsysInitialization(NameWebEmarsysInitalizationTag, tagTemplate)); err != nil {
 			return err
 		}
 	}
 
-	if _, err := googletag.CreateWebDatalayerVariables(tm, map[string]string{
+	if _, err := googletag.CreateWebDatalayerVariables(ctx, tm, map[string]string{
 		"emarsys_page_view_id": "emarsys.page_view_id",
 	}); err != nil {
 		return err
 	}
 
 	{ // create event tags
-		tagID, err := tm.LookupVariable(googletag.NameGoogleTagID)
+		tagID, err := tm.LookupVariable(ctx, googletag.NameGoogleTagID)
 		if err != nil {
 			return err
 		}
@@ -49,17 +49,17 @@ func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.Emarsys) err
 		}
 
 		for event := range eventParameters {
-			eventTrigger, err := tm.LookupTrigger(commontrigger.EventName(event))
+			eventTrigger, err := tm.LookupTrigger(ctx, commontrigger.EventName(event))
 			if err != nil {
 				return errors.Wrap(err, "failed to lookup event trigger: "+event)
 			}
 
-			eventSettings, err := tm.LookupVariable(commonvariable.GoogleTagEventSettingsName(event))
+			eventSettings, err := tm.LookupVariable(ctx, commonvariable.GoogleTagEventSettingsName(event))
 			if err != nil {
 				return errors.Wrap(err, "failed to lookup google tag event setting: "+event)
 			}
 
-			if _, err := tm.UpsertTag(folder, containertag.NewGoogleAnalyticsEvent(event, tagID, eventSettings, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(ctx, folder, containertag.NewGoogleAnalyticsEvent(event, tagID, eventSettings, eventTrigger)); err != nil {
 				return err
 			}
 		}

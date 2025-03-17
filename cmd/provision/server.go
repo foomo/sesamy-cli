@@ -51,14 +51,18 @@ func NewServer(root *cobra.Command) {
 				return err
 			}
 
+			if err := tm.EnsureWorkspaceID(cmd.Context()); err != nil {
+				return err
+			}
+
 			if pkgcmd.Tag(googletagprovider.Tag, tags) {
-				if err := googletagprovider.Server(tm, cfg.GoogleTag); err != nil {
+				if err := googletagprovider.Server(cmd.Context(), tm, cfg.GoogleTag); err != nil {
 					return errors.Wrap(err, "failed to provision google tag provider")
 				}
 			}
 
 			if pkgcmd.Tag(googletagmanagerprovider.Tag, tags) {
-				if err := googletagmanagerprovider.Server(tm, cfg.GoogleTagManager, cfg.EnableGeoResolution); err != nil {
+				if err := googletagmanagerprovider.Server(cmd.Context(), tm, cfg.GoogleTagManager, cfg.EnableGeoResolution); err != nil {
 					return errors.Wrap(err, "failed to provision google tag manager")
 				}
 			}
@@ -72,7 +76,7 @@ func NewServer(root *cobra.Command) {
 
 			if cfg.ConversionLinker.Enabled && pkgcmd.Tag(conversionlinkerprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", conversionlinkerprovider.Name, "tag", conversionlinkerprovider.Tag)
-				if err := conversionlinkerprovider.Server(tm, cfg.ConversionLinker); err != nil {
+				if err := conversionlinkerprovider.Server(cmd.Context(), tm, cfg.ConversionLinker); err != nil {
 					return errors.Wrap(err, "failed to provision conversion linker")
 				}
 			}

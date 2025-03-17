@@ -15,12 +15,12 @@ import (
 )
 
 func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.Umami) error {
-	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
 	if err != nil {
 		return err
 	}
 
-	template, err := tm.UpsertCustomTemplate(containertemplate.NewUmami(Name))
+	template, err := tm.UpsertCustomTemplate(ctx, containertemplate.NewUmami(Name))
 	if err != nil {
 		return err
 	}
@@ -34,22 +34,22 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.Umami) er
 		for event := range eventParameters {
 			var eventTriggerOpts []trigger.UmamiEventOption
 			if cfg.GoogleConsent.Enabled {
-				if err := googleconsent.ServerEnsure(tm); err != nil {
+				if err := googleconsent.ServerEnsure(ctx, tm); err != nil {
 					return err
 				}
-				consentVariable, err := tm.LookupVariable(googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
+				consentVariable, err := tm.LookupVariable(ctx, googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
 				if err != nil {
 					return err
 				}
 				eventTriggerOpts = append(eventTriggerOpts, trigger.UmamiEventWithConsentMode(consentVariable))
 			}
 
-			eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewUmamiEvent(event, eventTriggerOpts...))
+			eventTrigger, err := tm.UpsertTrigger(ctx, folder, trigger.NewUmamiEvent(event, eventTriggerOpts...))
 			if err != nil {
 				return errors.Wrap(err, "failed to upsert event trigger: "+event)
 			}
 
-			if _, err := tm.UpsertTag(folder, containertag.NewUmami(event, cfg, template, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(ctx, folder, containertag.NewUmami(event, cfg, template, eventTrigger)); err != nil {
 				return err
 			}
 		}

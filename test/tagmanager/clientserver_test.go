@@ -35,10 +35,11 @@ func TestNewClient_Server(t *testing.T) {
 		),
 	)
 	require.NoError(t, err)
+	require.NoError(t, c.EnsureWorkspaceID(t.Context()))
 
 	{ // --- Folders ---
 		t.Run("upsert folder", func(t *testing.T) {
-			obj, err := c.UpsertFolder("Sesamy")
+			obj, err := c.UpsertFolder(t.Context(), "Sesamy")
 			require.NoError(t, err)
 			dump(t, obj)
 		})
@@ -113,7 +114,7 @@ func TestNewClient_Server(t *testing.T) {
 
 	{ // --- Templates ---
 		t.Run("upsert template", func(t *testing.T) {
-			obj, err := c.UpsertCustomTemplate(template.NewGoogleConsentModeCheck("TESTOMAT"))
+			obj, err := c.UpsertCustomTemplate(t.Context(), template.NewGoogleConsentModeCheck("TESTOMAT"))
 			require.NoError(t, err)
 			dump(t, obj)
 		})

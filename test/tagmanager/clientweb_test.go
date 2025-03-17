@@ -35,6 +35,7 @@ func TestNewClient_Web(t *testing.T) {
 		),
 	)
 	require.NoError(t, err)
+	require.NoError(t, c.EnsureWorkspaceID(t.Context()))
 
 	{ // --- Containers ---
 		t.Run("list containers", func(t *testing.T) {
@@ -91,7 +92,7 @@ func TestNewClient_Web(t *testing.T) {
 		})
 
 		t.Run("upsert folder", func(t *testing.T) {
-			obj, err := c.UpsertFolder(name)
+			obj, err := c.UpsertFolder(t.Context(), name)
 			require.NoError(t, err)
 			t.Log("ID: " + obj.FolderId)
 		})

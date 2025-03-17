@@ -80,7 +80,7 @@ googleTagManager:
     tagId: GTM-57BHX34G
     # The container id
     containerId: '175355532'
-    # The workspace id that should be used by the api
+    # (Optional) The workspace id that should be used by the api
     workspaceId: '23'
   # Server container settings
   serverContainer:
@@ -88,7 +88,7 @@ googleTagManager:
     tagId: GTM-5NWPR4QW
     # The container id
     containerId: '175348980'
-    # The workspace id that should be used by the api
+    # (Optional) The workspace id that should be used by the api
     workspaceId: '10'
   # Web container variables
   webContainerVariables:

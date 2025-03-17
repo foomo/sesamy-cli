@@ -17,24 +17,24 @@ import (
 )
 
 func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.GoogleAds) error {
-	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
 	if err != nil {
 		return err
 	}
 
-	conversionID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameConversionIDConstant, cfg.ConversionID))
+	conversionID, err := tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NameConversionIDConstant, cfg.ConversionID))
 	if err != nil {
 		return err
 	}
 
 	// conversion
 	if cfg.Conversion.Enabled {
-		value, err := tm.UpsertVariable(folder, variable.NewEventData("value"))
+		value, err := tm.UpsertVariable(ctx, folder, variable.NewEventData("value"))
 		if err != nil {
 			return err
 		}
 
-		currency, err := tm.UpsertVariable(folder, variable.NewEventData("currency"))
+		currency, err := tm.UpsertVariable(ctx, folder, variable.NewEventData("currency"))
 		if err != nil {
 			return err
 		}
@@ -48,22 +48,22 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 			for event := range eventParameters {
 				var eventTriggerOpts []trigger.GoogleAdsEventOption
 				if cfg.GoogleConsent.Enabled {
-					if err := googleconsent.ServerEnsure(tm); err != nil {
+					if err := googleconsent.ServerEnsure(ctx, tm); err != nil {
 						return err
 					}
-					consentVariable, err := tm.LookupVariable(googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
+					consentVariable, err := tm.LookupVariable(ctx, googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
 					if err != nil {
 						return err
 					}
 					eventTriggerOpts = append(eventTriggerOpts, trigger.GoogleAdsEventWithConsentMode(consentVariable))
 				}
 
-				eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewGoogleAdsEvent(event, eventTriggerOpts...))
+				eventTrigger, err := tm.UpsertTrigger(ctx, folder, trigger.NewGoogleAdsEvent(event, eventTriggerOpts...))
 				if err != nil {
 					return errors.Wrap(err, "failed to upsert event trigger: "+event)
 				}
 
-				if _, err := tm.UpsertTag(folder, servertagx.NewGoogleAdsConversionTracking(event, value, currency, conversionID, cfg.Conversion.ServerContainer.Setting(event), eventTrigger)); err != nil {
+				if _, err := tm.UpsertTag(ctx, folder, servertagx.NewGoogleAdsConversionTracking(event, value, currency, conversionID, cfg.Conversion.ServerContainer.Setting(event), eventTrigger)); err != nil {
 					return err
 				}
 			}
@@ -73,22 +73,22 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 		if cfg.Remarketing.Enabled {
 			var eventTriggerOpts []trigger.GoogleAdsRemarketingEventOption
 			if cfg.GoogleConsent.Enabled {
-				if err := googleconsent.ServerEnsure(tm); err != nil {
+				if err := googleconsent.ServerEnsure(ctx, tm); err != nil {
 					return err
 				}
-				consentVariable, err := tm.LookupVariable(googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
+				consentVariable, err := tm.LookupVariable(ctx, googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
 				if err != nil {
 					return err
 				}
 				eventTriggerOpts = append(eventTriggerOpts, trigger.GoogleAdsRemarketingEventWithConsentMode(consentVariable))
 			}
 
-			eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewGoogleAdsRemarketingEvent(NameGoogleAdsRemarketingTrigger, eventTriggerOpts...))
+			eventTrigger, err := tm.UpsertTrigger(ctx, folder, trigger.NewGoogleAdsRemarketingEvent(NameGoogleAdsRemarketingTrigger, eventTriggerOpts...))
 			if err != nil {
 				return errors.Wrap(err, "failed to upsert event trigger: "+NameGoogleAdsRemarketingTrigger)
 			}
 
-			if _, err := tm.UpsertTag(folder, servertagx.NewGoogleAdsRemarketing(NameGoogleAdsRemarketingTag, conversionID, cfg.Remarketing, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(ctx, folder, servertagx.NewGoogleAdsRemarketing(NameGoogleAdsRemarketingTag, conversionID, cfg.Remarketing, eventTrigger)); err != nil {
 				return err
 			}
 		}

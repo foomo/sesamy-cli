@@ -23,58 +23,58 @@ import (
 )
 
 func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleAnalytics, redactVisitorIP, enableGeoResolution bool) error {
-	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
 	if err != nil {
 		return err
 	}
 
 	{ // create clients
 		{
-			measurementID, err := tm.LookupVariable(googletag.NameGoogleTagMeasurementID)
+			measurementID, err := tm.LookupVariable(ctx, googletag.NameGoogleTagMeasurementID)
 			if err != nil {
 				return err
 			}
 
-			visitorRegion, err := tm.LookupVariable(googletagmanager.NameGoogleTagManagerVisitorRegion)
+			visitorRegion, err := tm.LookupVariable(ctx, googletagmanager.NameGoogleTagManagerVisitorRegion)
 			if err != nil {
 				return err
 			}
 
-			client, err := tm.UpsertClient(folder, googleanalyticsclient.NewGoogleAnalyticsGA4(NameGoogleAnalyticsGA4Client, enableGeoResolution, visitorRegion, measurementID))
+			client, err := tm.UpsertClient(ctx, folder, googleanalyticsclient.NewGoogleAnalyticsGA4(NameGoogleAnalyticsGA4Client, enableGeoResolution, visitorRegion, measurementID))
 			if err != nil {
 				return err
 			}
 
-			if _, err = tm.UpsertTrigger(folder, servertrigger.NewClient(NameGoogleAnalyticsGA4ClientTrigger, client)); err != nil {
+			if _, err = tm.UpsertTrigger(ctx, folder, servertrigger.NewClient(NameGoogleAnalyticsGA4ClientTrigger, client)); err != nil {
 				return err
 			}
 		}
 
 		{
-			client, err := tm.UpsertClient(folder, googleanalyticsclient.NewMeasurementProtocolGA4(NameMeasurementProtocolGA4Client))
+			client, err := tm.UpsertClient(ctx, folder, googleanalyticsclient.NewMeasurementProtocolGA4(NameMeasurementProtocolGA4Client))
 			if err != nil {
 				return err
 			}
-			if _, err = tm.UpsertTrigger(folder, servertrigger.NewClient(NameMeasurementProtocolGA4ClientTrigger, client)); err != nil {
+			if _, err = tm.UpsertTrigger(ctx, folder, servertrigger.NewClient(NameMeasurementProtocolGA4ClientTrigger, client)); err != nil {
 				return err
 			}
 
-			userDataTemplate, err := tm.UpsertCustomTemplate(servertemplate.NewJSONRequestValue(NameJSONRequestValueTemplate))
-			if err != nil {
-				return err
-			}
-
-			userDataVariable, err := tm.UpsertVariable(folder, servervariable.NewMPv2Data("user_data", userDataTemplate))
+			userDataTemplate, err := tm.UpsertCustomTemplate(ctx, servertemplate.NewJSONRequestValue(NameJSONRequestValueTemplate))
 			if err != nil {
 				return err
 			}
 
-			debugModeVariable, err := tm.UpsertVariable(folder, servervariable.NewMPv2Data("debug_mode", userDataTemplate))
+			userDataVariable, err := tm.UpsertVariable(ctx, folder, servervariable.NewMPv2Data("user_data", userDataTemplate))
 			if err != nil {
 				return err
 			}
 
-			_, err = tm.UpsertTransformation(folder, servertransformation.NewMPv2UserData(NameMPv2UserDataTransformation, map[string]*api.Variable{
+			debugModeVariable, err := tm.UpsertVariable(ctx, folder, servervariable.NewMPv2Data("debug_mode", userDataTemplate))
+			if err != nil {
+				return err
+			}
+
+			_, err = tm.UpsertTransformation(ctx, folder, servertransformation.NewMPv2UserData(NameMPv2UserDataTransformation, map[string]*api.Variable{
 				"user_data":  userDataVariable,
 				"debug_mode": debugModeVariable,
 			}, client))
@@ -84,12 +84,12 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleAna
 		}
 
 		if cfg.GoogleGTagJSOverride.Enabled {
-			template, err := tm.UpsertCustomTemplate(googleanalyticstemplate.NewGoogleGTagClient(NameGoogleGTagClientTemplate))
+			template, err := tm.UpsertCustomTemplate(ctx, googleanalyticstemplate.NewGoogleGTagClient(NameGoogleGTagClientTemplate))
 			if err != nil {
 				return err
 			}
 
-			_, err = tm.UpsertClient(folder, googleanalyticsclient.NewGoogleGTag(NameGoogleGTagClient, cfg.GoogleGTagJSOverride, template))
+			_, err = tm.UpsertClient(ctx, folder, googleanalyticsclient.NewGoogleGTag(NameGoogleGTagClient, cfg.GoogleGTagJSOverride, template))
 			if err != nil {
 				return err
 			}
@@ -105,22 +105,22 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleAna
 		for event := range eventParameters {
 			var eventTriggerOpts []trigger.GoogleAnalyticsEventOption
 			if cfg.GoogleConsent.Enabled {
-				if err := googleconsent.ServerEnsure(tm); err != nil {
+				if err := googleconsent.ServerEnsure(ctx, tm); err != nil {
 					return err
 				}
-				consentVariable, err := tm.LookupVariable(googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
+				consentVariable, err := tm.LookupVariable(ctx, googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
 				if err != nil {
 					return err
 				}
 				eventTriggerOpts = append(eventTriggerOpts, trigger.GoogleAnalyticsEventWithConsentMode(consentVariable))
 			}
 
-			eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewGoogleAnalyticsEvent(event, eventTriggerOpts...))
+			eventTrigger, err := tm.UpsertTrigger(ctx, folder, trigger.NewGoogleAnalyticsEvent(event, eventTriggerOpts...))
 			if err != nil {
 				return errors.Wrap(err, "failed to upsert event trigger: "+event)
 			}
 
-			if _, err := tm.UpsertTag(folder, containertag.NewGoogleAnalytics(event, redactVisitorIP, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(ctx, folder, containertag.NewGoogleAnalytics(event, redactVisitorIP, eventTrigger)); err != nil {
 				return errors.Wrap(err, "failed to upsert google analytics ga4 tag: "+event)
 			}
 		}

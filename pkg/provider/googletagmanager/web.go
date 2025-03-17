@@ -10,19 +10,19 @@ import (
 )
 
 func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleTagManager) error {
-	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
 	if err != nil {
 		return err
 	}
 
 	{ // create variables
 		for _, value := range cfg.WebContaienrVariables.DataLayer {
-			if _, err := tm.UpsertVariable(folder, variable.NewDataLayer(value)); err != nil {
+			if _, err := tm.UpsertVariable(ctx, folder, variable.NewDataLayer(value)); err != nil {
 				return err
 			}
 		}
 		for key, value := range cfg.WebContaienrVariables.LookupTables {
-			if _, err := tm.UpsertVariable(folder, commonvariable.NewLookupTable(key, value)); err != nil {
+			if _, err := tm.UpsertVariable(ctx, folder, commonvariable.NewLookupTable(key, value)); err != nil {
 				return err
 			}
 		}
