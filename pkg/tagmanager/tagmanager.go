@@ -29,6 +29,7 @@ type (
 		folders          *AccessedMap[*tagmanager.Folder]
 		variables        *AccessedMap[*tagmanager.Variable]
 		environments     *AccessedMap[*tagmanager.Environment]
+		workspaces       *AccessedMap[*tagmanager.Workspace]
 		builtInVariables *AccessedMap[*tagmanager.BuiltInVariable]
 		triggers         *AccessedMap[*tagmanager.Trigger]
 		tags             *AccessedMap[*tagmanager.Tag]
@@ -236,11 +237,15 @@ func (t *TagManager) Notes(v any) string {
 
 func (t *TagManager) EnsureWorkspaceID(ctx context.Context) error {
 	if t.WorkspaceID() == "" {
-		environment, err := t.GetEnvironment(ctx, "workspace")
-		if err != nil {
-			return err
+		name := t.container.Workspace
+		if name == "" {
+			name = "Default Workspace"
 		}
-		t.container.WorkspaceID = environment.WorkspaceId
+		workspace, err := t.GetWorkspace(ctx, name)
+		if err != nil {
+			return errors.Wrap(err, "failed to get default workspace")
+		}
+		t.container.WorkspaceID = workspace.WorkspaceId
 	}
 	return nil
 }
@@ -350,6 +355,19 @@ func (t *TagManager) GetEnvironment(ctx context.Context, typeName string) (*tagm
 	return elems.Get(typeName), nil
 }
 
+func (t *TagManager) GetWorkspace(ctx context.Context, name string) (*tagmanager.Workspace, error) {
+	elems, err := t.LoadWorkspaces(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if !elems.Has(name) {
+		return nil, ErrNotFound
+	}
+
+	return elems.Get(name), nil
+}
+
 func (t *TagManager) GetBuiltInVariable(ctx context.Context, typeName string) (*tagmanager.BuiltInVariable, error) {
 	elems, err := t.LoadBuiltInVariables(ctx)
 	if err != nil {
@@ -363,8 +381,26 @@ func (t *TagManager) GetBuiltInVariable(ctx context.Context, typeName string) (*
 	return elems.Get(typeName), nil
 }
 
+func (t *TagManager) LoadWorkspaces(ctx context.Context) (*AccessedMap[*tagmanager.Workspace], error) {
+	if t.workspaces == nil {
+		t.l.Info("└  ⬇︎ Loading list", "type", "Workspaces")
+		r, err := t.Service().Accounts.Containers.Workspaces.List(t.ContainerPath()).Context(ctx).Do()
+		if err != nil {
+			return nil, err
+		}
+
+		res := map[string]*tagmanager.Workspace{}
+		for _, value := range r.Workspace {
+			res[value.Name] = value
+		}
+		t.workspaces = NewAccessedMap(res)
+	}
+
+	return t.workspaces, nil
+}
+
 func (t *TagManager) LoadEnvironments(ctx context.Context) (*AccessedMap[*tagmanager.Environment], error) {
-	if t.builtInVariables == nil {
+	if t.environments == nil {
 		t.l.Info("└  ⬇︎ Loading list", "type", "Environments")
 		r, err := t.Service().Accounts.Containers.Environments.List(t.ContainerPath()).Context(ctx).Do()
 		if err != nil {

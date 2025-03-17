@@ -28,6 +28,8 @@ googleTagManager:
     containerId: '175355532'
     # (Optional) The workspace id that should be used by the api
     workspaceId: '23'
+    # (Optional) The workspace name that should be used by the api
+    workspace: 'Default Workspace'
   # Server container settings
   serverContainer:
     # The container tag id
@@ -36,6 +38,8 @@ googleTagManager:
     containerId: '175348980'
     # (Optional) The workspace id that should be used by the api
     workspaceId: '10'
+    # (Optional) The workspace name that should be used by the api
+    workspace: 'Default Workspace'
   # Web container variables
   webContainerVariables:
     dataLayer:

@@ -534,6 +534,10 @@
         "workspaceId": {
           "type": "string",
           "description": "(Optional) The workspace id that should be used by the api"
+        },
+        "workspace": {
+          "type": "string",
+          "description": "(Optional) The workspace name that should be used by the api"
         }
       },
       "additionalProperties": false,

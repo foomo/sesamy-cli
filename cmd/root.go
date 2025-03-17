@@ -18,6 +18,7 @@ func init() {
 	NewList(root)
 	NewProvision(root)
 	NewTypeScript(root)
+
 	cobra.OnInitialize(pkgcmd.InitConfig)
 }
 
