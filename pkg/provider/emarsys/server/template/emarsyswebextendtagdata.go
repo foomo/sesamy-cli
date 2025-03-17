@@ -81,6 +81,7 @@ ___SANDBOXED_JS_FOR_SERVER___
 
 const Math = require('Math');
 const JSON = require('JSON');
+const parseUrl = require('parseUrl');
 const setCookie = require('setCookie');
 const sendHttpGet = require('sendHttpGet');
 const setResponseBody = require('setResponseBody');
@@ -142,6 +143,7 @@ function mapEventData() {
     referrer: eventData.page_referrer || null,
     orderId: null,
     order: null,
+    search: null,
     category: null,
     view: null,
     cart: null,
@@ -150,6 +152,7 @@ function mapEventData() {
   switch (eventData.event_name) {
     case 'page_view': {
       mappedData.cart = serializeItems(eventData.items || []);
+      mappedData.search = ((parseUrl(eventData.page_location) || {}).searchParams || {}).q || null;
       break;
     }
     case 'view_item': {
@@ -236,6 +239,9 @@ function serializeData(mappedData) {
   if (mappedData.cart !== null) {
     slist.push("ca=" + encodeUriComponent(mappedData.cart));
     slist.push("cv=1");
+  }
+  if (mappedData.search) {
+    slist.push("q=" + encodeUriComponent(mappedData.search));
   }
   if (mappedData.referrer) {
     slist.push("prev_url=" + encodeUriComponent(mappedData.referrer));
