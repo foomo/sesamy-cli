@@ -79,7 +79,7 @@ const headers = {
   'user-agent': getRequestHeader('user-agent'),
 };
 
-let query = ['xp=1', 'cp=1'];
+let query = ['xp=1', 'cp=1', 'test=true'];
 if (sessionId) query.push('s='+encodeUriComponent(sessionId));
 if (visitorId) query.push('vi='+encodeUriComponent(visitorId));
 if (pageViewId) query.push('pv='+encodeUriComponent(pageViewId));
