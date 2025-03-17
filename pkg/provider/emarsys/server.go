@@ -18,28 +18,28 @@ import (
 )
 
 func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.Emarsys) error {
-	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
 	if err != nil {
 		return err
 	}
 
 	{ // conversion
-		merchantID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameMerchantIDConstant, cfg.MerchantID))
+		merchantID, err := tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NameMerchantIDConstant, cfg.MerchantID))
 		if err != nil {
 			return err
 		}
 
-		tagTemplate, err := tm.UpsertCustomTemplate(template.NewEmarsysWebExtendTag(NameServerEmarsysWebExtendTagTemplate))
+		tagTemplate, err := tm.UpsertCustomTemplate(ctx, template.NewEmarsysWebExtendTag(NameServerEmarsysWebExtendTagTemplate))
 		if err != nil {
 			return err
 		}
 
-		clientTemplate, err := tm.UpsertCustomTemplate(template.NewEmarsysInitializationClient(NameServerEmarsysInitalizationClientTemplate))
+		clientTemplate, err := tm.UpsertCustomTemplate(ctx, template.NewEmarsysInitializationClient(NameServerEmarsysInitalizationClientTemplate))
 		if err != nil {
 			return err
 		}
 
-		_, err = tm.UpsertClient(folder, serverclientx.NewEmarsys(NameServerEmarsysClient, cfg, clientTemplate))
+		_, err = tm.UpsertClient(ctx, folder, serverclientx.NewEmarsys(NameServerEmarsysClient, cfg, clientTemplate))
 		if err != nil {
 			return err
 		}
@@ -53,22 +53,22 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 			for event := range eventParameters {
 				var eventTriggerOpts []trigger.EmarsysEventOption
 				if cfg.GoogleConsent.Enabled {
-					if err := googleconsent.ServerEnsure(tm); err != nil {
+					if err := googleconsent.ServerEnsure(ctx, tm); err != nil {
 						return err
 					}
-					consentVariable, err := tm.LookupVariable(googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
+					consentVariable, err := tm.LookupVariable(ctx, googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
 					if err != nil {
 						return err
 					}
 					eventTriggerOpts = append(eventTriggerOpts, trigger.EmarsysEventWithConsentMode(consentVariable))
 				}
 
-				eventTrigger, err := tm.UpsertTrigger(folder, trigger.NewEmarsysEvent(event, eventTriggerOpts...))
+				eventTrigger, err := tm.UpsertTrigger(ctx, folder, trigger.NewEmarsysEvent(event, eventTriggerOpts...))
 				if err != nil {
 					return errors.Wrap(err, "failed to upsert event trigger: "+event)
 				}
 
-				if _, err := tm.UpsertTag(folder, servertagx.NewEmarsys(event, merchantID, cfg.TestMode, cfg.DebugMode, tagTemplate, eventTrigger)); err != nil {
+				if _, err := tm.UpsertTag(ctx, folder, servertagx.NewEmarsys(event, merchantID, cfg.TestMode, cfg.DebugMode, tagTemplate, eventTrigger)); err != nil {
 					return err
 				}
 			}

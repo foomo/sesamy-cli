@@ -47,6 +47,10 @@ func NewWeb(root *cobra.Command) {
 				return err
 			}
 
+			if err := tm.EnsureWorkspaceID(cmd.Context()); err != nil {
+				return err
+			}
+
 			if pkgcmd.Tag(googletagprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googletagprovider.Name, "tag", googletagprovider.Tag)
 				if err := googletagprovider.Web(cmd.Context(), tm, cfg.GoogleTag); err != nil {

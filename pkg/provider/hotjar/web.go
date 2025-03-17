@@ -10,18 +10,18 @@ import (
 )
 
 func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.Hotjar) error {
-	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
 	if err != nil {
 		return err
 	}
 
 	{ // setup hotjar
-		siteID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameSiteID, cfg.SiteID))
+		siteID, err := tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NameSiteID, cfg.SiteID))
 		if err != nil {
 			return err
 		}
 
-		if _, err = tm.UpsertTag(folder, client.NewHotjar(NameHotjarTag, siteID)); err != nil {
+		if _, err = tm.UpsertTag(ctx, folder, client.NewHotjar(NameHotjarTag, siteID)); err != nil {
 			return err
 		}
 	}

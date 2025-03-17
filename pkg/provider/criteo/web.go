@@ -12,12 +12,12 @@ import (
 )
 
 func Web(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error {
-	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
 	if err != nil {
 		return err
 	}
 
-	template, err := tm.LookupTemplate(NameCriteoUserIdentificationTemplate)
+	template, err := tm.LookupTemplate(ctx, NameCriteoUserIdentificationTemplate)
 	if err != nil {
 		if errors.Is(err, tagmanager.ErrNotFound) {
 			l.Warn("Please install the 'Criteo User Identification' template manually first")
@@ -26,17 +26,17 @@ func Web(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg con
 	}
 
 	{ // setup criteo
-		callerID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NameCallerID, cfg.CallerID))
+		callerID, err := tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NameCallerID, cfg.CallerID))
 		if err != nil {
 			return err
 		}
 
-		partnerID, err := tm.UpsertVariable(folder, commonvariable.NewConstant(NamePartnerID, cfg.PartnerID))
+		partnerID, err := tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NamePartnerID, cfg.PartnerID))
 		if err != nil {
 			return err
 		}
 
-		if _, err = tm.UpsertTag(folder, client.NewUserIdentification(NameCriteoUserIdentificationTag, callerID, partnerID, template)); err != nil {
+		if _, err = tm.UpsertTag(ctx, folder, client.NewUserIdentification(NameCriteoUserIdentificationTag, callerID, partnerID, template)); err != nil {
 			return err
 		}
 	}

@@ -28,6 +28,7 @@ type (
 		clients          *AccessedMap[*tagmanager.Client]
 		folders          *AccessedMap[*tagmanager.Folder]
 		variables        *AccessedMap[*tagmanager.Variable]
+		environments     *AccessedMap[*tagmanager.Environment]
 		builtInVariables *AccessedMap[*tagmanager.BuiltInVariable]
 		triggers         *AccessedMap[*tagmanager.Trigger]
 		tags             *AccessedMap[*tagmanager.Tag]
@@ -198,14 +199,6 @@ func (t *TagManager) WorkspaceID() string {
 	return t.container.WorkspaceID
 }
 
-// func (t *TagManager) FolderName() string {
-// 	return t.folderName
-// }
-
-// func (t *TagManager) SetFolderName(v string) {
-// 	t.folderName = v
-// }
-
 func (t *TagManager) Service() *tagmanager.Service {
 	if t.requestThrottler != nil {
 		<-t.requestThrottler.C
@@ -241,8 +234,19 @@ func (t *TagManager) Notes(v any) string {
 // ~ Public methods
 // ------------------------------------------------------------------------------------------------
 
-func (t *TagManager) LookupClient(name string) (*tagmanager.Client, error) {
-	elems, err := t.LoadClients()
+func (t *TagManager) EnsureWorkspaceID(ctx context.Context) error {
+	if t.WorkspaceID() == "" {
+		environment, err := t.GetEnvironment(ctx, "workspace")
+		if err != nil {
+			return err
+		}
+		t.container.WorkspaceID = environment.WorkspaceId
+	}
+	return nil
+}
+
+func (t *TagManager) LookupClient(ctx context.Context, name string) (*tagmanager.Client, error) {
+	elems, err := t.LoadClients(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -254,10 +258,10 @@ func (t *TagManager) LookupClient(name string) (*tagmanager.Client, error) {
 	return elems.Get(name), nil
 }
 
-func (t *TagManager) LoadClients() (*AccessedMap[*tagmanager.Client], error) {
+func (t *TagManager) LoadClients(ctx context.Context) (*AccessedMap[*tagmanager.Client], error) {
 	if t.clients == nil {
 		t.l.Info("└  ⬇︎ Loading list", "type", "Client")
-		r, err := t.Service().Accounts.Containers.Workspaces.Clients.List(t.WorkspacePath()).Do()
+		r, err := t.Service().Accounts.Containers.Workspaces.Clients.List(t.WorkspacePath()).Context(ctx).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -272,8 +276,8 @@ func (t *TagManager) LoadClients() (*AccessedMap[*tagmanager.Client], error) {
 	return t.clients, nil
 }
 
-func (t *TagManager) LookupFolder(name string) (*tagmanager.Folder, error) {
-	elems, err := t.LoadFolders()
+func (t *TagManager) LookupFolder(ctx context.Context, name string) (*tagmanager.Folder, error) {
+	elems, err := t.LoadFolders(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -285,10 +289,10 @@ func (t *TagManager) LookupFolder(name string) (*tagmanager.Folder, error) {
 	return elems.Get(name), nil
 }
 
-func (t *TagManager) LoadFolders() (*AccessedMap[*tagmanager.Folder], error) {
+func (t *TagManager) LoadFolders(ctx context.Context) (*AccessedMap[*tagmanager.Folder], error) {
 	if t.folders == nil {
 		t.l.Info("└  ⬇︎ Loading list", "type", "Folder")
-		r, err := t.Service().Accounts.Containers.Workspaces.Folders.List(t.WorkspacePath()).Do()
+		r, err := t.Service().Accounts.Containers.Workspaces.Folders.List(t.WorkspacePath()).Context(ctx).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -302,8 +306,8 @@ func (t *TagManager) LoadFolders() (*AccessedMap[*tagmanager.Folder], error) {
 	return t.folders, nil
 }
 
-func (t *TagManager) LookupVariable(name string) (*tagmanager.Variable, error) {
-	elems, err := t.LoadVariables()
+func (t *TagManager) LookupVariable(ctx context.Context, name string) (*tagmanager.Variable, error) {
+	elems, err := t.LoadVariables(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -315,10 +319,10 @@ func (t *TagManager) LookupVariable(name string) (*tagmanager.Variable, error) {
 	return elems.Get(name), nil
 }
 
-func (t *TagManager) LoadVariables() (*AccessedMap[*tagmanager.Variable], error) {
+func (t *TagManager) LoadVariables(ctx context.Context) (*AccessedMap[*tagmanager.Variable], error) {
 	if t.variables == nil {
 		t.l.Info("└  ⬇︎ Loading list", "type", "Variable")
-		r, err := t.Service().Accounts.Containers.Workspaces.Variables.List(t.WorkspacePath()).Do()
+		r, err := t.Service().Accounts.Containers.Workspaces.Variables.List(t.WorkspacePath()).Context(ctx).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -333,8 +337,8 @@ func (t *TagManager) LoadVariables() (*AccessedMap[*tagmanager.Variable], error)
 	return t.variables, nil
 }
 
-func (t *TagManager) GetBuiltInVariable(typeName string) (*tagmanager.BuiltInVariable, error) {
-	elems, err := t.LoadBuiltInVariables()
+func (t *TagManager) GetEnvironment(ctx context.Context, typeName string) (*tagmanager.Environment, error) {
+	elems, err := t.LoadEnvironments(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -346,10 +350,41 @@ func (t *TagManager) GetBuiltInVariable(typeName string) (*tagmanager.BuiltInVar
 	return elems.Get(typeName), nil
 }
 
-func (t *TagManager) LoadBuiltInVariables() (*AccessedMap[*tagmanager.BuiltInVariable], error) {
+func (t *TagManager) GetBuiltInVariable(ctx context.Context, typeName string) (*tagmanager.BuiltInVariable, error) {
+	elems, err := t.LoadBuiltInVariables(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	if !elems.Has(typeName) {
+		return nil, ErrNotFound
+	}
+
+	return elems.Get(typeName), nil
+}
+
+func (t *TagManager) LoadEnvironments(ctx context.Context) (*AccessedMap[*tagmanager.Environment], error) {
+	if t.builtInVariables == nil {
+		t.l.Info("└  ⬇︎ Loading list", "type", "Environments")
+		r, err := t.Service().Accounts.Containers.Environments.List(t.ContainerPath()).Context(ctx).Do()
+		if err != nil {
+			return nil, err
+		}
+
+		res := map[string]*tagmanager.Environment{}
+		for _, value := range r.Environment {
+			res[value.Type] = value
+		}
+		t.environments = NewAccessedMap(res)
+	}
+
+	return t.environments, nil
+}
+
+func (t *TagManager) LoadBuiltInVariables(ctx context.Context) (*AccessedMap[*tagmanager.BuiltInVariable], error) {
 	if t.builtInVariables == nil {
 		t.l.Info("└  ⬇︎ Loading list", "type", "BuiltInVariable")
-		r, err := t.Service().Accounts.Containers.Workspaces.BuiltInVariables.List(t.WorkspacePath()).Do()
+		r, err := t.Service().Accounts.Containers.Workspaces.BuiltInVariables.List(t.WorkspacePath()).Context(ctx).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -364,8 +399,8 @@ func (t *TagManager) LoadBuiltInVariables() (*AccessedMap[*tagmanager.BuiltInVar
 	return t.builtInVariables, nil
 }
 
-func (t *TagManager) LookupTrigger(name string) (*tagmanager.Trigger, error) {
-	elems, err := t.LoadTriggers()
+func (t *TagManager) LookupTrigger(ctx context.Context, name string) (*tagmanager.Trigger, error) {
+	elems, err := t.LoadTriggers(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -377,8 +412,8 @@ func (t *TagManager) LookupTrigger(name string) (*tagmanager.Trigger, error) {
 	return elems.Get(name), nil
 }
 
-func (t *TagManager) LookupTemplate(name string) (*tagmanager.CustomTemplate, error) {
-	elems, err := t.LoadCustomTemplates()
+func (t *TagManager) LookupTemplate(ctx context.Context, name string) (*tagmanager.CustomTemplate, error) {
+	elems, err := t.LoadCustomTemplates(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -390,8 +425,8 @@ func (t *TagManager) LookupTemplate(name string) (*tagmanager.CustomTemplate, er
 	return elems.Get(name), nil
 }
 
-func (t *TagManager) LookupTransformation(name string) (*tagmanager.Transformation, error) {
-	elems, err := t.LoadTransformations()
+func (t *TagManager) LookupTransformation(ctx context.Context, name string) (*tagmanager.Transformation, error) {
+	elems, err := t.LoadTransformations(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -403,10 +438,10 @@ func (t *TagManager) LookupTransformation(name string) (*tagmanager.Transformati
 	return elems.Get(name), nil
 }
 
-func (t *TagManager) LoadTriggers() (*AccessedMap[*tagmanager.Trigger], error) {
+func (t *TagManager) LoadTriggers(ctx context.Context) (*AccessedMap[*tagmanager.Trigger], error) {
 	if t.triggers == nil {
 		t.l.Info("└  ⬇︎ Loading list", "type", "Trigger")
-		r, err := t.Service().Accounts.Containers.Workspaces.Triggers.List(t.WorkspacePath()).Do()
+		r, err := t.Service().Accounts.Containers.Workspaces.Triggers.List(t.WorkspacePath()).Context(ctx).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -421,8 +456,8 @@ func (t *TagManager) LoadTriggers() (*AccessedMap[*tagmanager.Trigger], error) {
 	return t.triggers, nil
 }
 
-func (t *TagManager) LookupTag(name string) (*tagmanager.Tag, error) {
-	elems, err := t.LoadTags()
+func (t *TagManager) LookupTag(ctx context.Context, name string) (*tagmanager.Tag, error) {
+	elems, err := t.LoadTags(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -434,10 +469,10 @@ func (t *TagManager) LookupTag(name string) (*tagmanager.Tag, error) {
 	return elems.Get(name), nil
 }
 
-func (t *TagManager) LoadTags() (*AccessedMap[*tagmanager.Tag], error) {
+func (t *TagManager) LoadTags(ctx context.Context) (*AccessedMap[*tagmanager.Tag], error) {
 	if t.tags == nil {
 		t.l.Info("└  ⬇︎ Loading list", "type", "Tag")
-		r, err := t.Service().Accounts.Containers.Workspaces.Tags.List(t.WorkspacePath()).Do()
+		r, err := t.Service().Accounts.Containers.Workspaces.Tags.List(t.WorkspacePath()).Context(ctx).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -452,8 +487,8 @@ func (t *TagManager) LoadTags() (*AccessedMap[*tagmanager.Tag], error) {
 	return t.tags, nil
 }
 
-func (t *TagManager) CustomTemplate(name string) (*tagmanager.CustomTemplate, error) {
-	elems, err := t.LoadCustomTemplates()
+func (t *TagManager) CustomTemplate(ctx context.Context, name string) (*tagmanager.CustomTemplate, error) {
+	elems, err := t.LoadCustomTemplates(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -465,10 +500,10 @@ func (t *TagManager) CustomTemplate(name string) (*tagmanager.CustomTemplate, er
 	return elems.Get(name), nil
 }
 
-func (t *TagManager) LoadCustomTemplates() (*AccessedMap[*tagmanager.CustomTemplate], error) {
+func (t *TagManager) LoadCustomTemplates(ctx context.Context) (*AccessedMap[*tagmanager.CustomTemplate], error) {
 	if t.customTemplates == nil {
 		t.l.Info("└  ⬇︎ Loading list", "type", "CustomTemplate")
-		r, err := t.Service().Accounts.Containers.Workspaces.Templates.List(t.WorkspacePath()).Do()
+		r, err := t.Service().Accounts.Containers.Workspaces.Templates.List(t.WorkspacePath()).Context(ctx).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -483,10 +518,10 @@ func (t *TagManager) LoadCustomTemplates() (*AccessedMap[*tagmanager.CustomTempl
 	return t.customTemplates, nil
 }
 
-func (t *TagManager) LoadTransformations() (*AccessedMap[*tagmanager.Transformation], error) {
+func (t *TagManager) LoadTransformations(ctx context.Context) (*AccessedMap[*tagmanager.Transformation], error) {
 	if t.transformations == nil {
 		t.l.Info("└  ⬇︎ Loading list", "type", "Transformation")
-		r, err := t.Service().Accounts.Containers.Workspaces.Transformations.List(t.WorkspacePath()).Do()
+		r, err := t.Service().Accounts.Containers.Workspaces.Transformations.List(t.WorkspacePath()).Context(ctx).Do()
 		if err != nil {
 			return nil, err
 		}
@@ -501,7 +536,7 @@ func (t *TagManager) LoadTransformations() (*AccessedMap[*tagmanager.Transformat
 	return t.transformations, nil
 }
 
-func (t *TagManager) UpsertClient(folder *tagmanager.Folder, item *tagmanager.Client) (*tagmanager.Client, error) {
+func (t *TagManager) UpsertClient(ctx context.Context, folder *tagmanager.Folder, item *tagmanager.Client) (*tagmanager.Client, error) {
 	l := t.l.With("type", "Client", "name", item.Name)
 
 	item.ParentFolderId = folder.FolderId
@@ -511,7 +546,7 @@ func (t *TagManager) UpsertClient(folder *tagmanager.Folder, item *tagmanager.Cl
 	item.ContainerId = t.ContainerID()
 	item.WorkspaceId = t.WorkspaceID()
 
-	cache, err := t.LookupClient(item.Name)
+	cache, err := t.LookupClient(ctx, item.Name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
@@ -519,13 +554,13 @@ func (t *TagManager) UpsertClient(folder *tagmanager.Folder, item *tagmanager.Cl
 	var value *tagmanager.Client
 	if cache == nil {
 		l.Info("└  🚀 New")
-		value, err = t.Service().Accounts.Containers.Workspaces.Clients.Create(t.WorkspacePath(), item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Clients.Create(t.WorkspacePath(), item).Context(ctx).Do()
 		t.clients.Set(item.Name, value)
 	} else if item.Notes == cache.Notes {
 		l.Info("└  ✔︎ OK", "id", cache.ClientId)
 	} else {
 		l.Info("└  🔄 Update", "id", cache.ClientId)
-		value, err = t.Service().Accounts.Containers.Workspaces.Clients.Update(t.WorkspacePath()+"/clients/"+cache.ClientId, item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Clients.Update(t.WorkspacePath()+"/clients/"+cache.ClientId, item).Context(ctx).Do()
 		t.clients.Set(item.Name, value)
 	}
 	if err != nil {
@@ -535,10 +570,10 @@ func (t *TagManager) UpsertClient(folder *tagmanager.Folder, item *tagmanager.Cl
 		return nil, err
 	}
 
-	return t.LookupClient(item.Name)
+	return t.LookupClient(ctx, item.Name)
 }
 
-func (t *TagManager) UpsertTransformation(folder *tagmanager.Folder, item *tagmanager.Transformation) (*tagmanager.Transformation, error) {
+func (t *TagManager) UpsertTransformation(ctx context.Context, folder *tagmanager.Folder, item *tagmanager.Transformation) (*tagmanager.Transformation, error) {
 	l := t.l.With("type", "Transformation", "name", item.Name)
 
 	item.ParentFolderId = folder.FolderId
@@ -548,7 +583,7 @@ func (t *TagManager) UpsertTransformation(folder *tagmanager.Folder, item *tagma
 	item.ContainerId = t.ContainerID()
 	item.WorkspaceId = t.WorkspaceID()
 
-	cache, err := t.LookupTransformation(item.Name)
+	cache, err := t.LookupTransformation(ctx, item.Name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
@@ -556,13 +591,13 @@ func (t *TagManager) UpsertTransformation(folder *tagmanager.Folder, item *tagma
 	var value *tagmanager.Transformation
 	if cache == nil {
 		l.Info("└  🚀 New")
-		value, err = t.Service().Accounts.Containers.Workspaces.Transformations.Create(t.WorkspacePath(), item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Transformations.Create(t.WorkspacePath(), item).Context(ctx).Do()
 		t.transformations.Set(item.Name, value)
 	} else if item.Notes == cache.Notes {
 		l.Info("└  ✔︎ OK", "id", cache.TransformationId)
 	} else {
 		l.Info("└  🔄 Update", "id", cache.TransformationId)
-		value, err = t.Service().Accounts.Containers.Workspaces.Transformations.Update(t.WorkspacePath()+"/transformations/"+cache.TransformationId, item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Transformations.Update(t.WorkspacePath()+"/transformations/"+cache.TransformationId, item).Context(ctx).Do()
 		t.transformations.Set(item.Name, value)
 	}
 	if err != nil {
@@ -571,10 +606,10 @@ func (t *TagManager) UpsertTransformation(folder *tagmanager.Folder, item *tagma
 		}
 		return nil, err
 	}
-	return t.LookupTransformation(item.Name)
+	return t.LookupTransformation(ctx, item.Name)
 }
 
-func (t *TagManager) UpsertFolder(name string) (*tagmanager.Folder, error) {
+func (t *TagManager) UpsertFolder(ctx context.Context, name string) (*tagmanager.Folder, error) {
 	l := t.l.With("type", "Folder", "name", name)
 
 	item := &tagmanager.Folder{
@@ -586,7 +621,7 @@ func (t *TagManager) UpsertFolder(name string) (*tagmanager.Folder, error) {
 	item.ContainerId = t.ContainerID()
 	item.WorkspaceId = t.WorkspaceID()
 
-	cache, err := t.LookupFolder(name)
+	cache, err := t.LookupFolder(ctx, name)
 	if err != nil && !errors.Is(err, ErrNotFound) && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
@@ -594,13 +629,13 @@ func (t *TagManager) UpsertFolder(name string) (*tagmanager.Folder, error) {
 	var value *tagmanager.Folder
 	if cache == nil {
 		l.Info("└  🚀 New")
-		value, err = t.Service().Accounts.Containers.Workspaces.Folders.Create(t.WorkspacePath(), item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Folders.Create(t.WorkspacePath(), item).Context(ctx).Do()
 		t.folders.Set(item.Name, value)
 	} else if item.Notes == cache.Notes {
 		l.Info("└  ✔︎ OK", "id", item.FolderId)
 	} else {
 		l.Info("└  🔄 Update", "id", cache.FolderId)
-		value, err = t.Service().Accounts.Containers.Workspaces.Folders.Update(t.WorkspacePath()+"/folders/"+cache.FolderId, item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Folders.Update(t.WorkspacePath()+"/folders/"+cache.FolderId, item).Context(ctx).Do()
 		t.folders.Set(item.Name, value)
 	}
 	if err != nil {
@@ -610,10 +645,10 @@ func (t *TagManager) UpsertFolder(name string) (*tagmanager.Folder, error) {
 		return nil, err
 	}
 
-	return t.LookupFolder(name)
+	return t.LookupFolder(ctx, name)
 }
 
-func (t *TagManager) UpsertVariable(folder *tagmanager.Folder, item *tagmanager.Variable) (*tagmanager.Variable, error) {
+func (t *TagManager) UpsertVariable(ctx context.Context, folder *tagmanager.Folder, item *tagmanager.Variable) (*tagmanager.Variable, error) {
 	l := t.l.With("type", "Variable", "name", item.Name)
 
 	item.ParentFolderId = folder.FolderId
@@ -623,7 +658,7 @@ func (t *TagManager) UpsertVariable(folder *tagmanager.Folder, item *tagmanager.
 	item.ContainerId = t.ContainerID()
 	item.WorkspaceId = t.WorkspaceID()
 
-	cache, err := t.LookupVariable(item.Name)
+	cache, err := t.LookupVariable(ctx, item.Name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
@@ -631,13 +666,13 @@ func (t *TagManager) UpsertVariable(folder *tagmanager.Folder, item *tagmanager.
 	var value *tagmanager.Variable
 	if cache == nil {
 		l.Info("└  🚀 New")
-		value, err = t.Service().Accounts.Containers.Workspaces.Variables.Create(t.WorkspacePath(), item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Variables.Create(t.WorkspacePath(), item).Context(ctx).Do()
 		t.variables.Set(item.Name, value)
 	} else if item.Notes == cache.Notes {
 		l.Info("└  ✔︎ OK", "id", cache.VariableId)
 	} else {
 		l.Info("└  🔄 Update", "id", cache.VariableId)
-		value, err = t.Service().Accounts.Containers.Workspaces.Variables.Update(t.WorkspacePath()+"/variables/"+cache.VariableId, item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Variables.Update(t.WorkspacePath()+"/variables/"+cache.VariableId, item).Context(ctx).Do()
 		t.variables.Set(item.Name, value)
 	}
 	if err != nil {
@@ -647,13 +682,13 @@ func (t *TagManager) UpsertVariable(folder *tagmanager.Folder, item *tagmanager.
 		return nil, err
 	}
 
-	return t.LookupVariable(item.Name)
+	return t.LookupVariable(ctx, item.Name)
 }
 
-func (t *TagManager) EnableBuiltInVariable(typeName string) (*tagmanager.BuiltInVariable, error) {
+func (t *TagManager) EnableBuiltInVariable(ctx context.Context, typeName string) (*tagmanager.BuiltInVariable, error) {
 	l := t.l.With("type", "Built-In Variable", "typeName", typeName)
 
-	cache, err := t.GetBuiltInVariable(typeName)
+	cache, err := t.GetBuiltInVariable(ctx, typeName)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
@@ -664,7 +699,7 @@ func (t *TagManager) EnableBuiltInVariable(typeName string) (*tagmanager.BuiltIn
 	}
 
 	l.Info("└  🚀 New")
-	resp, err := t.Service().Accounts.Containers.Workspaces.BuiltInVariables.Create(t.WorkspacePath()).Type(typeName).Do()
+	resp, err := t.Service().Accounts.Containers.Workspaces.BuiltInVariables.Create(t.WorkspacePath()).Type(typeName).Context(ctx).Do()
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to create built-in variable")
 	}
@@ -673,10 +708,10 @@ func (t *TagManager) EnableBuiltInVariable(typeName string) (*tagmanager.BuiltIn
 		t.builtInVariables.Set(builtInVariable.Type, builtInVariable)
 	}
 
-	return t.GetBuiltInVariable(typeName)
+	return t.GetBuiltInVariable(ctx, typeName)
 }
 
-func (t *TagManager) UpsertTrigger(folder *tagmanager.Folder, item *tagmanager.Trigger) (*tagmanager.Trigger, error) {
+func (t *TagManager) UpsertTrigger(ctx context.Context, folder *tagmanager.Folder, item *tagmanager.Trigger) (*tagmanager.Trigger, error) {
 	l := t.l.With("type", "Trigger", "name", item.Name)
 
 	item.ParentFolderId = folder.FolderId
@@ -686,7 +721,7 @@ func (t *TagManager) UpsertTrigger(folder *tagmanager.Folder, item *tagmanager.T
 	item.ContainerId = t.ContainerID()
 	item.WorkspaceId = t.WorkspaceID()
 
-	cache, err := t.LookupTrigger(item.Name)
+	cache, err := t.LookupTrigger(ctx, item.Name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
@@ -694,13 +729,13 @@ func (t *TagManager) UpsertTrigger(folder *tagmanager.Folder, item *tagmanager.T
 	var value *tagmanager.Trigger
 	if cache == nil {
 		l.Info("└  🚀 New")
-		value, err = t.Service().Accounts.Containers.Workspaces.Triggers.Create(t.WorkspacePath(), item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Triggers.Create(t.WorkspacePath(), item).Context(ctx).Do()
 		t.triggers.Set(item.Name, value)
 	} else if item.Notes == cache.Notes {
 		l.Info("└  ✔︎ OK", "id", cache.TriggerId)
 	} else {
 		l.Info("└  🔄 Update", "id", cache.TriggerId)
-		value, err = t.Service().Accounts.Containers.Workspaces.Triggers.Update(t.WorkspacePath()+"/triggers/"+cache.TriggerId, item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Triggers.Update(t.WorkspacePath()+"/triggers/"+cache.TriggerId, item).Context(ctx).Do()
 		t.triggers.Set(item.Name, value)
 	}
 	if err != nil {
@@ -710,10 +745,10 @@ func (t *TagManager) UpsertTrigger(folder *tagmanager.Folder, item *tagmanager.T
 		return nil, err
 	}
 
-	return t.LookupTrigger(item.Name)
+	return t.LookupTrigger(ctx, item.Name)
 }
 
-func (t *TagManager) UpsertTag(folder *tagmanager.Folder, item *tagmanager.Tag) (*tagmanager.Tag, error) {
+func (t *TagManager) UpsertTag(ctx context.Context, folder *tagmanager.Folder, item *tagmanager.Tag) (*tagmanager.Tag, error) {
 	l := t.l.With("type", "Tag", "name", item.Name)
 
 	item.ParentFolderId = folder.FolderId
@@ -723,7 +758,7 @@ func (t *TagManager) UpsertTag(folder *tagmanager.Folder, item *tagmanager.Tag) 
 	item.ContainerId = t.ContainerID()
 	item.WorkspaceId = t.WorkspaceID()
 
-	cache, err := t.LookupTag(item.Name)
+	cache, err := t.LookupTag(ctx, item.Name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
@@ -731,13 +766,13 @@ func (t *TagManager) UpsertTag(folder *tagmanager.Folder, item *tagmanager.Tag) 
 	var value *tagmanager.Tag
 	if cache == nil {
 		l.Info("└  🚀 New")
-		value, err = t.Service().Accounts.Containers.Workspaces.Tags.Create(t.WorkspacePath(), item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Tags.Create(t.WorkspacePath(), item).Context(ctx).Do()
 		t.tags.Set(item.Name, value)
 	} else if item.Notes == cache.Notes {
 		l.Info("└  ✔︎ OK", "id", cache.TagId)
 	} else {
 		l.Info("└  🔄 Update", "id", cache.TagId)
-		value, err = t.Service().Accounts.Containers.Workspaces.Tags.Update(t.WorkspacePath()+"/tags/"+cache.TagId, item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Tags.Update(t.WorkspacePath()+"/tags/"+cache.TagId, item).Context(ctx).Do()
 		t.tags.Set(item.Name, value)
 	}
 	if err != nil {
@@ -746,17 +781,17 @@ func (t *TagManager) UpsertTag(folder *tagmanager.Folder, item *tagmanager.Tag) 
 		}
 		return nil, err
 	}
-	return t.LookupTag(item.Name)
+	return t.LookupTag(ctx, item.Name)
 }
 
-func (t *TagManager) UpsertCustomTemplate(item *tagmanager.CustomTemplate) (*tagmanager.CustomTemplate, error) {
+func (t *TagManager) UpsertCustomTemplate(ctx context.Context, item *tagmanager.CustomTemplate) (*tagmanager.CustomTemplate, error) {
 	l := t.l.With("type", "CustomTemplate", "name", item.Name)
 
 	item.AccountId = t.AccountID()
 	item.ContainerId = t.ContainerID()
 	item.WorkspaceId = t.WorkspaceID()
 
-	cache, err := t.CustomTemplate(item.Name)
+	cache, err := t.CustomTemplate(ctx, item.Name)
 	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
@@ -764,13 +799,13 @@ func (t *TagManager) UpsertCustomTemplate(item *tagmanager.CustomTemplate) (*tag
 	var value *tagmanager.CustomTemplate
 	if cache == nil {
 		l.Info("└  🚀 New")
-		value, err = t.Service().Accounts.Containers.Workspaces.Templates.Create(t.WorkspacePath(), item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Templates.Create(t.WorkspacePath(), item).Context(ctx).Do()
 		t.customTemplates.Set(item.Name, value)
 	} else if item.TemplateData == cache.TemplateData {
 		l.Info("└  ✔︎ OK", "id", cache.TemplateId)
 	} else {
 		l.Info("└  🔄 Update", "id", cache.TemplateId)
-		value, err = t.Service().Accounts.Containers.Workspaces.Templates.Update(t.WorkspacePath()+"/templates/"+cache.TemplateId, item).Do()
+		value, err = t.Service().Accounts.Containers.Workspaces.Templates.Update(t.WorkspacePath()+"/templates/"+cache.TemplateId, item).Context(ctx).Do()
 		t.customTemplates.Set(item.Name, value)
 	}
 	if err != nil {
@@ -779,5 +814,5 @@ func (t *TagManager) UpsertCustomTemplate(item *tagmanager.CustomTemplate) (*tag
 		}
 		return nil, err
 	}
-	return t.CustomTemplate(item.Name)
+	return t.CustomTemplate(ctx, item.Name)
 }

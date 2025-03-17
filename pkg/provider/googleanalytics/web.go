@@ -13,13 +13,13 @@ import (
 )
 
 func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleAnalytics) error {
-	folder, err := tm.UpsertFolder("Sesamy - " + Name)
+	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
 	if err != nil {
 		return err
 	}
 
 	{ // create event tags
-		tagID, err := tm.LookupVariable(googletag.NameGoogleTagID)
+		tagID, err := tm.LookupVariable(ctx, googletag.NameGoogleTagID)
 		if err != nil {
 			return err
 		}
@@ -30,17 +30,17 @@ func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleAnalyt
 		}
 
 		for event := range eventParameters {
-			eventTrigger, err := tm.LookupTrigger(commontrigger.EventName(event))
+			eventTrigger, err := tm.LookupTrigger(ctx, commontrigger.EventName(event))
 			if err != nil {
 				return errors.Wrap(err, "failed to lookup event trigger: "+event)
 			}
 
-			eventSettings, err := tm.LookupVariable(commonvariable.GoogleTagEventSettingsName(event))
+			eventSettings, err := tm.LookupVariable(ctx, commonvariable.GoogleTagEventSettingsName(event))
 			if err != nil {
 				return errors.Wrap(err, "failed to lookup google tag event setting: "+event)
 			}
 
-			if _, err := tm.UpsertTag(folder, containertag.NewGoogleAnalyticsEvent(event, tagID, eventSettings, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(ctx, folder, containertag.NewGoogleAnalyticsEvent(event, tagID, eventSettings, eventTrigger)); err != nil {
 				return err
 			}
 		}

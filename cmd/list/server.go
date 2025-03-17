@@ -15,6 +15,7 @@ func NewServer(root *cobra.Command) {
 		ValidArgs: []cobra.Completion{
 			"built-in-variables",
 			"clients",
+			"environments",
 			"folders",
 			"gtag-config",
 			"status",
@@ -48,7 +49,11 @@ func NewServer(root *cobra.Command) {
 				return err
 			}
 
-			return list(l, tm, resource)
+			if err := tm.EnsureWorkspaceID(cmd.Context()); err != nil {
+				return err
+			}
+
+			return list(cmd.Context(), l, tm, resource)
 		},
 	}
 
