@@ -7,6 +7,9 @@ import (
 )
 
 func TemplateType(template *tagmanager.CustomTemplate) string {
+	if template.GalleryReference != nil && template.GalleryReference.GalleryTemplateId != "" {
+		return fmt.Sprintf("cvt_%s", template.GalleryReference.GalleryTemplateId)
+	}
 	return fmt.Sprintf("cvt_%s_%s", template.ContainerId, template.TemplateId)
 }
 
