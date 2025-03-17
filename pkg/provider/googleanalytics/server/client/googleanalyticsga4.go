@@ -12,7 +12,7 @@ func NewGoogleAnalyticsGA4(name string, enableGeoResolution bool, visitorRegion,
 		Parameter: []*tagmanager.Parameter{
 			{
 				Key:   "activateResponseCompression",
-				Type:  "template",
+				Type:  "boolean",
 				Value: "true",
 			},
 			{
