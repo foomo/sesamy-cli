@@ -10,7 +10,8 @@ import (
 func Logger() *slog.Logger {
 	verbose := viper.GetBool("verbose")
 
-	plogger := pterm.DefaultLogger.WithTime(false)
+	plogger := pterm.DefaultLogger.WithTime(false).WithMaxWidth(100)
+
 	if verbose {
 		plogger = plogger.WithLevel(pterm.LogLevelTrace).WithCaller(true)
 	}

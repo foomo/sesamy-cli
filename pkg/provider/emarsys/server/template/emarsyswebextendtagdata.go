@@ -214,8 +214,7 @@ function serializeData(mappedData) {
   }
   if (mappedData.email) {
     slist.push("eh=" + encodeUriComponent(mappedData.email));
-  }
-  if (mappedData.customerId) {
+  } else if (mappedData.customerId) {
     slist.push("ci=" + encodeUriComponent(mappedData.customerId));
   }
   if (mappedData.sessionId) {
