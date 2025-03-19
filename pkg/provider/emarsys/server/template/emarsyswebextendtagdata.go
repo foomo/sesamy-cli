@@ -92,6 +92,7 @@ const getRequestHeader = require('getRequestHeader');
 const getCookieValues = require('getCookieValues');
 const generateRandom = require('generateRandom');
 const logToConsole = require('logToConsole');
+const createRegex = require('createRegex');
 
 // --- Config ---
 
@@ -161,8 +162,10 @@ function mapEventData() {
       break;
     }
     case 'view_item_list': {
+      const prefix = createRegex('^/', 'i');
+      const seperator = createRegex('/', 'i');
       mappedData.cart = serializeItems(eventData.items || []);
-      mappedData.category = eventData.item_list_id;
+      mappedData.category = eventData.item_list_id.replace(prefix,"").replace(seperator, " > ");
       break;
     }
     case 'purchase': {
