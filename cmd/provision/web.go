@@ -10,6 +10,7 @@ import (
 	googletagmanagerprovider "github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
 	hotjarprovider "github.com/foomo/sesamy-cli/pkg/provider/hotjar"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
@@ -112,7 +113,7 @@ func NewWeb(root *cobra.Command) {
 					}
 					tree.Children = append(tree.Children, child)
 				}
-				if err := pterm.DefaultTree.WithRoot(tree).Render(); err != nil {
+				if err := pterm.DefaultTree.WithRoot(tree).WithWriter(utils.NewPTermWriter(pterm.Warning)).Render(); err != nil {
 					l.Warn("failed to render missed resources", "error", err)
 				}
 			}

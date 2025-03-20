@@ -95,7 +95,6 @@ func Execute() {
 	if err := root.Execute(); err != nil {
 		pterm.Error.Println(say(strings.Split(errors.Cause(err).Error(), ":")[0]))
 		pterm.Error.Println(err.Error())
-		pterm.Error.Println(root.UsageString())
 		code = 1
 	}
 }
