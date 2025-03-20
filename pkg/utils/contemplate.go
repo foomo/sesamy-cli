@@ -26,7 +26,7 @@ func LoadEventParams(ctx context.Context, cfg contemplate.Config) (map[string]ma
 		for _, typ := range cfgPkg.Types {
 			eventParams, err := getEventParams(pkg.LookupScopeType(typ))
 			if err != nil {
-				return nil, errors.Wrap(err, "failed to load event params: "+typ)
+				return nil, errors.Wrap(err, "failed to load event params: "+cfgPkg.Path+"."+typ)
 			}
 			ret[strcase.SnakeCase(typ)] = eventParams
 		}
