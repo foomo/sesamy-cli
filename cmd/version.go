@@ -2,13 +2,14 @@ package cmd
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/spf13/cobra"
 )
 
 var version = "latest"
 
-func NewVersion(root *cobra.Command) {
+func NewVersion(l *slog.Logger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "version",
 		Short: "Print version",
@@ -17,5 +18,5 @@ func NewVersion(root *cobra.Command) {
 		},
 	}
 
-	root.AddCommand(cmd)
+	return cmd
 }

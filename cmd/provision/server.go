@@ -1,6 +1,8 @@
 package provision
 
 import (
+	"log/slog"
+
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
 	conversionlinkerprovider "github.com/foomo/sesamy-cli/pkg/provider/conversionlinker"
 	criteoprovider "github.com/foomo/sesamy-cli/pkg/provider/criteo"
@@ -22,12 +24,14 @@ import (
 )
 
 // NewServer represents the server command
-func NewServer(root *cobra.Command) {
+func NewServer(l *slog.Logger) *cobra.Command {
+	c := viper.New()
+
 	cmd := &cobra.Command{
 		Use:   "server",
 		Short: "Provision Google Tag Manager Server Container",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			l := pkgcmd.Logger()
+			l := pkgcmd.NewLogger()
 			l.Info("☕ Provisioning Server Container")
 
 			tags, err := cmd.Flags().GetStringSlice("tags")
@@ -35,7 +39,7 @@ func NewServer(root *cobra.Command) {
 				return errors.Wrap(err, "error reading tags flag")
 			}
 
-			cfg, err := pkgcmd.ReadConfig(l, cmd)
+			cfg, err := pkgcmd.ReadConfig(l, c, cmd)
 			if err != nil {
 				return err
 			}
@@ -56,75 +60,75 @@ func NewServer(root *cobra.Command) {
 				return err
 			}
 
-			if pkgcmd.Tag(googletagprovider.Tag, tags) {
+			if utils.Tag(googletagprovider.Tag, tags) {
 				if err := googletagprovider.Server(cmd.Context(), tm, cfg.GoogleTag); err != nil {
 					return errors.Wrap(err, "failed to provision google tag provider")
 				}
 			}
 
-			if pkgcmd.Tag(googletagmanagerprovider.Tag, tags) {
+			if utils.Tag(googletagmanagerprovider.Tag, tags) {
 				if err := googletagmanagerprovider.Server(cmd.Context(), tm, cfg.GoogleTagManager, cfg.EnableGeoResolution); err != nil {
 					return errors.Wrap(err, "failed to provision google tag manager")
 				}
 			}
 
-			if cfg.GoogleAnalytics.Enabled && pkgcmd.Tag(googleanalyticsprovider.Tag, tags) {
+			if cfg.GoogleAnalytics.Enabled && utils.Tag(googleanalyticsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googleanalyticsprovider.Name, "tag", googleanalyticsprovider.Tag)
 				if err := googleanalyticsprovider.Server(cmd.Context(), tm, cfg.GoogleAnalytics, cfg.RedactVisitorIP, cfg.EnableGeoResolution); err != nil {
 					return errors.Wrap(err, "failed to provision google analytics")
 				}
 			}
 
-			if cfg.ConversionLinker.Enabled && pkgcmd.Tag(conversionlinkerprovider.Tag, tags) {
+			if cfg.ConversionLinker.Enabled && utils.Tag(conversionlinkerprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", conversionlinkerprovider.Name, "tag", conversionlinkerprovider.Tag)
 				if err := conversionlinkerprovider.Server(cmd.Context(), tm, cfg.ConversionLinker); err != nil {
 					return errors.Wrap(err, "failed to provision conversion linker")
 				}
 			}
 
-			if cfg.Umami.Enabled && pkgcmd.Tag(umamiprovider.Tag, tags) {
+			if cfg.Umami.Enabled && utils.Tag(umamiprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", umamiprovider.Name, "tag", umamiprovider.Tag)
 				if err := umamiprovider.Server(cmd.Context(), tm, cfg.Umami); err != nil {
 					return errors.Wrap(err, "failed to provision umami")
 				}
 			}
 
-			if cfg.Facebook.Enabled && pkgcmd.Tag(facebookprovider.Tag, tags) {
+			if cfg.Facebook.Enabled && utils.Tag(facebookprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", facebookprovider.Name, "tag", facebookprovider.Tag)
 				if err := facebookprovider.Server(cmd.Context(), l, tm, cfg.Facebook); err != nil {
 					return errors.Wrap(err, "failed to provision facebook")
 				}
 			}
 
-			if cfg.GoogleAds.Enabled && pkgcmd.Tag(googleadsprovider.Tag, tags) {
+			if cfg.GoogleAds.Enabled && utils.Tag(googleadsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googleadsprovider.Name, "tag", googleadsprovider.Tag)
 				if err := googleadsprovider.Server(cmd.Context(), l, tm, cfg.GoogleAds); err != nil {
 					return errors.Wrap(err, "failed to provision google ads")
 				}
 			}
 
-			if cfg.Emarsys.Enabled && pkgcmd.Tag(emarsysprovider.Tag, tags) {
+			if cfg.Emarsys.Enabled && utils.Tag(emarsysprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", emarsysprovider.Name, "tag", emarsysprovider.Tag)
 				if err := emarsysprovider.Server(cmd.Context(), l, tm, cfg.Emarsys); err != nil {
 					return errors.Wrap(err, "failed to provision emarsys")
 				}
 			}
 
-			if cfg.Tracify.Enabled && pkgcmd.Tag(tracifyprovider.Tag, tags) {
+			if cfg.Tracify.Enabled && utils.Tag(tracifyprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", tracifyprovider.Name, "tag", tracifyprovider.Tag)
 				if err := tracifyprovider.Server(cmd.Context(), l, tm, cfg.Tracify); err != nil {
 					return errors.Wrap(err, "failed to provision tracify")
 				}
 			}
 
-			if cfg.Criteo.Enabled && pkgcmd.Tag(criteoprovider.Tag, tags) {
+			if cfg.Criteo.Enabled && utils.Tag(criteoprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", criteoprovider.Name, "tag", criteoprovider.Tag)
 				if err := criteoprovider.Server(cmd.Context(), l, tm, cfg.Criteo); err != nil {
 					return errors.Wrap(err, "failed to provision criteo")
 				}
 			}
 
-			if cfg.MicrosoftAds.Enabled && pkgcmd.Tag(microsoftadsprovider.Tag, tags) {
+			if cfg.MicrosoftAds.Enabled && utils.Tag(microsoftadsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", microsoftadsprovider.Name, "tag", microsoftadsprovider.Tag)
 				if err := microsoftadsprovider.Server(cmd.Context(), l, tm, cfg.MicrosoftAds); err != nil {
 					return errors.Wrap(err, "failed to provision microsoftads")
@@ -154,8 +158,13 @@ func NewServer(root *cobra.Command) {
 		},
 	}
 
-	cmd.Flags().StringSlice("tags", nil, "list of tags to provision")
-	_ = viper.BindPFlag("tags", cmd.Flags().Lookup("tags"))
+	flags := cmd.Flags()
 
-	root.AddCommand(cmd)
+	flags.StringSliceP("config", "c", []string{"sesamy.yaml"}, "config files (default is sesamy.yaml)")
+	_ = c.BindPFlag("config", flags.Lookup("config"))
+
+	flags.StringSlice("tags", nil, "list of tags to provision")
+	_ = c.BindPFlag("tags", flags.Lookup("tags"))
+
+	return cmd
 }

@@ -124,7 +124,7 @@ func (p *Package) renderTypeBasic(typeName string, typeObject types.Object) {
 
 	typeValues := &strings.Builder{}
 	for _, name := range names {
-		typeValues.WriteString(fmt.Sprintf("\t%s = %s,\n", name, res[name]))
+		_, _ = fmt.Fprintf(typeValues, "\t%s = %s,\n", name, res[name])
 	}
 
 	p.code.Body().Tprintn(`
@@ -217,9 +217,7 @@ func (p *Package) renderStruct(obj types.Object, typeName string, t *types.Struc
 			name += "?"
 		}
 
-		typeFields.WriteString(
-			fmt.Sprintf("\t%s: %s;\n", name, p.tsType(t.Field(i).Type())),
-		)
+		_, _ = fmt.Fprintf(typeFields, "\t%s: %s;\n", name, p.tsType(t.Field(i).Type()))
 	}
 
 	if typeFields.Len() == 0 {

@@ -2,11 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"runtime/debug"
 	"strings"
 
 	cowsay "github.com/Code-Hex/Neo-cowsay/v2"
+	cmdx "github.com/foomo/sesamy-cli/pkg/cmd"
 	"github.com/pkg/errors"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
@@ -14,60 +16,44 @@ import (
 )
 
 var (
+	l    *slog.Logger
 	root *cobra.Command
 )
 
 func init() {
-	pterm.Info.Prefix.Text = "⎈"
-	pterm.Info.Scope.Style = &pterm.ThemeDefault.DebugMessageStyle
-	pterm.Debug.Prefix.Text = "⛏︎"
-	pterm.Debug.Scope.Style = &pterm.ThemeDefault.DebugMessageStyle
-	pterm.Fatal.Prefix.Text = "⛔︎"
-	pterm.Fatal.Scope.Style = &pterm.ThemeDefault.DebugMessageStyle
-	pterm.Error.Prefix.Text = "⛌"
-	pterm.Error.Scope.Style = &pterm.ThemeDefault.DebugMessageStyle
-	pterm.Warning.Prefix.Text = "⚠"
-	pterm.Warning.Scope.Style = &pterm.ThemeDefault.DebugMessageStyle
-	pterm.Success.Prefix.Text = "✓"
-	pterm.Success.Scope.Style = &pterm.ThemeDefault.DebugMessageStyle
+	l = cmdx.NewLogger()
 
-	if scope := os.Getenv("SESAMY_SCOPE"); scope != "" {
-		pterm.Info.Scope.Text = scope
-		pterm.Debug.Scope.Text = scope
-		pterm.Fatal.Scope.Text = scope
-		pterm.Error.Scope.Text = scope
-		pterm.Warning.Scope.Text = scope
-		pterm.Success.Scope.Text = scope
-	}
-
-	root = NewRoot()
-	NewConfig(root)
-	NewVersion(root)
-	NewTags(root)
-	NewList(root)
-	NewProvision(root)
-	NewTypeScript(root)
+	root = NewRoot(l)
+	root.AddCommand(
+		NewConfig(l),
+		NewConfig(l),
+		NewList(l),
+		NewProvision(l),
+		NewTags(l),
+		NewTypeScript(l),
+		NewVersion(l),
+	)
 }
 
 // NewRoot represents the base command when called without any subcommands
-func NewRoot() *cobra.Command {
+func NewRoot(l *slog.Logger) *cobra.Command {
+	c := viper.New()
+
 	cmd := &cobra.Command{
 		Use:           "sesamy",
 		Short:         "Server Side Tag Management System",
 		SilenceErrors: true,
 		SilenceUsage:  true,
-		PersistentPostRunE: func(cmd *cobra.Command, args []string) error {
-			if viper.GetBool("verbose") {
-				pterm.EnableDebugMessages()
-			}
-			return nil
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			pterm.PrintDebugMessages = viper.GetBool("verbose")
 		},
 	}
-	cmd.PersistentFlags().BoolP("verbose", "v", false, "output debug information")
-	_ = viper.BindPFlag("verbose", cmd.PersistentFlags().Lookup("verbose"))
 
-	cmd.PersistentFlags().StringSliceP("config", "c", []string{"sesamy.yaml"}, "config files (default is sesamy.yaml)")
-	_ = viper.BindPFlag("config", cmd.PersistentFlags().Lookup("config"))
+	flags := cmd.PersistentFlags()
+
+	flags.BoolP("verbose", "v", false, "output debug information")
+	_ = c.BindPFlag("verbose", flags.Lookup("verbose"))
+
 	return cmd
 }
 
