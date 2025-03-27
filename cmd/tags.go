@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"log/slog"
+
 	"github.com/foomo/sesamy-cli/pkg/provider/conversionlinker"
 	"github.com/foomo/sesamy-cli/pkg/provider/cookiebot"
 	"github.com/foomo/sesamy-cli/pkg/provider/criteo"
@@ -20,7 +22,7 @@ import (
 )
 
 // NewTags represents the tags command
-func NewTags(root *cobra.Command) *cobra.Command {
+func NewTags(l *slog.Logger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "tags",
 		Short: "Print out all available tags",
@@ -47,8 +49,6 @@ func NewTags(root *cobra.Command) *cobra.Command {
 			return pterm.DefaultTable.WithHasHeader().WithData(data).Render()
 		},
 	}
-
-	root.AddCommand(cmd)
 
 	return cmd
 }

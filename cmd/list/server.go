@@ -1,13 +1,18 @@
 package list
 
 import (
+	"log/slog"
+
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // NewServer represents the server command
-func NewServer(root *cobra.Command) {
+func NewServer(l *slog.Logger) *cobra.Command {
+	c := viper.New()
+
 	cmd := &cobra.Command{
 		Use:   "server",
 		Short: "List Google Tag Manager Server Container",
@@ -30,10 +35,9 @@ func NewServer(root *cobra.Command) {
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			resource := args[0]
-			l := pkgcmd.Logger()
 			l.Info("☕ Listing Server Container resources: " + resource)
 
-			cfg, err := pkgcmd.ReadConfig(l, cmd)
+			cfg, err := pkgcmd.ReadConfig(l, c, cmd)
 			if err != nil {
 				return err
 			}
@@ -58,5 +62,10 @@ func NewServer(root *cobra.Command) {
 		},
 	}
 
-	root.AddCommand(cmd)
+	flags := cmd.Flags()
+
+	flags.StringSliceP("config", "c", []string{"sesamy.yaml"}, "config files (default is sesamy.yaml)")
+	_ = c.BindPFlag("config", flags.Lookup("config"))
+
+	return cmd
 }

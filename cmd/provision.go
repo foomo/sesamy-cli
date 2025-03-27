@@ -1,20 +1,23 @@
 package cmd
 
 import (
+	"log/slog"
+
 	"github.com/foomo/sesamy-cli/cmd/provision"
 	"github.com/spf13/cobra"
 )
 
 // NewProvision represents the provision command
-func NewProvision(root *cobra.Command) *cobra.Command {
+func NewProvision(l *slog.Logger) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "provision",
 		Short: "Provision Google Tag Manager containers",
 	}
 
-	provision.NewServer(cmd)
-	provision.NewWeb(cmd)
-	root.AddCommand(cmd)
+	cmd.AddCommand(
+		provision.NewServer(l),
+		provision.NewWeb(l),
+	)
 
 	return cmd
 }

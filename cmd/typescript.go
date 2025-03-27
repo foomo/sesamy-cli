@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"log/slog"
 	"maps"
 	"os"
 	"path"
@@ -12,17 +13,20 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/typescript/generator"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // NewTypeScript represents the typescript command
-func NewTypeScript(root *cobra.Command) *cobra.Command {
+func NewTypeScript(l *slog.Logger) *cobra.Command {
+	c := viper.New()
+
 	cmd := &cobra.Command{
 		Use:   "typescript",
 		Short: "Generate typescript events",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			l := pkgcmd.Logger()
+			l := pkgcmd.NewLogger()
 
-			cfg, err := pkgcmd.ReadConfig(l, cmd)
+			cfg, err := pkgcmd.ReadConfig(l, c, cmd)
 			if err != nil {
 				return err
 			}
@@ -57,7 +61,10 @@ func NewTypeScript(root *cobra.Command) *cobra.Command {
 		},
 	}
 
-	root.AddCommand(cmd)
+	flags := cmd.Flags()
+
+	flags.StringSliceP("config", "c", []string{"sesamy.yaml"}, "config files (default is sesamy.yaml)")
+	_ = c.BindPFlag("config", flags.Lookup("config"))
 
 	return cmd
 }

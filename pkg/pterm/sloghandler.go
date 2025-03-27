@@ -1,4 +1,4 @@
-package cmd
+package pterm
 
 import (
 	"context"
@@ -10,6 +10,11 @@ import (
 
 type SlogHandler struct {
 	attrs []slog.Attr
+}
+
+// NewSlogHandler returns a new logging handler that can be intrgrated with log/slog.
+func NewSlogHandler() *SlogHandler {
+	return &SlogHandler{}
 }
 
 // Enabled returns true if the given level is enabled.
@@ -77,9 +82,4 @@ func (s *SlogHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
 func (s *SlogHandler) WithGroup(name string) slog.Handler {
 	// Grouping is not yet supported by pterm.
 	return s
-}
-
-// NewSlogHandler returns a new logging handler that can be intrgrated with log/slog.
-func NewSlogHandler() *SlogHandler {
-	return &SlogHandler{}
 }

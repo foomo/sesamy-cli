@@ -15,25 +15,21 @@ import (
 	"github.com/spf13/viper"
 )
 
-var conf = koanf.Conf{
-	Delim: "/",
-}
-var k = koanf.NewWithConf(conf)
+func ReadConfig(l *slog.Logger, c *viper.Viper, cmd *cobra.Command) (*config.Config, error) {
+	k := koanf.NewWithConf(koanf.Conf{
+		Delim: "/",
+	})
 
-func ReadConfig(l *slog.Logger, cmd *cobra.Command) (*config.Config, error) {
-	filenames := viper.GetStringSlice("config")
-
-	for _, filename := range filenames {
+	for _, filename := range c.GetStringSlice("config") {
 		var p koanf.Provider
-		switch {
-		case filename == "-":
+		if filename == "-" {
 			pterm.Debug.Println("reading config from stdin")
 			if b, err := io.ReadAll(cmd.InOrStdin()); err != nil {
 				return nil, err
 			} else {
 				p = rawbytes.Provider(b)
 			}
-		default:
+		} else {
 			pterm.Debug.Println("reading config from filename: " + filename)
 			p = file.Provider(filename)
 		}

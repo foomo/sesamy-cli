@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"encoding/json"
+	"log/slog"
 	"os"
 
 	"github.com/alecthomas/chroma/quick"
@@ -10,16 +11,17 @@ import (
 	"github.com/itchyny/json2yaml"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-func NewConfig(root *cobra.Command) {
+func NewConfig(l *slog.Logger) *cobra.Command {
+	c := viper.New()
+
 	cmd := &cobra.Command{
 		Use:   "config",
 		Short: "Print config",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			l := pkgcmd.Logger()
-
-			cfg, err := pkgcmd.ReadConfig(l, cmd)
+			cfg, err := pkgcmd.ReadConfig(l, c, cmd)
 			if err != nil {
 				return err
 			}
@@ -38,5 +40,10 @@ func NewConfig(root *cobra.Command) {
 		},
 	}
 
-	root.AddCommand(cmd)
+	flags := cmd.Flags()
+
+	flags.StringSliceP("config", "c", []string{"sesamy.yaml"}, "config files (default is sesamy.yaml)")
+	_ = c.BindPFlag("config", flags.Lookup("config"))
+
+	return cmd
 }
