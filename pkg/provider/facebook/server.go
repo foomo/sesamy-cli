@@ -37,10 +37,10 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 	}
 
 	template, err := tm.LookupTemplate(ctx, NameConversionsAPITagTemplate)
-	if err != nil {
-		if errors.Is(err, tagmanager.ErrNotFound) {
-			l.Warn("Please install the 'Conversion API' template manually first")
-		}
+	if errors.Is(err, tagmanager.ErrNotFound) {
+		l.Warn("Please install the 'Conversions API Tag' by 'facebookincubator' template manually first")
+		return err
+	} else if err != nil {
 		return err
 	}
 

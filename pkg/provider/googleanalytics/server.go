@@ -59,27 +59,29 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleAna
 				return err
 			}
 
-			userDataTemplate, err := tm.UpsertCustomTemplate(ctx, servertemplate.NewJSONRequestValue(NameJSONRequestValueTemplate))
-			if err != nil {
-				return err
-			}
+			if cfg.EnableMPv2UserDataTransformation {
+				userDataTemplate, err := tm.UpsertCustomTemplate(ctx, servertemplate.NewJSONRequestValue(NameJSONRequestValueTemplate))
+				if err != nil {
+					return err
+				}
 
-			userDataVariable, err := tm.UpsertVariable(ctx, folder, servervariable.NewMPv2Data("user_data", userDataTemplate))
-			if err != nil {
-				return err
-			}
+				userDataVariable, err := tm.UpsertVariable(ctx, folder, servervariable.NewMPv2Data("user_data", userDataTemplate))
+				if err != nil {
+					return err
+				}
 
-			debugModeVariable, err := tm.UpsertVariable(ctx, folder, servervariable.NewMPv2Data("debug_mode", userDataTemplate))
-			if err != nil {
-				return err
-			}
+				debugModeVariable, err := tm.UpsertVariable(ctx, folder, servervariable.NewMPv2Data("debug_mode", userDataTemplate))
+				if err != nil {
+					return err
+				}
 
-			_, err = tm.UpsertTransformation(ctx, folder, servertransformation.NewMPv2UserData(NameMPv2UserDataTransformation, map[string]*api.Variable{
-				"user_data":  userDataVariable,
-				"debug_mode": debugModeVariable,
-			}, client))
-			if err != nil {
-				return err
+				_, err = tm.UpsertTransformation(ctx, folder, servertransformation.NewMPv2UserData(NameMPv2UserDataTransformation, map[string]*api.Variable{
+					"user_data":  userDataVariable,
+					"debug_mode": debugModeVariable,
+				}, client))
+				if err != nil {
+					return err
+				}
 			}
 		}
 

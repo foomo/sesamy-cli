@@ -149,41 +149,64 @@ func (t *TagManager) Missed() map[string][]string {
 		for _, i2 := range t.clients.Misssed() {
 			ret["Clients"] = append(ret["Clients"], i2.Name)
 		}
+	} else {
+		ret["Clients"] = append(ret["Clients"], "All")
 	}
+
 	if t.folders != nil {
 		for _, i2 := range t.folders.Misssed() {
 			ret["Folders"] = append(ret["Folders"], i2.Name)
 		}
+	} else {
+		ret["Folders"] = append(ret["Folders"], "All")
 	}
+
 	if t.variables != nil {
 		for _, i2 := range t.variables.Misssed() {
 			ret["Variables"] = append(ret["Variables"], i2.Name)
 		}
+	} else {
+		ret["Variables"] = append(ret["Variables"], "All")
 	}
+
 	if t.builtInVariables != nil {
 		for _, i2 := range t.builtInVariables.Misssed() {
 			ret["Built In Variables"] = append(ret["Built In Variables"], i2.Name)
 		}
+	} else {
+		ret["Built In Variables"] = append(ret["Built In Variables"], "All")
 	}
+
 	if t.triggers != nil {
 		for _, i2 := range t.triggers.Misssed() {
 			ret["Triggers"] = append(ret["Triggers"], i2.Name)
 		}
+	} else {
+		ret["Triggers"] = append(ret["Triggers"], "All")
 	}
+
 	if t.tags != nil {
 		for _, i2 := range t.tags.Misssed() {
 			ret["Tags"] = append(ret["Tags"], i2.Name)
 		}
+	} else {
+		ret["Tags"] = append(ret["Tags"], "All")
 	}
+
 	if t.customTemplates != nil {
 		for _, i2 := range t.customTemplates.Misssed() {
 			ret["Custom Templates"] = append(ret["Custom Templates"], i2.Name)
 		}
+	} else {
+		ret["Custom Templates"] = append(ret["Custom Templates"], "All")
 	}
+
 	if t.transformations != nil {
 		for _, i2 := range t.transformations.Misssed() {
 			ret["Transformations"] = append(ret["Transformations"], i2.Name)
 		}
+	} else {
+		ret["Transformations"] = append(ret["Transformations"], "All")
 	}
 	return ret
 }
