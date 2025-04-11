@@ -1,9 +1,5 @@
-.DEFAULT_GOAL:=help
+.DEFAULT_GOAL	:= help
 -include .makerc
-
-# --- Config -----------------------------------------------------------------
-
-export PATH := bin:$(PATH)
 
 # --- Targets -----------------------------------------------------------------
 
@@ -36,7 +32,7 @@ doc:
 .PHONY: test
 ## Run tests
 test:
-	@GO_TEST_TAGS=-skip go test -coverprofile=coverage.out -race -json ./... | gotestfmt
+	@GO_TEST_TAGS=-skip go test -tags=safe -coverprofile=coverage.out -race -json -v ./... 2>&1 | tee /tmp/gotest.log | gotestfmt
 
 .PHONY: lint
 ## Run linter
@@ -62,17 +58,17 @@ outdated:
 ## Build binary
 build:
 	@mkdir -p bin
-	@go build -o bin/sesamy main.go
+	@go build -tags=safe -o bin/sesamy main.go
 
 .PHONY: install
 ## Install binary
 install:
-	@go build -o ${GOPATH}/bin/sesamy main.go
+	@go build -tags=safe -o ${GOPATH}/bin/sesamy main.go
 
 .PHONY: install.debug
 ## Install debug binary
 install.debug:
-	@go build -gcflags "all=-N -l" -o ${GOPATH}/bin/sesamy main.go
+	@go build -tags=safe -gclags="all=-N -l" -o ${GOPATH}/bin/sesamy main.go
 
 ## === Utils ===
 
