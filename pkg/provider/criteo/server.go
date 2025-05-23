@@ -24,7 +24,7 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 	template, err := tm.LookupTemplate(ctx, NameCriteoEventsAPITemplate)
 	if err != nil {
 		if errors.Is(err, tagmanager.ErrNotFound) {
-			l.Warn("Please install the 'Criteo Events API' template manually first")
+			l.Warn("Please install the 'Criteo Events API' Tag Template manually first")
 		}
 		return err
 	}

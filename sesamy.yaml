@@ -439,3 +439,38 @@ cookiebot:
       adUserData: denied
       # Default consent ad_personalization
       adPersonalization: denied
+
+# --- Mixpanel
+mixpanel:
+  # Enable provider
+  enabled: true
+  # Project Token
+  projectToken: ''
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: analytics_storage
+  # Google Tag Manager server container settings
+  serverContainer:
+    # Track events
+    track:
+      # Directory containing the go.mod file
+      directory: .
+      # Contemplate package config for generated events
+      packages:
+        - path: 'github.com/foomo/sesamy-go/pkg/event'
+          types:
+            - AddPaymentInfo
+            - AddShippingInfo
+            - AddToCart
+            - BeginCheckout
+            - PageView
+            - Purchase
+            - RemoveFromCart
+            - Search
+            - SelectItem
+            - ViewCart
+            - ViewItem
+            - ViewItemList
