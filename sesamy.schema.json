@@ -15,6 +15,12 @@
       },
       "type": "array"
     },
+    "[]config.GoogleAdsConversionTracking": {
+      "items": {
+        "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversionTracking"
+      },
+      "type": "array"
+    },
     "[]string": {
       "items": {
         "type": "string"
@@ -388,7 +394,8 @@
           "$ref": "#/$defs/[]*contemplate.PackageConfig"
         },
         "settings": {
-          "$ref": "#/$defs/map[string]config.GoogleAdsConversionTracking"
+          "$ref": "#/$defs/map[string][]config.GoogleAdsConversionTracking",
+          "description": "Conversion settings map"
         }
       },
       "additionalProperties": false,
@@ -397,7 +404,12 @@
     "github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversionTracking": {
       "properties": {
         "label": {
-          "type": "string"
+          "type": "string",
+          "description": "Conversion label"
+        },
+        "conversionId": {
+          "type": "string",
+          "description": "Optional conversion id overriding the default"
         }
       },
       "additionalProperties": false,
@@ -777,15 +789,15 @@
       "additionalProperties": false,
       "type": "object"
     },
-    "map[string]config.FacebookConversionAPITag": {
+    "map[string][]config.GoogleAdsConversionTracking": {
       "additionalProperties": {
-        "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.FacebookConversionAPITag"
+        "$ref": "#/$defs/[]config.GoogleAdsConversionTracking"
       },
       "type": "object"
     },
-    "map[string]config.GoogleAdsConversionTracking": {
+    "map[string]config.FacebookConversionAPITag": {
       "additionalProperties": {
-        "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAdsConversionTracking"
+        "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.FacebookConversionAPITag"
       },
       "type": "object"
     },

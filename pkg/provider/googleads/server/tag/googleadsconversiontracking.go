@@ -11,9 +11,16 @@ func GoogleAdsConversionTrackingName(v string) string {
 }
 
 func NewGoogleAdsConversionTracking(name string, value, currency, conversionID *tagmanager.Variable, settings config.GoogleAdsConversionTracking, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+	tagName := GoogleAdsConversionTrackingName(name)
+	tagConversionID := "{{" + conversionID.Name + "}}"
+	if settings.ConversionID != "" {
+		tagName += " (" + settings.ConversionID + ")"
+		tagConversionID = settings.ConversionID
+	}
+
 	return &tagmanager.Tag{
 		FiringTriggerId: utils.TriggerIDs(triggers),
-		Name:            GoogleAdsConversionTrackingName(name),
+		Name:            tagName,
 		TagFiringOption: "oncePerEvent",
 		Parameter: []*tagmanager.Parameter{
 			{
@@ -39,7 +46,7 @@ func NewGoogleAdsConversionTracking(name string, value, currency, conversionID *
 			{
 				Key:   "conversionId",
 				Type:  "template",
-				Value: "{{" + conversionID.Name + "}}",
+				Value: tagConversionID,
 			},
 			{
 				Key:   "currencyCode",

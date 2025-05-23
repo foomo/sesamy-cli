@@ -69,8 +69,10 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 					return errors.Wrap(err, "failed to upsert event trigger: "+event)
 				}
 
-				if _, err := tm.UpsertTag(ctx, folder, servertagx.NewGoogleAdsConversionTracking(event, value, currency, conversionID, cfg.Conversion.ServerContainer.Setting(event), eventTrigger)); err != nil {
-					return err
+				for _, setting := range cfg.Conversion.ServerContainer.Setting(event) {
+					if _, err := tm.UpsertTag(ctx, folder, servertagx.NewGoogleAdsConversionTracking(event, value, currency, conversionID, setting, eventTrigger)); err != nil {
+						return err
+					}
 				}
 			}
 		}
