@@ -13,13 +13,14 @@ type (
 	}
 	GoogleAdsConversionServerContainer struct {
 		contemplate.Config `json:",inline" yaml:",squash"`
-		Settings           map[string]GoogleAdsConversionTracking `json:"settings" yaml:"settings"`
+		// Conversion settings map
+		Settings map[string][]GoogleAdsConversionTracking `json:"settings" yaml:"settings"`
 	}
 )
 
-func (s *GoogleAdsConversionServerContainer) Setting(eventName string) GoogleAdsConversionTracking {
+func (s *GoogleAdsConversionServerContainer) Setting(eventName string) []GoogleAdsConversionTracking {
 	if value, ok := s.Settings[eventName]; ok {
 		return value
 	}
-	return GoogleAdsConversionTracking{}
+	return nil
 }

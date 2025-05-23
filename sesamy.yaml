@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=sesamy.schema.json
-version: '1.0'
+version: '1.1'
 
 # Whether to redact the visitor ip
 redactVisitorIp: true
@@ -200,14 +200,14 @@ googleAds:
     enabled: true
     # Google Tag Manager server container settings
     serverContainer:
-      # Conversion labels map
-      settings:
-        add_to_cart:
-          label: ''
-        purchase:
-          label: ''
       # Path to the go.mod file
       directory: .
+      # Conversion settings map
+      settings:
+        add_to_cart:
+          - label: ''
+        purchase:
+          - label: ''
       # Contemplate package config for generated events
       packages:
         - path: github.com/foomo/sesamy-go/pkg/event

@@ -53,7 +53,7 @@ Add a `sesamy.yaml` configuration
 
 ```yaml
 # yaml-language-server: $schema=https://raw.githubusercontent.com/foomo/sesamy-cli/refs/heads/main/sesamy.schema.json
-version: '1.0'
+version: '1.1'
 
 # Whether to redact the visitor ip
 redactVisitorIp: true
@@ -249,12 +249,20 @@ googleAds:
   conversion:
     # Enable Google Ads Conversion
     enabled: true
-    # Google Ads Conversion Tracking Label
-    conversionLabel: ''
     # Google Tag Manager server container settings
     serverContainer:
       # Path to the go.mod file
       directory: .
+      # Conversion settings map
+      settings:
+        add_to_cart:
+          - label: ''
+          - conversionId: ''
+            label: ''
+        purchase:
+          - label: ''
+          - conversionId: ''
+            label: ''
       # Contemplate package config for generated events
       packages:
         - path: github.com/foomo/sesamy-go/pkg/event
@@ -447,6 +455,42 @@ cookiebot:
       adUserData: denied
       # Default consent ad_personalization
       adPersonalization: denied
+
+# --- Mixpanel
+mixpanel:
+  # Enable provider
+  enabled: true
+  # Project Token
+  projectToken: ''
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: analytics_storage
+  # Google Tag Manager server container settings
+  serverContainer:
+    # Track events
+    track:
+      # Directory containing the go.mod file
+      directory: .
+      # Contemplate package config for generated events
+      packages:
+        - path: 'github.com/foomo/sesamy-go/pkg/event'
+          types:
+            - AddPaymentInfo
+            - AddShippingInfo
+            - AddToCart
+            - BeginCheckout
+            - PageView
+            - Purchase
+            - RemoveFromCart
+            - Search
+            - SelectItem
+            - ViewCart
+            - ViewItem
+            - ViewItemList
+
 ```
 
 ## Caveats
