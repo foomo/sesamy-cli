@@ -18,7 +18,6 @@ func main() {
 	root := cmd.NewRoot(l)
 	root.AddCommand(
 		cmd.NewConfig(l),
-		cmd.NewConfig(l),
 		cmd.NewList(l),
 		cmd.NewProvision(l),
 		cmd.NewTags(l),

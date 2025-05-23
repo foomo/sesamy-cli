@@ -26,6 +26,8 @@ type Config struct {
 	Facebook Facebook `json:"facebook" yaml:"facebook"`
 	// MicrosoftAds provider settings
 	MicrosoftAds MicrosoftAds `json:"microsoftAds" yaml:"microsoftAds"`
+	// Mixpanel provider settings
+	Mixpanel Mixpanel `json:"mixpanel" yaml:"mixpanel"`
 	// Emarsys provider settings
 	Emarsys Emarsys `json:"emarsys" yaml:"emarsys"`
 	// Hotjar provider settings

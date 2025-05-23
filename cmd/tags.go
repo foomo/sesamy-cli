@@ -15,6 +15,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
 	"github.com/foomo/sesamy-cli/pkg/provider/hotjar"
 	"github.com/foomo/sesamy-cli/pkg/provider/microsoftads"
+	"github.com/foomo/sesamy-cli/pkg/provider/mixpanel"
 	"github.com/foomo/sesamy-cli/pkg/provider/tracify"
 	"github.com/foomo/sesamy-cli/pkg/provider/umami"
 	"github.com/pterm/pterm"
@@ -42,6 +43,7 @@ func NewTags(l *slog.Logger) *cobra.Command {
 				{googletagmanager.Name, googletagmanager.Tag},
 				{hotjar.Name, hotjar.Tag},
 				{microsoftads.Name, microsoftads.Tag},
+				{mixpanel.Name, mixpanel.Tag},
 				{tracify.Name, tracify.Tag},
 				{umami.Name, umami.Tag},
 			}

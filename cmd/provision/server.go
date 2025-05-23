@@ -13,6 +13,7 @@ import (
 	googletagprovider "github.com/foomo/sesamy-cli/pkg/provider/googletag"
 	googletagmanagerprovider "github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
 	microsoftadsprovider "github.com/foomo/sesamy-cli/pkg/provider/microsoftads"
+	mixpanelprovider "github.com/foomo/sesamy-cli/pkg/provider/mixpanel"
 	tracifyprovider "github.com/foomo/sesamy-cli/pkg/provider/tracify"
 	umamiprovider "github.com/foomo/sesamy-cli/pkg/provider/umami"
 	ptermx "github.com/foomo/sesamy-cli/pkg/pterm"
@@ -133,6 +134,13 @@ func NewServer(l *slog.Logger) *cobra.Command {
 				l.Info("🅿️ Running provider", "name", microsoftadsprovider.Name, "tag", microsoftadsprovider.Tag)
 				if err := microsoftadsprovider.Server(cmd.Context(), l, tm, cfg.MicrosoftAds); err != nil {
 					return errors.Wrap(err, "failed to provision microsoftads")
+				}
+			}
+
+			if cfg.Mixpanel.Enabled && utils.Tag(mixpanelprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", mixpanelprovider.Name, "tag", mixpanelprovider.Tag)
+				if err := mixpanelprovider.Server(cmd.Context(), l, tm, cfg.Mixpanel); err != nil {
+					return errors.Wrap(err, "failed to provision mixpanel")
 				}
 			}
 

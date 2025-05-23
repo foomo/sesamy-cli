@@ -16,7 +16,7 @@ import (
 )
 
 func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleTag) error {
-	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
+	folder, err := Folder(ctx, tm)
 	if err != nil {
 		return err
 	}
