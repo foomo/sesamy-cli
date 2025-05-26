@@ -74,9 +74,13 @@ export interface Item {
 }
 
 export interface PageView {
-	page_title?: string;
-	page_referrer?: string;
+	client_id?: string;
+	language?: string;
+	page_encoding?: string;
 	page_location?: string;
+	page_referrer?: string;
+	page_title?: string;
+	user_agent?: string;
 }
 `
 	expectedSesamy = `
@@ -106,6 +110,7 @@ export enum EventName {
 	LevelStart = "level_start",
 	LevelUp = "level_up",
 	Login = "login",
+	Logout = "logout",
 	PageView = "page_view",
 	PostScore = "post_score",
 	Purchase = "purchase",
@@ -118,7 +123,6 @@ export enum EventName {
 	SelectContent = "select_content",
 	SelectItem = "select_item",
 	SelectPromotion = "select_promotion",
-	SessionStart = "session_start",
 	Share = "share",
 	SignUp = "sign_up",
 	SpendVirtualCurrency = "spend_virtual_currency",
