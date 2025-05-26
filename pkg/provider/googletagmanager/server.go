@@ -12,7 +12,7 @@ import (
 )
 
 func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleTagManager, enableGeoResolution bool) error {
-	folder, err := tm.UpsertFolder(ctx, "Sesamy - "+Name)
+	folder, err := Folder(ctx, tm)
 	if err != nil {
 		return err
 	}
