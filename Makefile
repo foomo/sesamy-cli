@@ -1,5 +1,6 @@
 .DEFAULT_GOAL	:= help
 -include .makerc
+PATH:=bin:$(PATH)
 
 # --- Targets -----------------------------------------------------------------
 
