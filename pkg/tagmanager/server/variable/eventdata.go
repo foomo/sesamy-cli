@@ -5,7 +5,7 @@ import (
 )
 
 func EventDataName(v string) string {
-	return "event." + v
+	return "eventData." + v
 }
 
 func NewEventData(name string) *tagmanager.Variable {

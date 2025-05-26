@@ -9,7 +9,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/googleads/server/trigger"
 	"github.com/foomo/sesamy-cli/pkg/provider/googleconsent"
 	googleconsentvariable "github.com/foomo/sesamy-cli/pkg/provider/googleconsent/server/variable"
-	"github.com/foomo/sesamy-cli/pkg/provider/googletag"
+	"github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager/server/variable"
@@ -23,7 +23,7 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 		return err
 	}
 
-	gtagFolder, err := googletag.Folder(ctx, tm)
+	gtmFolder, err := googletagmanager.Folder(ctx, tm)
 	if err != nil {
 		return err
 	}
@@ -35,12 +35,12 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 
 	// conversion
 	if cfg.Conversion.Enabled {
-		value, err := tm.UpsertVariable(ctx, gtagFolder, variable.NewEventData("value"))
+		value, err := tm.UpsertVariable(ctx, gtmFolder, variable.NewEventData("value"))
 		if err != nil {
 			return err
 		}
 
-		currency, err := tm.UpsertVariable(ctx, gtagFolder, variable.NewEventData("currency"))
+		currency, err := tm.UpsertVariable(ctx, gtmFolder, variable.NewEventData("currency"))
 		if err != nil {
 			return err
 		}

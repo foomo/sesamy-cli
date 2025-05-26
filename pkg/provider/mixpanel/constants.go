@@ -4,5 +4,5 @@ const (
 	Tag                     = "mixpanel"
 	Name                    = "Mixpanel"
 	NameTagTemplate         = "Mixpanel"
-	NamePrjectTokenConstant = "Project Token"
+	NamePrjectTokenConstant = "Mixpanel Project Token"
 )

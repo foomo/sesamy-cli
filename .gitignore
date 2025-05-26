@@ -16,6 +16,9 @@
 ## Editorconfig
 !.editorconfig
 
+## Ownbrew
+!.ownbrew.yaml
+
 ## Husky
 !.husky/
 !.husky.yaml

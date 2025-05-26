@@ -8,11 +8,11 @@ import (
 	"google.golang.org/api/tagmanager/v2"
 )
 
-func EventName(v string) string {
+func TrackName(v string) string {
 	return "Mixpanel Track - " + v
 }
 
-func NewEvent(eventType Type, name string, projectToken *tagmanager.Variable, template *tagmanager.CustomTemplate, params map[string]*tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+func NewTrack(name string, projectToken *tagmanager.Variable, template *tagmanager.CustomTemplate, params map[string]*tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	parameter := []*tagmanager.Parameter{
 		{
 			Key:   "serverEU",
@@ -42,7 +42,7 @@ func NewEvent(eventType Type, name string, projectToken *tagmanager.Variable, te
 		{
 			Key:   "type",
 			Type:  "template",
-			Value: eventType.String(),
+			Value: "track",
 		},
 		{
 			Key:   "token",
@@ -85,7 +85,7 @@ func NewEvent(eventType Type, name string, projectToken *tagmanager.Variable, te
 
 	return &tagmanager.Tag{
 		FiringTriggerId: utils.TriggerIDs(triggers),
-		Name:            EventName(name),
+		Name:            TrackName(name),
 		TagFiringOption: "oncePerEvent",
 		Parameter:       parameter,
 		Type:            utils.TemplateType(template),
