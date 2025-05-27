@@ -35,7 +35,7 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.Conversio
 		return errors.Wrap(err, "failed to upsert event trigger: "+NameConversionLinkerTrigger)
 	}
 
-	if _, err := tm.UpsertTag(ctx, folder, containertag.NewConversionLinker(Name, eventTrigger)); err != nil {
+	if _, err := tm.UpsertTag(ctx, folder, containertag.NewConversionLinker(Name, cfg.EnableLinkerParams, eventTrigger)); err != nil {
 		return err
 	}
 
