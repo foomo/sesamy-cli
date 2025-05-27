@@ -141,6 +141,10 @@
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
           "description": "Google Consent settings"
+        },
+        "enableLinkerParams": {
+          "type": "boolean",
+          "description": "Accept incoming linker parameters"
         }
       },
       "additionalProperties": false,

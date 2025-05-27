@@ -1,11 +1,13 @@
 package tag
 
 import (
+	"strconv"
+
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"google.golang.org/api/tagmanager/v2"
 )
 
-func NewConversionLinker(name string, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+func NewConversionLinker(name string, enableLinkerParams bool, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	return &tagmanager.Tag{
 		FiringTriggerId: utils.TriggerIDs(triggers),
 		Name:            name,
@@ -14,7 +16,7 @@ func NewConversionLinker(name string, triggers ...*tagmanager.Trigger) *tagmanag
 			{
 				Key:   "enableLinkerParams",
 				Type:  "boolean",
-				Value: "false",
+				Value: strconv.FormatBool(enableLinkerParams),
 			},
 			{
 				Key:   "enableCookieOverrides",

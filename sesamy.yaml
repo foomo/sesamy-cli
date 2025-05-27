@@ -225,6 +225,8 @@ conversionLinker:
     enabled: true
     # Consent mode name
     mode: ad_storage
+  # Accept incoming linker parameters
+  enableLinkerParams: true
 
 # --- Umami settings
 umami:
