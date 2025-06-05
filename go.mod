@@ -25,7 +25,7 @@ require (
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.10.0
 	github.com/wissance/stringFormatter v1.4.1
-	google.golang.org/api v0.234.0
+	google.golang.org/api v0.235.0
 )
 
 require (
