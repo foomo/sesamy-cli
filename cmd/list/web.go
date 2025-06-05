@@ -1,10 +1,12 @@
 package list
 
 import (
+	"fmt"
 	"log/slog"
 
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -57,11 +59,23 @@ func NewWeb(l *slog.Logger) *cobra.Command {
 				return err
 			}
 
-			return list(cmd.Context(), l, tm, resource)
+			out, err := list(cmd.Context(), l, tm, resource)
+			if err != nil {
+				return err
+			}
+
+			if !c.GetBool("raw") {
+				out = utils.Highlight(out)
+			}
+			_, err = fmt.Println(out)
+			return err
 		},
 	}
 
 	flags := cmd.Flags()
+
+	flags.Bool("raw", false, "print raw output")
+	_ = c.BindPFlag("raw", flags.Lookup("raw"))
 
 	flags.StringSliceP("config", "c", []string{"sesamy.yaml"}, "config files (default is sesamy.yaml)")
 	_ = c.BindPFlag("config", flags.Lookup("config"))
