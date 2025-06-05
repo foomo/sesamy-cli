@@ -6,6 +6,7 @@ import (
 
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
 	"github.com/pkg/browser"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -33,7 +34,7 @@ func NewOpen(l *slog.Logger) *cobra.Command {
 			switch args[0] {
 			case "ga":
 				if cfg.GoogleAnalytics.PropertyID == "" {
-					return fmt.Errorf("missing Google Analytics Property ID")
+					return errors.New("missing Google Analytics Property ID")
 				}
 				url = fmt.Sprintf(
 					"https://analytics.google.com/analytics/web/#/p%s/",

@@ -11,6 +11,8 @@ import (
 	"github.com/sters/yaml-diff/yamldiff"
 )
 
+const ChangeStatusDeleted = "deleted"
+
 func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (string, error) {
 	l.Info("└  ⬇︎ Loading status")
 	s, err := tm.Service().Accounts.Containers.Workspaces.GetStatus(tm.WorkspacePath()).Context(ctx).Do()
@@ -39,7 +41,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			entity.Tag.TagManagerUrl = ""
 
 			var changed string
-			if entity.ChangeStatus != "deleted" {
+			if entity.ChangeStatus != ChangeStatusDeleted {
 				changed, err = ToYalm(entity.Tag)
 				if err != nil {
 					return "", err
@@ -75,7 +77,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			entity.Folder.TagManagerUrl = ""
 
 			var changed string
-			if entity.ChangeStatus != "deleted" {
+			if entity.ChangeStatus != ChangeStatusDeleted {
 				changed, err = ToYalm(entity.Folder)
 				if err != nil {
 					return "", err
@@ -111,7 +113,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			entity.Trigger.TagManagerUrl = ""
 
 			var changed string
-			if entity.ChangeStatus != "deleted" {
+			if entity.ChangeStatus != ChangeStatusDeleted {
 				changed, err = ToYalm(entity.Trigger)
 				if err != nil {
 					return "", err
@@ -147,7 +149,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			entity.Variable.TagManagerUrl = ""
 
 			var changed string
-			if entity.ChangeStatus != "deleted" {
+			if entity.ChangeStatus != ChangeStatusDeleted {
 				changed, err = ToYalm(entity.Variable)
 				if err != nil {
 					return "", err
@@ -183,7 +185,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			entity.Client.TagManagerUrl = ""
 
 			var changed string
-			if entity.ChangeStatus != "deleted" {
+			if entity.ChangeStatus != ChangeStatusDeleted {
 				changed, err = ToYalm(entity.Client)
 				if err != nil {
 					return "", err
@@ -219,7 +221,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			entity.GtagConfig.TagManagerUrl = ""
 
 			var changed string
-			if entity.ChangeStatus != "deleted" {
+			if entity.ChangeStatus != ChangeStatusDeleted {
 				changed, err = ToYalm(entity.GtagConfig)
 				if err != nil {
 					return "", err
@@ -253,7 +255,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			entity.BuiltInVariable.WorkspaceId = ""
 
 			var changed string
-			if entity.ChangeStatus != "deleted" {
+			if entity.ChangeStatus != ChangeStatusDeleted {
 				changed, err = ToYalm(entity.BuiltInVariable)
 				if err != nil {
 					return "", err
@@ -286,7 +288,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			entity.CustomTemplate.TagManagerUrl = ""
 
 			var changed string
-			if entity.ChangeStatus != "deleted" {
+			if entity.ChangeStatus != ChangeStatusDeleted {
 				changed, err = ToYalm(entity.CustomTemplate)
 				if err != nil {
 					return "", err
@@ -322,7 +324,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			entity.Transformation.TagManagerUrl = ""
 
 			var changed string
-			if entity.ChangeStatus != "deleted" {
+			if entity.ChangeStatus != ChangeStatusDeleted {
 				changed, err = ToYalm(entity.Transformation)
 				if err != nil {
 					return "", err
