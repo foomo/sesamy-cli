@@ -16,10 +16,12 @@ require (
 	github.com/knadh/koanf/providers/file v1.2.0
 	github.com/knadh/koanf/providers/rawbytes v1.0.0
 	github.com/knadh/koanf/v2 v2.2.0
+	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/pkg/errors v0.9.1
 	github.com/pterm/pterm v0.12.80
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.20.1
+	github.com/sters/yaml-diff v1.4.1
 	github.com/stoewer/go-strcase v1.3.0
 	github.com/stretchr/testify v1.10.0
 	github.com/wissance/stringFormatter v1.4.1
@@ -45,6 +47,7 @@ require (
 	github.com/go-logr/logr v1.4.2 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
+	github.com/goccy/go-yaml v1.15.6 // indirect
 	github.com/google/s2a-go v0.1.9 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.6 // indirect

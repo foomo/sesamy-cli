@@ -438,6 +438,14 @@
           "type": "boolean",
           "description": "Enable provider"
         },
+        "accountId": {
+          "type": "string",
+          "description": "Google Analytics account id"
+        },
+        "propertyId": {
+          "type": "string",
+          "description": "Google Analytics property id"
+        },
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
           "description": "Google Consent settings"

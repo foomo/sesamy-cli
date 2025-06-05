@@ -19,6 +19,8 @@ func main() {
 	root.AddCommand(
 		cmd.NewConfig(l),
 		cmd.NewList(l),
+		cmd.NewDiff(l),
+		cmd.NewOpen(l),
 		cmd.NewProvision(l),
 		cmd.NewTags(l),
 		cmd.NewTypeScript(l),

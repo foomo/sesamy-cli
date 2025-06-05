@@ -1,4 +1,4 @@
-package list
+package diff
 
 import (
 	"fmt"
@@ -11,33 +11,16 @@ import (
 	"github.com/spf13/viper"
 )
 
-// NewServer represents the server command
-func NewServer(l *slog.Logger) *cobra.Command {
+// NewWeb represents the web command
+func NewWeb(l *slog.Logger) *cobra.Command {
 	c := viper.New()
 
 	cmd := &cobra.Command{
-		Use:   "server",
-		Short: "List Google Tag Manager Server Container",
-		Args:  cobra.OnlyValidArgs,
-		ValidArgs: []cobra.Completion{
-			"built-in-variables",
-			"clients",
-			"environments",
-			"folders",
-			"gtag-config",
-			"status",
-			"tags",
-			"templates",
-			"templates-data",
-			"transformations",
-			"triggers",
-			"variables",
-			"workspaces",
-			"zones",
-		},
+		Use:   "web",
+		Short: "Print Google Tag Manager Web Container status diff",
+		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			resource := args[0]
-			l.Info("☕ Listing Server Container resources: " + resource)
+			l.Info("☕ Retrieving Web Container status")
 
 			cfg, err := pkgcmd.ReadConfig(l, c, cmd)
 			if err != nil {
@@ -48,7 +31,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 				cmd.Context(),
 				l,
 				cfg.GoogleTagManager.AccountID,
-				cfg.GoogleTagManager.ServerContainer,
+				cfg.GoogleTagManager.WebContainer,
 				tagmanager.WithRequestQuota(cfg.GoogleAPI.RequestQuota),
 				tagmanager.WithClientOptions(cfg.GoogleAPI.GetClientOption()),
 			)
@@ -60,7 +43,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 				return err
 			}
 
-			out, err := list(cmd.Context(), l, tm, resource)
+			out, err := diff(cmd.Context(), l, tm)
 			if err != nil {
 				return err
 			}

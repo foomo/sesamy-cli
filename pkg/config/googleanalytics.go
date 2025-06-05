@@ -7,6 +7,10 @@ import (
 type GoogleAnalytics struct {
 	// Enable provider
 	Enabled bool `json:"enabled" yaml:"enabled"`
+	// Google Analytics account id
+	AccountID string `json:"accountId" yaml:"accountId"`
+	// Google Analytics property id
+	PropertyID string `json:"propertyId" yaml:"propertyId"`
 	// Google Consent settings
 	GoogleConsent GoogleConsent `json:"googleConsent" yaml:"googleConsent"`
 	// GTag.js override configuration
