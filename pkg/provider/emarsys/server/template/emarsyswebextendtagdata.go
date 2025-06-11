@@ -113,7 +113,7 @@ const headerList = ["referer", "user-agent"];
 const requestUrl = merchantUrl+'?'+serializeData(mappedData);
 const requestOptions = {
   headers: generateRequestHeaders(headerList, cookieList),
-  timeout: 500,
+  timeout: 1000,
 };
 
 return sendHttpGet(requestUrl, requestOptions).then((result) => {
