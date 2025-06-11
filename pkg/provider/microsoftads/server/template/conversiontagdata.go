@@ -531,7 +531,7 @@ if (data.activateLogs) {
 
 return sendHttpGet(url, {
   headers: {key: 'value'},
-  timeout: 500,
+  timeout: 1000,
 }).then((result) => {
   if (result.statusCode >= 200 && result.statusCode < 300) {
     data.gtmOnSuccess();

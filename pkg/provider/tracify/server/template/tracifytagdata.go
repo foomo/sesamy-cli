@@ -129,7 +129,7 @@ if (!isConsentGivenOrNotRequired()) {
 const options = {
   headers: {'tracify-token': data.token},
   method: 'POST',
-  timeout: 500,
+  timeout: 1000,
 };
 const body = mapEventData();
 
