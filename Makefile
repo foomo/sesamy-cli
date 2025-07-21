@@ -59,11 +59,13 @@ outdated:
 ## Build binary
 build:
 	@mkdir -p bin
+	@echo "building: bin/sesamy"
 	@go build -tags=safe -o bin/sesamy main.go
 
 .PHONY: install
 ## Install binary
 install:
+	@echo "installing: ${GOPATH}/bin/sesamy"
 	@go build -tags=safe -o ${GOPATH}/bin/sesamy main.go
 
 .PHONY: install.debug
