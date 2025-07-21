@@ -13,6 +13,7 @@ import (
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
+	tagmanager2 "google.golang.org/api/tagmanager/v2"
 )
 
 func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.Facebook) error {
@@ -31,9 +32,13 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 		return err
 	}
 
-	testEventToken, err := tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NameTestEventTokenConstant, cfg.TestEventToken))
-	if err != nil {
-		return err
+	var testEventToken *tagmanager2.Variable
+	if cfg.TestEventToken != "" {
+		var err error
+		testEventToken, err = tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NameTestEventTokenConstant, cfg.TestEventToken))
+		if err != nil {
+			return err
+		}
 	}
 
 	template, err := tm.LookupTemplate(ctx, NameConversionsAPITagTemplate)
