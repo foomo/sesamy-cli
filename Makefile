@@ -19,11 +19,6 @@ PATH:=bin:$(PATH)
 
 ### Tasks
 
-.PHONY: brew
-## Install project binaries
-brew:
-	@ownbrew install
-
 .PHONY: doc
 ## Open go docs
 doc:
@@ -74,6 +69,11 @@ install.debug:
 	@go build -tags=safe -gclags="all=-N -l" -o ${GOPATH}/bin/sesamy main.go
 
 ### Utils
+
+.PHONY: brew
+## Install project binaries
+brew:
+	@ownbrew install
 
 .PHONY: help
 ## Show help text
