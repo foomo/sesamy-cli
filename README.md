@@ -493,6 +493,37 @@ mixpanel:
             - ViewItem
             - ViewItemList
 
+# --- Pinterest
+pinterest:
+  # Enable provider
+  enabled: true
+  # Pinterest advertiser id
+  advertiserId: ''
+  # Pinterest API access token
+  apiAccessToken: ''
+  # Enable test mode
+  testModeEnabled: false
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: analytics_storage
+  # Google Tag Manager server container settings
+  serverContainer:
+    # Directory containing the go.mod file
+    directory: .
+    # Contemplate package config for generated events
+    packages:
+      - path: 'github.com/foomo/sesamy-go/pkg/event'
+        types:
+          - AddToCart
+          - GenerateLead
+          - PageView
+          - Purchase
+          - Search
+          - SignUp
+          - ViewItemList
 ```
 
 ## Caveats

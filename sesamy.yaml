@@ -495,18 +495,16 @@ pinterest:
     mode: analytics_storage
   # Google Tag Manager server container settings
   serverContainer:
-    # Track events
-    track:
-      # Directory containing the go.mod file
-      directory: .
-      # Contemplate package config for generated events
-      packages:
-        - path: 'github.com/foomo/sesamy-go/pkg/event'
-          types:
-            - AddToCart
-            - GenerateLead
-            - PageView
-            - Purchase
-            - Search
-            - SignUp
-            - ViewItemList
+    # Directory containing the go.mod file
+    directory: .
+    # Contemplate package config for generated events
+    packages:
+      - path: 'github.com/foomo/sesamy-go/pkg/event'
+        types:
+          - AddToCart
+          - GenerateLead
+          - PageView
+          - Purchase
+          - Search
+          - SignUp
+          - ViewItemList
