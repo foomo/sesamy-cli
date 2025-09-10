@@ -16,13 +16,18 @@
 ## Editorconfig
 !.editorconfig
 
-## Ownbrew
-!.ownbrew.yaml
+## Docker
+!.dockerignore
 
 ## Husky
 !.husky/
 !.husky.yaml
 
 ## Golang
+go.work
+go.work.sum
 !.golangci.yml
 !.goreleaser.yml
+
+## Ownbrew
+!.ownbrew.yaml

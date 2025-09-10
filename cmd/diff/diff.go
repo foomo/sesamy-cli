@@ -350,6 +350,8 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 				return "", err
 			}
 			res = append(res, d...)
+		default:
+			l.Warn("unknown entity type", "entity", entity)
 		}
 	}
 	return strings.Join(res, "  ---\n"), nil

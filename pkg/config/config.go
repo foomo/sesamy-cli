@@ -28,6 +28,8 @@ type Config struct {
 	MicrosoftAds MicrosoftAds `json:"microsoftAds" yaml:"microsoftAds"`
 	// Mixpanel provider settings
 	Mixpanel Mixpanel `json:"mixpanel" yaml:"mixpanel"`
+	// Pinterest provider settings
+	Pinterest Pinterest `json:"pinterest" yaml:"pinterest"`
 	// Emarsys provider settings
 	Emarsys Emarsys `json:"emarsys" yaml:"emarsys"`
 	// Hotjar provider settings
