@@ -23,6 +23,7 @@ func GoogleAnalyticsEventWithConsentMode(mode *tagmanager.Variable) GoogleAnalyt
 
 func NewGoogleAnalyticsEvent(name string, opts ...GoogleAnalyticsEventOption) *tagmanager.Trigger {
 	o := &GoogleAnalyticsEventOptions{}
+
 	for _, opt := range opts {
 		if opt != nil {
 			opt(o)

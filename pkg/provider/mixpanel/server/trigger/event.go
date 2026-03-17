@@ -23,6 +23,7 @@ func EventWithConsentMode(mode *tagmanager.Variable) EventOption {
 
 func NewEvent(name string, opts ...EventOption) *tagmanager.Trigger {
 	o := &EventOptions{}
+
 	for _, opt := range opts {
 		if opt != nil {
 			opt(o)

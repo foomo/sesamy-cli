@@ -68,6 +68,7 @@ func (f *File) String() string {
 		section := f.Sections[id]
 		sectionParts := section.Parts
 		slices.Sort(sectionParts)
+
 		for _, part := range sectionParts {
 			b.WriteString(part + "\n")
 		}

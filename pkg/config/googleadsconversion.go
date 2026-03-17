@@ -22,5 +22,6 @@ func (s *GoogleAdsConversionServerContainer) Setting(eventName string) []GoogleA
 	if value, ok := s.Settings[eventName]; ok {
 		return value
 	}
+
 	return nil
 }

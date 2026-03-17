@@ -25,5 +25,6 @@ func (s *MicrosoftAdsServerContainer) Setting(eventName string) MicrosoftAdsConv
 	if value, ok := s.Settings[eventName]; ok {
 		return value
 	}
+
 	return MicrosoftAdsConversionTag{}
 }

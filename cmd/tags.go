@@ -54,6 +54,7 @@ func NewTags(l *slog.Logger) *cobra.Command {
 			for _, name := range slices.Sorted(maps.Keys(tags)) {
 				data = append(data, []string{name, tags[name]})
 			}
+
 			return pterm.DefaultTable.WithHasHeader().WithData(data).Render()
 		},
 	}

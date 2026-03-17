@@ -18,5 +18,6 @@ func NewHotjar(name string, siteID *tagmanager.Variable) *tagmanager.Tag {
 		},
 		Type: "hjtc",
 	}
+
 	return ret
 }

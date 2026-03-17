@@ -23,6 +23,7 @@ func TracifyEventWithConsentMode(mode *tagmanager.Variable) TracifyEventOption {
 
 func NewTracifyEvent(name string, opts ...TracifyEventOption) *tagmanager.Trigger {
 	o := &TracifyEventOptions{}
+
 	for _, opt := range opts {
 		if opt != nil {
 			opt(o)

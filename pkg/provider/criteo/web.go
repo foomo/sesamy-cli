@@ -22,6 +22,7 @@ func Web(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg con
 		if errors.Is(err, tagmanager.ErrNotFound) {
 			l.Warn("Please install the 'Criteo User Identification' template manually first")
 		}
+
 		return err
 	}
 

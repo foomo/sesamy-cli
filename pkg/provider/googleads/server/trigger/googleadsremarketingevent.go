@@ -19,6 +19,7 @@ func GoogleAdsRemarketingEventWithConsentMode(mode *tagmanager.Variable) GoogleA
 
 func NewGoogleAdsRemarketingEvent(name string, opts ...GoogleAdsRemarketingEventOption) *tagmanager.Trigger {
 	o := &GoogleAdsRemarketingEventOptions{}
+
 	for _, opt := range opts {
 		if opt != nil {
 			opt(o)

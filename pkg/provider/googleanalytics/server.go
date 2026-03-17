@@ -55,6 +55,7 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleAna
 			if err != nil {
 				return err
 			}
+
 			if _, err = tm.UpsertTrigger(ctx, folder, servertrigger.NewClient(NameMeasurementProtocolGA4ClientTrigger, client)); err != nil {
 				return err
 			}
@@ -106,14 +107,17 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleAna
 
 		for event := range eventParameters {
 			var eventTriggerOpts []trigger.GoogleAnalyticsEventOption
+
 			if cfg.GoogleConsent.Enabled {
 				if err := googleconsent.ServerEnsure(ctx, tm); err != nil {
 					return err
 				}
+
 				consentVariable, err := tm.LookupVariable(ctx, googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
 				if err != nil {
 					return err
 				}
+
 				eventTriggerOpts = append(eventTriggerOpts, trigger.GoogleAnalyticsEventWithConsentMode(consentVariable))
 			}
 

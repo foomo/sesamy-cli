@@ -40,6 +40,7 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleTag
 				return err
 			}
 		}
+
 		for key, value := range cfg.ServerContaienrVariables.LookupTables {
 			if _, err := tm.UpsertVariable(ctx, folder, commonvariable.NewLookupTable(key, value)); err != nil {
 				return err

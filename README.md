@@ -4,7 +4,7 @@
 [![goreleaser](https://github.com/foomo/sesamy-cli/actions/workflows/release.yml/badge.svg)](https://github.com/foomo/sesamy-cli/actions)
 
 <p align="center">
-  <img alt="sesamy" src=".github/assets/sesamy.png"/>
+  <img alt="sesamy" src="docs/public/logo.png" width="400" height="400"/>
 </p>
 
 # Sesamy CLI
@@ -532,10 +532,12 @@ You might need to increase your Google Tag Manager API quotas, since they are li
 
 ## How to Contribute
 
-Please refer to the [CONTRIBUTING](.github/CONTRIBUTING.md) details and follow the [CODE_OF_CONDUCT](.github/CODE_OF_CONDUCT.md) and [SECURITY](.github/SECURITY.md) guidelines.
+Contributions are welcome! Please read the [contributing guide](docs/CONTRIBUTING.md).
+
+![Contributors](https://contributors-table.vercel.app/image?repo=foomo/sesamy-cli&width=50&columns=15)
 
 ## License
 
-Distributed under MIT License, please see license file within the code for more details.
+Distributed under MIT License, please see the [license](LICENSE) file within the code for more details.
 
 _Made with ♥ [foomo](https://www.foomo.org) by [bestbytes](https://www.bestbytes.com)_

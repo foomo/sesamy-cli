@@ -33,8 +33,10 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 	}
 
 	var testEventToken *tagmanager2.Variable
+
 	if cfg.TestEventToken != "" {
 		var err error
+
 		testEventToken, err = tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NameTestEventTokenConstant, cfg.TestEventToken))
 		if err != nil {
 			return err
@@ -57,14 +59,17 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 
 		for event := range eventParameters {
 			var eventTriggerOpts []trigger.FacebookEventOption
+
 			if cfg.GoogleConsent.Enabled {
 				if err := googleconsent.ServerEnsure(ctx, tm); err != nil {
 					return err
 				}
+
 				consentVariable, err := tm.LookupVariable(ctx, googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
 				if err != nil {
 					return err
 				}
+
 				eventTriggerOpts = append(eventTriggerOpts, trigger.FacebookEventWithConsentMode(consentVariable))
 			}
 

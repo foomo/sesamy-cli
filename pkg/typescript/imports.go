@@ -26,6 +26,7 @@ func (i *Imports) Import(location string) *Import {
 	if _, ok := i.imports[location]; !ok {
 		i.imports[location] = NewImport(location)
 	}
+
 	return i.imports[location]
 }
 

@@ -29,6 +29,7 @@ func TestConfig(t *testing.T) {
 		if t.Name() == "" {
 			return t.String()
 		}
+
 		return strings.ReplaceAll(t.PkgPath(), "/", ".") + "." + t.Name()
 	}
 	require.NoError(t, reflector.AddGoComments("github.com/foomo/sesamy-cli", "./"))
@@ -37,6 +38,7 @@ func TestConfig(t *testing.T) {
 	require.NoError(t, err)
 
 	filename := path.Join(cwd, "sesamy.schema.json")
+
 	expected, err := os.ReadFile(filename)
 	if !errors.Is(err, os.ErrNotExist) {
 		require.NoError(t, err)

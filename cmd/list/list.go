@@ -15,6 +15,7 @@ func dump(i interface{ MarshalJSON() ([]byte, error) }, err error) (string, erro
 	if err != nil {
 		return "", err
 	}
+
 	out, err := i.MarshalJSON()
 	if err != nil {
 		return "", err
@@ -24,6 +25,7 @@ func dump(i interface{ MarshalJSON() ([]byte, error) }, err error) (string, erro
 	if err := json2yaml.Convert(&output, bytes.NewBuffer(out)); err != nil {
 		return "", err
 	}
+
 	return output.String(), nil
 }
 
@@ -50,11 +52,13 @@ func list(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, resour
 		if err != nil {
 			return "", err
 		}
+
 		var ret strings.Builder
 		for _, template := range r.Template {
 			ret.WriteString("---- Template data: " + template.Name + " ----------------------\n")
 			ret.WriteString(template.TemplateData + "\n")
 		}
+
 		return ret.String(), nil
 	case "gtag-config":
 		return dump(tm.Service().Accounts.Containers.Workspaces.GtagConfig.List(tm.WorkspacePath()).Context(ctx).Do())

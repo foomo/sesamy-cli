@@ -19,6 +19,7 @@ func ConversionLinkerEventWithConsentMode(mode *tagmanager.Variable) ConversionL
 
 func NewConversionLinkerEvent(name string, opts ...ConversionLinkerEventOption) *tagmanager.Trigger {
 	o := &ConversionLinkerEventOptions{}
+
 	for _, opt := range opts {
 		if opt != nil {
 			opt(o)

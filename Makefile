@@ -1,54 +1,94 @@
-.DEFAULT_GOAL	:= help
+.DEFAULT_GOAL:=help
 -include .makerc
-PATH:=bin:$(PATH)
+
+# --- Config -----------------------------------------------------------------
+
+# Newline hack for error output
+define br
+
+
+endef
 
 # --- Targets -----------------------------------------------------------------
 
 # This allows us to accept extra arguments
-%: .husky
+%: .mise .lefthook
 	@:
 
-.PHONY: .husky
-# Configure git hooks for husky
-.husky:
-	@if ! command -v husky &> /dev/null; then \
-		echo "ERROR: missing executeable 'husky', please run:"; \
-		echo "\n$ make brew\n"; \
-	fi
-	@git config core.hooksPath .husky
+.PHONY: .mise
+# Install dependencies
+.mise:
+ifeq (, $(shell command -v mise))
+	$(error $(br)$(br)Please ensure you have 'mise' installed and activated!$(br)$(br)  $$ brew update$(br)  $$ brew install mise$(br)$(br)See the documentation: https://mise.jdx.dev/getting-started.html)
+endif
+	@mise install
+
+.PHONY: .lefthook
+# Configure git hooks for lefthook
+.lefthook:
+	@lefthook install --reset-hooks-path
 
 ### Tasks
 
-.PHONY: doc
-## Open go docs
-doc:
-	@open "http://localhost:6060/pkg/github.com/foomo/sesamy-cli/"
-	@godoc -http=localhost:6060 -play
+.PHONY: check
+## Run lint & test
+check: tidy generate lint test
 
-.PHONY: test
-## Run tests
-test:
-	@GO_TEST_TAGS=-skip go test -tags=safe -coverprofile=coverage.out -race -json -v ./... 2>&1 | tee /tmp/gotest.log | gotestfmt
+.PHONY: tidy
+## Run go mod tidy
+tidy:
+	@echo "〉go mod tidy"
+	@go mod tidy
 
 .PHONY: lint
 ## Run linter
 lint:
+	@echo "〉golangci-lint run"
 	@golangci-lint run
 
 .PHONY: lint.fix
 ## Fix lint violations
 lint.fix:
+	@echo "〉golangci-lint run fix"
 	@golangci-lint run --fix
 
-.PHONY: tidy
-## Run go mod tidy
-tidy:
-	@go mod tidy
+.PHONY: lint.branch
+## Run linter with --new-from-rev=origin/main
+lint.branch:
+	@echo "〉golangci-lint run with --new-from-rev=origin/main"
+	@golangci-lint run --new-from-rev=origin/main
+
+.PHONY: test
+## Run tests
+test:
+	@echo "〉go test"
+	@GO_TEST_TAGS=-skip go test -coverprofile=coverage.out -tags=safe ./...
+
+.PHONY: test.race
+## Run tests with -race
+test.race:
+	@echo "〉go test -race"
+	@GO_TEST_TAGS=-skip go test -coverprofile=coverage.out -tags=safe -race ./...
+
+.PHONY: test.nocache
+## Run tests with -count=1
+test.nocache:
+	@echo "〉go test -count=1"
+	@GO_TEST_TAGS=-skip go test -coverprofile=coverage.out -tags=safe -count=1 ./...
 
 .PHONY: outdated
 ## Show outdated direct dependencies
 outdated:
+	@echo "〉go mod outdated"
 	@go list -u -m -json all | go-mod-outdated -update -direct
+
+.PHONY: generate
+## Run go generate
+generate:
+	@echo "〉go generate"
+	@go generate ./...
+
+### Build
 
 .PHONY: build
 ## Build binary
@@ -68,24 +108,30 @@ install:
 install.debug:
 	@go build -tags=safe -gclags="all=-N -l" -o ${GOPATH}/bin/sesamy main.go
 
-### Utils
+### Documentation
 
-.PHONY: brew
-## Install project binaries
-brew:
-	@ownbrew install
+.PHONY: godocs
+## Open go docs
+godocs:
+	@echo "〉starting go docs"
+	@go doc -http
+
+### Utils
 
 .PHONY: help
 ## Show help text
 help:
-	@echo "\033[1;36mSesamy CLI\033[0m"
+	@echo ""
+	@echo "SESAMY CLI"
+	@echo ""
+	@echo "Usage:\n  make [task]"
 	@awk '{ \
 		if($$0 ~ /^### /){ \
-			if(help) printf "\033[36m%-23s\033[0m %s\n\n", cmd, help; help=""; \
-			printf "\n\033[1;36m%s\033[0m\n", substr($$0,5); \
+			if(help) printf "%-23s %s\n\n", cmd, help; help=""; \
+			printf "\n%s:\n", substr($$0,5); \
 		} else if($$0 ~ /^[a-zA-Z0-9._-]+:/){ \
 			cmd = substr($$0, 1, index($$0, ":")-1); \
-			if(help) printf "  \033[36m%-23s\033[0m %s\n", cmd, help; help=""; \
+			if(help) printf "  %-23s %s\n", cmd, help; help=""; \
 		} else if($$0 ~ /^##/){ \
 			help = help ? help "\n                        " substr($$0,3) : substr($$0,3); \
 		} else if(help){ \

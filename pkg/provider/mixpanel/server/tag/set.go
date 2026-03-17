@@ -53,6 +53,7 @@ func NewSet(name string, projectToken *tagmanager.Variable, template *tagmanager
 
 	if len(params) > 0 {
 		var list []*tagmanager.Parameter
+
 		for _, key := range slices.Sorted(maps.Keys(params)) {
 			param := params[key]
 			list = append(list, &tagmanager.Parameter{
@@ -71,6 +72,7 @@ func NewSet(name string, projectToken *tagmanager.Variable, template *tagmanager
 				},
 			})
 		}
+
 		parameter = append(parameter, &tagmanager.Parameter{
 			Key:  "userPropertiesTable",
 			Type: "list",

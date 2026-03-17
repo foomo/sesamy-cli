@@ -13,5 +13,6 @@ func NewEmarsysInitialization(name string, template *tagmanager.CustomTemplate) 
 		TagFiringOption: "oncePerEvent",
 		Type:            utils.TemplateType(template),
 	}
+
 	return ret
 }

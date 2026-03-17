@@ -29,5 +29,6 @@ func NewUserIdentification(name string, callerID, partnerID *tagmanager.Variable
 		},
 		Type: utils.TemplateType(template),
 	}
+
 	return ret
 }

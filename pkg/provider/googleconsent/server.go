@@ -19,9 +19,11 @@ func ServerEnsure(ctx context.Context, tm *tagmanager.TagManager) error {
 		if err != nil {
 			return err
 		}
+
 		if _, err = tm.UpsertVariable(ctx, folder, variable.NewGoogleConsentModeAdStorage(consentTemplate)); err != nil {
 			return err
 		}
+
 		if _, err = tm.UpsertVariable(ctx, folder, variable.NewGoogleConsentModeAnalyticsStorage(consentTemplate)); err != nil {
 			return err
 		}

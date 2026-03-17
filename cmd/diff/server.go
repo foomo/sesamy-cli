@@ -51,7 +51,9 @@ func NewServer(l *slog.Logger) *cobra.Command {
 			if !c.GetBool("raw") {
 				out = utils.Highlight(out)
 			}
+
 			_, err = fmt.Println(out)
+
 			return err
 		},
 	}

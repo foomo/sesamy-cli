@@ -23,6 +23,7 @@ func UmamiEventWithConsentMode(mode *tagmanager.Variable) UmamiEventOption {
 
 func NewUmamiEvent(name string, opts ...UmamiEventOption) *tagmanager.Trigger {
 	o := &UmamiEventOptions{}
+
 	for _, opt := range opts {
 		if opt != nil {
 			opt(o)

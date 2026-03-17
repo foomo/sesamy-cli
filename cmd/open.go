@@ -31,11 +31,13 @@ func NewOpen(l *slog.Logger) *cobra.Command {
 			}
 
 			var url string
+
 			switch args[0] {
 			case "ga":
 				if cfg.GoogleAnalytics.PropertyID == "" {
 					return errors.New("missing Google Analytics Property ID")
 				}
+
 				url = fmt.Sprintf(
 					"https://analytics.google.com/analytics/web/#/p%s/",
 					cfg.GoogleAnalytics.PropertyID,

@@ -26,5 +26,6 @@ func (s *FacebookServerContainer) Setting(eventName string) FacebookConversionAP
 	if value, ok := s.Settings[eventName]; ok {
 		return value
 	}
+
 	return FacebookConversionAPITag{}
 }

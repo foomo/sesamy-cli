@@ -31,7 +31,7 @@ func TestNewClient_Web(t *testing.T) {
 			WorkspaceID: os.Getenv("TEST_WEB_WORKSPACE_ID"),
 		},
 		tagmanager.WithClientOptions(
-			option.WithCredentialsFile(os.Getenv("TEST_CREDENTIALS_FILE")),
+			option.WithAuthCredentialsFile(option.ServiceAccount, os.Getenv("TEST_CREDENTIALS_FILE")),
 		),
 	)
 	require.NoError(t, err)
@@ -58,6 +58,7 @@ func TestNewClient_Web(t *testing.T) {
 	folderID := "25"
 	{ // --- Folders ---
 		name := "Sesamy"
+
 		t.Run("list folders", func(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Folders.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
@@ -87,6 +88,7 @@ func TestNewClient_Web(t *testing.T) {
 						return
 					}
 				}
+
 				t.Error("not found")
 			}
 		})
@@ -127,6 +129,7 @@ func TestNewClient_Web(t *testing.T) {
 
 	{ // --- Triggers ---
 		name := "login"
+
 		t.Run("list triggers", func(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Triggers.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {
@@ -175,6 +178,7 @@ func TestNewClient_Web(t *testing.T) {
 						return
 					}
 				}
+
 				t.Error("not found")
 			}
 		})
@@ -188,6 +192,7 @@ func TestNewClient_Web(t *testing.T) {
 
 	{ // --- Tags ---
 		name := "login"
+
 		t.Run("list tags", func(t *testing.T) {
 			cmd := c.Service().Accounts.Containers.Workspaces.Tags.List(c.WorkspacePath())
 			if r, err := cmd.Do(); assert.NoError(t, err) {

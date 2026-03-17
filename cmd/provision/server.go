@@ -77,6 +77,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 			if cfg.GoogleAnalytics.Enabled && utils.Tag(googleanalyticsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googleanalyticsprovider.Name, "tag", googleanalyticsprovider.Tag)
+
 				if err := googleanalyticsprovider.Server(cmd.Context(), tm, cfg.GoogleAnalytics, cfg.RedactVisitorIP, cfg.EnableGeoResolution); err != nil {
 					return errors.Wrap(err, "failed to provision google analytics")
 				}
@@ -84,6 +85,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 			if cfg.ConversionLinker.Enabled && utils.Tag(conversionlinkerprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", conversionlinkerprovider.Name, "tag", conversionlinkerprovider.Tag)
+
 				if err := conversionlinkerprovider.Server(cmd.Context(), tm, cfg.ConversionLinker); err != nil {
 					return errors.Wrap(err, "failed to provision conversion linker")
 				}
@@ -91,6 +93,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 			if cfg.Umami.Enabled && utils.Tag(umamiprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", umamiprovider.Name, "tag", umamiprovider.Tag)
+
 				if err := umamiprovider.Server(cmd.Context(), tm, cfg.Umami); err != nil {
 					return errors.Wrap(err, "failed to provision umami")
 				}
@@ -98,6 +101,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 			if cfg.Facebook.Enabled && utils.Tag(facebookprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", facebookprovider.Name, "tag", facebookprovider.Tag)
+
 				if err := facebookprovider.Server(cmd.Context(), l, tm, cfg.Facebook); err != nil {
 					return errors.Wrap(err, "failed to provision facebook")
 				}
@@ -105,6 +109,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 			if cfg.GoogleAds.Enabled && utils.Tag(googleadsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googleadsprovider.Name, "tag", googleadsprovider.Tag)
+
 				if err := googleadsprovider.Server(cmd.Context(), l, tm, cfg.GoogleAds); err != nil {
 					return errors.Wrap(err, "failed to provision google ads")
 				}
@@ -112,6 +117,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 			if cfg.Emarsys.Enabled && utils.Tag(emarsysprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", emarsysprovider.Name, "tag", emarsysprovider.Tag)
+
 				if err := emarsysprovider.Server(cmd.Context(), l, tm, cfg.Emarsys); err != nil {
 					return errors.Wrap(err, "failed to provision emarsys")
 				}
@@ -119,6 +125,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 			if cfg.Tracify.Enabled && utils.Tag(tracifyprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", tracifyprovider.Name, "tag", tracifyprovider.Tag)
+
 				if err := tracifyprovider.Server(cmd.Context(), l, tm, cfg.Tracify); err != nil {
 					return errors.Wrap(err, "failed to provision tracify")
 				}
@@ -126,6 +133,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 			if cfg.Criteo.Enabled && utils.Tag(criteoprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", criteoprovider.Name, "tag", criteoprovider.Tag)
+
 				if err := criteoprovider.Server(cmd.Context(), l, tm, cfg.Criteo); err != nil {
 					return errors.Wrap(err, "failed to provision criteo")
 				}
@@ -133,6 +141,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 			if cfg.MicrosoftAds.Enabled && utils.Tag(microsoftadsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", microsoftadsprovider.Name, "tag", microsoftadsprovider.Tag)
+
 				if err := microsoftadsprovider.Server(cmd.Context(), l, tm, cfg.MicrosoftAds); err != nil {
 					return errors.Wrap(err, "failed to provision microsoftads")
 				}
@@ -140,6 +149,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 			if cfg.Mixpanel.Enabled && utils.Tag(mixpanelprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", mixpanelprovider.Name, "tag", mixpanelprovider.Tag)
+
 				if err := mixpanelprovider.Server(cmd.Context(), l, tm, cfg.Mixpanel); err != nil {
 					return errors.Wrap(err, "failed to provision mixpanel")
 				}
@@ -147,6 +157,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 			if cfg.Pinterest.Enabled && utils.Tag(pinterestprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", pinterestprovider.Name, "tag", pinterestprovider.Tag)
+
 				if err := pinterestprovider.Server(cmd.Context(), l, tm, cfg.Pinterest); err != nil {
 					return errors.Wrap(err, "failed to provision mixpanel")
 				}
@@ -163,6 +174,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 					for _, s := range i {
 						child.Children = append(child.Children, pterm.TreeNode{Text: s})
 					}
+
 					tree.Children = append(tree.Children, child)
 				}
 

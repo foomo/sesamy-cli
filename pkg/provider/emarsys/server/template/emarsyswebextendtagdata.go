@@ -163,9 +163,9 @@ function mapEventData() {
     }
     case 'view_item_list': {
       const prefix = createRegex('^/', 'i');
-      const seperator = createRegex('/', 'i');
+      const separator = createRegex('/', 'i');
       mappedData.cart = serializeItems(eventData.items || []);
-      mappedData.category = eventData.item_list_id.replace(prefix,"").replace(seperator, " > ");
+      mappedData.category = eventData.item_list_id.replace(prefix,"").replace(separator, " > ");
       break;
     }
     case 'purchase': {

@@ -28,6 +28,7 @@ func LoadEventParams(ctx context.Context, cfg contemplate.Config) (map[string]ma
 			if err != nil {
 				return nil, errors.Wrap(err, "failed to load event params: "+cfgPkg.Path+"."+typ)
 			}
+
 			ret[strcase.SnakeCase(typ)] = eventParams
 		}
 	}
@@ -37,27 +38,34 @@ func LoadEventParams(ctx context.Context, cfg contemplate.Config) (map[string]ma
 
 func getEventParams(obj types.Object) (map[string]string, error) {
 	ret := map[string]string{}
+
 	if obj == nil {
 		return nil, errors.New("obj is nil")
 	}
+
 	if obj.Type() == nil {
 		return nil, errors.New("object is not a type: " + obj.String())
 	}
+
 	if obj.Type().Underlying() == nil {
 		return nil, errors.New("underlying object is not a type: " + obj.Type().String())
 	}
+
 	if eventStruct := assume.T[*types.Struct](obj.Type().Underlying()); eventStruct != nil {
-		for i := range eventStruct.NumFields() {
-			if eventField := eventStruct.Field(i); eventField.Name() == "Params" {
+		for eventField := range eventStruct.Fields() {
+			if eventField.Name() == "Params" {
 				if paramsStruct := assume.T[*types.Struct](eventField.Type().Underlying()); paramsStruct != nil {
 					for j := range paramsStruct.NumFields() {
-						var name string
-						var value string
+						var (
+							name  string
+							value string
+						)
 
 						tag, err := ParseStructTagName(paramsStruct.Tag(j), "json")
 						if err != nil {
 							return nil, errors.Wrapf(err, "failed to parse tag `%s`", paramsStruct.Tag(j))
 						}
+
 						name = tag
 						value = "eventModel." + tag
 
@@ -65,11 +73,13 @@ func getEventParams(obj types.Object) (map[string]string, error) {
 						if tag, err := ParseStructTagName(paramsStruct.Tag(j), "dlv"); err == nil {
 							value = tag
 						}
+
 						ret[name] = value
 					}
 				}
 			}
 		}
 	}
+
 	return ret, nil
 }
