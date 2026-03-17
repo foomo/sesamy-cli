@@ -105,6 +105,7 @@ func NewCookiebotInitialization(name string, cfg config.Cookiebot, template *tag
 				Type: "map",
 			})
 		}
+
 		parameter = append(parameter, param)
 	}
 

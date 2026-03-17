@@ -15,6 +15,7 @@ func NewGoogleTagEventSettings(name string, variables map[string]*tagmanager.Var
 	for k := range variables {
 		parameters = append(parameters, k)
 	}
+
 	sort.Strings(parameters)
 
 	list := make([]*tagmanager.Parameter, len(parameters))

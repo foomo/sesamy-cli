@@ -21,6 +21,7 @@ func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleTagMan
 				return err
 			}
 		}
+
 		for key, value := range cfg.WebContaienrVariables.LookupTables {
 			if _, err := tm.UpsertVariable(ctx, folder, commonvariable.NewLookupTable(key, value)); err != nil {
 				return err

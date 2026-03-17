@@ -15,6 +15,7 @@ const ChangeStatusDeleted = "deleted"
 
 func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (string, error) {
 	l.Info("└  ⬇︎ Loading status")
+
 	s, err := tm.Service().Accounts.Containers.Workspaces.GetStatus(tm.WorkspacePath()).Context(ctx).Do()
 	if err != nil {
 		return "", err
@@ -23,12 +24,14 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 	}
 
 	l.Info("└  ⬇︎ Loading live version")
+
 	live, err := tm.Service().Accounts.Containers.Versions.Live(tm.ContainerPath()).Do()
 	if err != nil {
 		return "", err
 	}
 
 	var res []string
+
 	for _, entity := range s.WorkspaceChange {
 		switch {
 		case entity.Tag != nil:
@@ -49,6 +52,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			}
 
 			var original string
+
 			for _, value := range live.Tag {
 				if value.Name == entity.Tag.Name {
 					// unset props
@@ -58,6 +62,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 					if err != nil {
 						return "", err
 					}
+
 					break
 				}
 			}
@@ -66,6 +71,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			if err != nil {
 				return "", err
 			}
+
 			res = append(res, d...)
 		case entity.Folder != nil:
 			res = append(res, "  # Folder: "+entity.Folder.Name+" ("+entity.ChangeStatus+")")
@@ -85,6 +91,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			}
 
 			var original string
+
 			for _, value := range live.Folder {
 				if value.Name == entity.Folder.Name {
 					// unset props
@@ -94,6 +101,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 					if err != nil {
 						return "", err
 					}
+
 					break
 				}
 			}
@@ -102,6 +110,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			if err != nil {
 				return "", err
 			}
+
 			res = append(res, d...)
 		case entity.Trigger != nil:
 			res = append(res, "  # Trigger: "+entity.Trigger.Name+" ("+entity.ChangeStatus+")")
@@ -121,6 +130,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			}
 
 			var original string
+
 			for _, value := range live.Trigger {
 				if value.Name == entity.Trigger.Name {
 					// unset props
@@ -130,6 +140,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 					if err != nil {
 						return "", err
 					}
+
 					break
 				}
 			}
@@ -138,6 +149,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			if err != nil {
 				return "", err
 			}
+
 			res = append(res, d...)
 		case entity.Variable != nil:
 			res = append(res, "  # Variable: "+entity.Variable.Name+" ("+entity.ChangeStatus+")")
@@ -157,6 +169,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			}
 
 			var original string
+
 			for _, value := range live.Variable {
 				if value.Name == entity.Variable.Name {
 					// unset props
@@ -166,6 +179,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 					if err != nil {
 						return "", err
 					}
+
 					break
 				}
 			}
@@ -174,6 +188,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			if err != nil {
 				return "", err
 			}
+
 			res = append(res, d...)
 		case entity.Client != nil:
 			res = append(res, "  # Client: "+entity.Client.Name+" ("+entity.ChangeStatus+")")
@@ -193,6 +208,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			}
 
 			var original string
+
 			for _, value := range live.Client {
 				if value.Name == entity.Client.Name {
 					// unset props
@@ -202,6 +218,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 					if err != nil {
 						return "", err
 					}
+
 					break
 				}
 			}
@@ -210,6 +227,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			if err != nil {
 				return "", err
 			}
+
 			res = append(res, d...)
 		case entity.GtagConfig != nil:
 			res = append(res, "  # GtagConfig: "+entity.GtagConfig.AccountId+" ("+entity.ChangeStatus+")")
@@ -229,6 +247,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			}
 
 			var original string
+
 			for _, value := range live.GtagConfig {
 				if value.AccountId == entity.GtagConfig.AccountId {
 					// unset props
@@ -238,6 +257,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 					if err != nil {
 						return "", err
 					}
+
 					break
 				}
 			}
@@ -246,6 +266,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			if err != nil {
 				return "", err
 			}
+
 			res = append(res, d...)
 		case entity.BuiltInVariable != nil:
 			res = append(res, "  # BuiltInVariable: "+entity.BuiltInVariable.Name+" ("+entity.ChangeStatus+")")
@@ -263,12 +284,14 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			}
 
 			var original string
+
 			for _, value := range live.BuiltInVariable {
 				if value.Name == entity.BuiltInVariable.Name {
 					original, err = ToYalm(value)
 					if err != nil {
 						return "", err
 					}
+
 					break
 				}
 			}
@@ -277,6 +300,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			if err != nil {
 				return "", err
 			}
+
 			res = append(res, d...)
 		case entity.CustomTemplate != nil:
 			res = append(res, "  # CustomTemplate: "+entity.CustomTemplate.Name+" ("+entity.ChangeStatus+")")
@@ -296,6 +320,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			}
 
 			var original string
+
 			for _, value := range live.CustomTemplate {
 				if value.Name == entity.CustomTemplate.Name {
 					// unset props
@@ -305,6 +330,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 					if err != nil {
 						return "", err
 					}
+
 					break
 				}
 			}
@@ -313,6 +339,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			if err != nil {
 				return "", err
 			}
+
 			res = append(res, d...)
 		case entity.Transformation != nil:
 			res = append(res, "  # Transformation: "+entity.Transformation.Name+" ("+entity.ChangeStatus+")")
@@ -332,6 +359,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			}
 
 			var original string
+
 			for _, value := range live.Transformation {
 				if value.Name == entity.Transformation.Name {
 					// unset props
@@ -341,6 +369,7 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 					if err != nil {
 						return "", err
 					}
+
 					break
 				}
 			}
@@ -349,11 +378,13 @@ func diff(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager) (strin
 			if err != nil {
 				return "", err
 			}
+
 			res = append(res, d...)
 		default:
 			l.Warn("unknown entity type", "entity", entity)
 		}
 	}
+
 	return strings.Join(res, "  ---\n"), nil
 }
 
@@ -373,11 +404,13 @@ func ToDiff(original, changed string) ([]string, error) {
 	}
 
 	var ret []string
+
 	for _, d := range yamldiff.Do(yamls1, yamls2) {
 		if value := d.Dump(); len(value) > 4 {
 			ret = append(ret, value)
 		}
 	}
+
 	return ret, nil
 }
 

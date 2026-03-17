@@ -17,6 +17,7 @@ func NewLookupTable(name string, data config.LookupTable) *tagmanager.Variable {
 	{
 		keys := slices.AppendSeq(make([]string, 0, len(data.KeyTable)), maps.Keys(data.KeyTable))
 		slices.Sort(keys)
+
 		for _, k := range keys {
 			v := data.KeyTable[k]
 			list = append(list, &tagmanager.Parameter{
@@ -36,8 +37,10 @@ func NewLookupTable(name string, data config.LookupTable) *tagmanager.Variable {
 			})
 		}
 	}
+
 	keys := slices.AppendSeq(make([]string, 0, len(data.ValueTable)), maps.Keys(data.ValueTable))
 	slices.Sort(keys)
+
 	for _, k := range keys {
 		v := data.ValueTable[k]
 		list = append(list, &tagmanager.Parameter{
@@ -56,6 +59,7 @@ func NewLookupTable(name string, data config.LookupTable) *tagmanager.Variable {
 			},
 		})
 	}
+
 	return &tagmanager.Variable{
 		Name: LookupTableName(name),
 		Parameter: []*tagmanager.Parameter{

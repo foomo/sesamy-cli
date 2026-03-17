@@ -13,9 +13,10 @@ type GoogleAPI struct {
 func (c GoogleAPI) GetClientOption() googleapioption.ClientOption {
 	var ret googleapioption.ClientOption
 	if c.CredentialsFile != "" {
-		ret = googleapioption.WithCredentialsFile(c.CredentialsFile)
+		ret = googleapioption.WithAuthCredentialsFile(googleapioption.ServiceAccount, c.CredentialsFile)
 	} else {
-		ret = googleapioption.WithCredentialsJSON([]byte(c.Credentials))
+		ret = googleapioption.WithAuthCredentialsJSON(googleapioption.ServiceAccount, []byte(c.Credentials))
 	}
+
 	return ret
 }

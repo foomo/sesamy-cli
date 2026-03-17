@@ -51,6 +51,7 @@ func NewTypeScript(l *slog.Logger) *cobra.Command {
 			}
 
 			l.InfoContext(cmd.Context(), "generated typescript code", "dir", outPath, "files", slices.AppendSeq(make([]string, 0, len(files)), maps.Keys(files)))
+
 			for filename, file := range files {
 				if err = os.WriteFile(path.Join(outPath, filename), []byte(file.String()), 0600); err != nil {
 					return errors.Wrap(err, "failed to write typescript code")

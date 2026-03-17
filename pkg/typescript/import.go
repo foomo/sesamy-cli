@@ -47,6 +47,7 @@ func (i *Import) SetDefault(v string) {
 func (i *Import) Modules() []string {
 	ret := slices.AppendSeq(make([]string, 0, len(i.modules)), maps.Keys(i.modules))
 	slices.Sort(ret)
+
 	return ret
 }
 
@@ -63,6 +64,7 @@ func (i *Import) Alias(name string) string {
 	if v, ok := i.modules[name]; ok {
 		return v
 	}
+
 	return ""
 }
 
@@ -97,11 +99,14 @@ func (i *Import) String() string {
 			if alias != "" {
 				name += " as " + alias
 			}
+
 			if i.IsType(name) {
 				name = "type " + name
 			}
+
 			modules = append(modules, name)
 		}
+
 		defModules = append(defModules, "{ "+strings.Join(modules, ", ")+" }")
 	}
 

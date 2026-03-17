@@ -23,6 +23,7 @@ func ConversionEventWithConsentMode(mode *tagmanager.Variable) ConversionEventOp
 
 func NewConversionEvent(name string, opts ...ConversionEventOption) *tagmanager.Trigger {
 	o := &ConversionEventOptions{}
+
 	for _, opt := range opts {
 		if opt != nil {
 			opt(o)

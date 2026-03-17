@@ -28,16 +28,19 @@ func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleTag) e
 		if !cfg.SendPageView {
 			configSettings["send_page_view"] = "false"
 		}
+
 		if cfg.ServerContainerURL != "" {
 			configSettings["server_container_url"] = cfg.ServerContainerURL
 		}
 
 		eventSettings := map[string]*api.Variable{}
+
 		for k, v := range cfg.DataLayerVariables {
 			dlv, err := tm.UpsertVariable(ctx, folder, variable.NewDataLayer(v))
 			if err != nil {
 				return err
 			}
+
 			eventSettings[k] = dlv
 		}
 
@@ -50,6 +53,7 @@ func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleTag) e
 		if err != nil {
 			return err
 		}
+
 		if _, err = tm.UpsertTag(ctx, folder, webtag.NewGoogleTag(NameGoogleTag, tagID, settingsVariable, eventSettings)); err != nil {
 			return err
 		}
@@ -99,5 +103,6 @@ func CreateWebDatalayerVariables(ctx context.Context, tm *tagmanager.TagManager,
 			return nil, err
 		}
 	}
+
 	return variables, nil
 }

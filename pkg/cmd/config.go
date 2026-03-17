@@ -22,8 +22,10 @@ func ReadConfig(l *slog.Logger, c *viper.Viper, cmd *cobra.Command) (*config.Con
 
 	for _, filename := range c.GetStringSlice("config") {
 		var p koanf.Provider
+
 		if filename == "-" {
 			pterm.Debug.Println("reading config from stdin")
+
 			if b, err := io.ReadAll(cmd.InOrStdin()); err != nil {
 				return nil, err
 			} else {
@@ -33,13 +35,16 @@ func ReadConfig(l *slog.Logger, c *viper.Viper, cmd *cobra.Command) (*config.Con
 			pterm.Debug.Println("reading config from filename: " + filename)
 			p = file.Provider(filename)
 		}
+
 		if err := k.Load(p, yaml.Parser()); err != nil {
 			return nil, errors.Wrap(err, "error loading config file: "+filename)
 		}
 	}
 
 	var cfg *config.Config
+
 	pterm.Debug.Println("unmarshalling config")
+
 	if err := k.UnmarshalWithConf("", &cfg, koanf.UnmarshalConf{
 		Tag: "yaml",
 	}); err != nil {

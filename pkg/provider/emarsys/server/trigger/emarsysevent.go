@@ -23,6 +23,7 @@ func EmarsysEventWithConsentMode(mode *tagmanager.Variable) EmarsysEventOption {
 
 func NewEmarsysEvent(name string, opts ...EmarsysEventOption) *tagmanager.Trigger {
 	o := &EmarsysEventOptions{}
+
 	for _, opt := range opts {
 		if opt != nil {
 			opt(o)

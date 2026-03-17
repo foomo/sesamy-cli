@@ -40,6 +40,7 @@ func NewConversion(name string, cfg config.Pinterest, template *tagmanager.Custo
 					if testMode {
 						return "log"
 					}
+
 					return "donotlog"
 				}(cfg.TestModeEnabled),
 			},

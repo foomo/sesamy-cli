@@ -31,23 +31,28 @@ func main() {
 		if say, cerr := cowsay.Say(msg, cowsay.BallonWidth(80)); cerr == nil {
 			msg = say
 		}
+
 		return msg
 	}
 
 	code := 0
+
 	defer func() {
 		if r := recover(); r != nil {
 			l.Error(say("It's time to panic"))
 			l.Error(fmt.Sprintf("%v", r))
 			l.Error(string(debug.Stack()))
+
 			code = 1
 		}
+
 		os.Exit(code)
 	}()
 
 	if err := root.Execute(); err != nil {
 		l.Error(say(strings.Split(errors.Cause(err).Error(), ":")[0]))
 		l.Error(err.Error())
+
 		code = 1
 	}
 }

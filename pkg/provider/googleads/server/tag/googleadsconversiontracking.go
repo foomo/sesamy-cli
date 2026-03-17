@@ -13,6 +13,7 @@ func GoogleAdsConversionTrackingName(v string) string {
 func NewGoogleAdsConversionTracking(name string, value, currency, conversionID *tagmanager.Variable, settings config.GoogleAdsConversionTracking, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	tagName := GoogleAdsConversionTrackingName(name)
 	tagConversionID := "{{" + conversionID.Name + "}}"
+
 	if settings.ConversionID != "" {
 		tagName += " (" + settings.ConversionID + ")"
 		tagConversionID = settings.ConversionID

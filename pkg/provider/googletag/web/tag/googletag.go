@@ -47,5 +47,6 @@ func NewGoogleTag(name string, tagID *tagmanager.Variable, configSettings *tagma
 		},
 		Type: "googtag",
 	}
+
 	return ret
 }

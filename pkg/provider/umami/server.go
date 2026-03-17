@@ -33,14 +33,17 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.Umami) er
 
 		for event := range eventParameters {
 			var eventTriggerOpts []trigger.UmamiEventOption
+
 			if cfg.GoogleConsent.Enabled {
 				if err := googleconsent.ServerEnsure(ctx, tm); err != nil {
 					return err
 				}
+
 				consentVariable, err := tm.LookupVariable(ctx, googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
 				if err != nil {
 					return err
 				}
+
 				eventTriggerOpts = append(eventTriggerOpts, trigger.UmamiEventWithConsentMode(consentVariable))
 			}
 

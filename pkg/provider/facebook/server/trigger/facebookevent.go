@@ -23,6 +23,7 @@ func FacebookEventWithConsentMode(mode *tagmanager.Variable) FacebookEventOption
 
 func NewFacebookEvent(name string, opts ...FacebookEventOption) *tagmanager.Trigger {
 	o := &FacebookEventOptions{}
+
 	for _, opt := range opts {
 		if opt != nil {
 			opt(o)

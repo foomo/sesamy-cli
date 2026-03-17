@@ -58,6 +58,7 @@ func NewTrack(name string, projectToken *tagmanager.Variable, template *tagmanag
 
 	if len(params) > 0 {
 		var list []*tagmanager.Parameter
+
 		for _, key := range slices.Sorted(maps.Keys(params)) {
 			param := params[key]
 			list = append(list, &tagmanager.Parameter{
@@ -76,6 +77,7 @@ func NewTrack(name string, projectToken *tagmanager.Variable, template *tagmanag
 				},
 			})
 		}
+
 		parameter = append(parameter, &tagmanager.Parameter{
 			Key:  "trackParameters",
 			Type: "list",

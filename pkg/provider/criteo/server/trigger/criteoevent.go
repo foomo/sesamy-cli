@@ -23,6 +23,7 @@ func CriteoEventWithConsentMode(mode *tagmanager.Variable) CriteoEventOption {
 
 func NewCriteoEvent(name string, opts ...CriteoEventOption) *tagmanager.Trigger {
 	o := &CriteoEventOptions{}
+
 	for _, opt := range opts {
 		if opt != nil {
 			opt(o)

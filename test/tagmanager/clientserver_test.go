@@ -31,7 +31,7 @@ func TestNewClient_Server(t *testing.T) {
 			WorkspaceID: os.Getenv("TEST_SERVER_WORKSPACE_ID"),
 		},
 		tagmanager.WithClientOptions(
-			option.WithCredentialsFile(os.Getenv("TEST_CREDENTIALS_FILE")),
+			option.WithAuthCredentialsFile(option.ServiceAccount, os.Getenv("TEST_CREDENTIALS_FILE")),
 		),
 	)
 	require.NoError(t, err)

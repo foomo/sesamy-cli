@@ -53,14 +53,17 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 
 			for event := range eventParameters {
 				var eventTriggerOpts []trigger.GoogleAdsEventOption
+
 				if cfg.GoogleConsent.Enabled {
 					if err := googleconsent.ServerEnsure(ctx, tm); err != nil {
 						return err
 					}
+
 					consentVariable, err := tm.LookupVariable(ctx, googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
 					if err != nil {
 						return err
 					}
+
 					eventTriggerOpts = append(eventTriggerOpts, trigger.GoogleAdsEventWithConsentMode(consentVariable))
 				}
 
@@ -80,14 +83,17 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 		// remarketing
 		if cfg.Remarketing.Enabled {
 			var eventTriggerOpts []trigger.GoogleAdsRemarketingEventOption
+
 			if cfg.GoogleConsent.Enabled {
 				if err := googleconsent.ServerEnsure(ctx, tm); err != nil {
 					return err
 				}
+
 				consentVariable, err := tm.LookupVariable(ctx, googleconsentvariable.GoogleConsentModeName(cfg.GoogleConsent.Mode))
 				if err != nil {
 					return err
 				}
+
 				eventTriggerOpts = append(eventTriggerOpts, trigger.GoogleAdsRemarketingEventWithConsentMode(consentVariable))
 			}
 

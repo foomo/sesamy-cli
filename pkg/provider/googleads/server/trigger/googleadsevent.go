@@ -23,6 +23,7 @@ func GoogleAdsEventWithConsentMode(mode *tagmanager.Variable) GoogleAdsEventOpti
 
 func NewGoogleAdsEvent(name string, opts ...GoogleAdsEventOption) *tagmanager.Trigger {
 	o := &GoogleAdsEventOptions{}
+
 	for _, opt := range opts {
 		if opt != nil {
 			opt(o)

@@ -59,6 +59,7 @@ func NewWeb(l *slog.Logger) *cobra.Command {
 
 			if utils.Tag(googletagprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googletagprovider.Name, "tag", googletagprovider.Tag)
+
 				if err := googletagprovider.Web(cmd.Context(), tm, cfg.GoogleTag); err != nil {
 					return errors.Wrap(err, "failed to provision google tag provider")
 				}
@@ -72,6 +73,7 @@ func NewWeb(l *slog.Logger) *cobra.Command {
 
 			if cfg.GoogleAnalytics.Enabled && utils.Tag(googleanaylticsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googleanaylticsprovider.Name, "tag", googleanaylticsprovider.Tag)
+
 				if err := googleanaylticsprovider.Web(cmd.Context(), tm, cfg.GoogleAnalytics); err != nil {
 					return errors.Wrap(err, "failed to provision google analytics provider")
 				}
@@ -79,6 +81,7 @@ func NewWeb(l *slog.Logger) *cobra.Command {
 
 			if cfg.Emarsys.Enabled && utils.Tag(emarsysprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", emarsysprovider.Name, "tag", emarsysprovider.Tag)
+
 				if err := emarsysprovider.Web(cmd.Context(), tm, cfg.Emarsys); err != nil {
 					return errors.Wrap(err, "failed to provision emarsys provider")
 				}
@@ -86,6 +89,7 @@ func NewWeb(l *slog.Logger) *cobra.Command {
 
 			if cfg.Hotjar.Enabled && utils.Tag(hotjarprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", hotjarprovider.Name, "tag", hotjarprovider.Tag)
+
 				if err := hotjarprovider.Web(cmd.Context(), tm, cfg.Hotjar); err != nil {
 					return errors.Wrap(err, "failed to provision hotjar provider")
 				}
@@ -93,6 +97,7 @@ func NewWeb(l *slog.Logger) *cobra.Command {
 
 			if cfg.Criteo.Enabled && utils.Tag(criteoprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", criteoprovider.Name, "tag", criteoprovider.Tag)
+
 				if err := criteoprovider.Web(cmd.Context(), l, tm, cfg.Criteo); err != nil {
 					return errors.Wrap(err, "failed to provision criteo provider")
 				}
@@ -100,6 +105,7 @@ func NewWeb(l *slog.Logger) *cobra.Command {
 
 			if cfg.Cookiebot.Enabled && utils.Tag(cookiebotprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", cookiebotprovider.Name, "tag", cookiebotprovider.Tag)
+
 				if err := cookiebotprovider.Web(cmd.Context(), tm, cfg.Cookiebot); err != nil {
 					return errors.Wrap(err, "failed to provision cookiebot provider")
 				}
@@ -116,8 +122,10 @@ func NewWeb(l *slog.Logger) *cobra.Command {
 					for _, s := range i {
 						child.Children = append(child.Children, pterm.TreeNode{Text: s})
 					}
+
 					tree.Children = append(tree.Children, child)
 				}
+
 				if err := pterm.DefaultTree.WithRoot(tree).WithWriter(ptermx.NewWriter(pterm.Warning)).Render(); err != nil {
 					l.Warn("failed to render missed resources", "error", err)
 				}
