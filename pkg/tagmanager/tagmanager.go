@@ -69,7 +69,7 @@ func (l AccessedMap[T]) Set(key string, value T) {
 	l.data[key] = value
 }
 
-func (l AccessedMap[T]) Misssed() map[string]T {
+func (l AccessedMap[T]) Missed() map[string]T {
 	ret := map[string]T{}
 
 	for k := range l.data {
@@ -150,7 +150,7 @@ func (t *TagManager) Missed() map[string][]string {
 	ret := map[string][]string{}
 
 	if t.clients != nil {
-		for _, i2 := range t.clients.Misssed() {
+		for _, i2 := range t.clients.Missed() {
 			ret["Clients"] = append(ret["Clients"], i2.Name)
 		}
 	} else {
@@ -158,7 +158,7 @@ func (t *TagManager) Missed() map[string][]string {
 	}
 
 	if t.folders != nil {
-		for _, i2 := range t.folders.Misssed() {
+		for _, i2 := range t.folders.Missed() {
 			ret["Folders"] = append(ret["Folders"], i2.Name)
 		}
 	} else {
@@ -166,7 +166,7 @@ func (t *TagManager) Missed() map[string][]string {
 	}
 
 	if t.variables != nil {
-		for _, i2 := range t.variables.Misssed() {
+		for _, i2 := range t.variables.Missed() {
 			ret["Variables"] = append(ret["Variables"], i2.Name)
 		}
 	} else {
@@ -174,7 +174,7 @@ func (t *TagManager) Missed() map[string][]string {
 	}
 
 	if t.builtInVariables != nil {
-		for _, i2 := range t.builtInVariables.Misssed() {
+		for _, i2 := range t.builtInVariables.Missed() {
 			ret["Built In Variables"] = append(ret["Built In Variables"], i2.Name)
 		}
 	} else {
@@ -182,7 +182,7 @@ func (t *TagManager) Missed() map[string][]string {
 	}
 
 	if t.triggers != nil {
-		for _, i2 := range t.triggers.Misssed() {
+		for _, i2 := range t.triggers.Missed() {
 			ret["Triggers"] = append(ret["Triggers"], i2.Name)
 		}
 	} else {
@@ -190,7 +190,7 @@ func (t *TagManager) Missed() map[string][]string {
 	}
 
 	if t.tags != nil {
-		for _, i2 := range t.tags.Misssed() {
+		for _, i2 := range t.tags.Missed() {
 			ret["Tags"] = append(ret["Tags"], i2.Name)
 		}
 	} else {
@@ -198,7 +198,7 @@ func (t *TagManager) Missed() map[string][]string {
 	}
 
 	if t.customTemplates != nil {
-		for _, i2 := range t.customTemplates.Misssed() {
+		for _, i2 := range t.customTemplates.Missed() {
 			ret["Custom Templates"] = append(ret["Custom Templates"], i2.Name)
 		}
 	} else {
@@ -206,7 +206,7 @@ func (t *TagManager) Missed() map[string][]string {
 	}
 
 	if t.transformations != nil {
-		for _, i2 := range t.transformations.Misssed() {
+		for _, i2 := range t.transformations.Missed() {
 			ret["Transformations"] = append(ret["Transformations"], i2.Name)
 		}
 	} else {
@@ -722,7 +722,7 @@ func (t *TagManager) UpsertFolder(ctx context.Context, name string) (*tagmanager
 	item.WorkspaceId = t.WorkspaceID()
 
 	cache, err := t.LookupFolder(ctx, name)
-	if err != nil && !errors.Is(err, ErrNotFound) && !errors.Is(err, ErrNotFound) {
+	if err != nil && !errors.Is(err, ErrNotFound) {
 		return nil, err
 	}
 

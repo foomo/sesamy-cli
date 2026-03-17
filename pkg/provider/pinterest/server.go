@@ -23,7 +23,7 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 	template, err := tm.LookupTemplate(ctx, NameTagTemplate)
 	if err != nil {
 		if errors.Is(err, tagmanager.ErrNotFound) {
-			l.Warn("Please install the 'Pinterest API for Conversions Ta' Tag Template manually first")
+			l.Warn("Please install the 'Pinterest API for Conversions Tag' Tag Template manually first")
 		}
 
 		return err

@@ -159,7 +159,7 @@ func NewServer(l *slog.Logger) *cobra.Command {
 				l.Info("🅿️ Running provider", "name", pinterestprovider.Name, "tag", pinterestprovider.Tag)
 
 				if err := pinterestprovider.Server(cmd.Context(), l, tm, cfg.Pinterest); err != nil {
-					return errors.Wrap(err, "failed to provision mixpanel")
+					return errors.Wrap(err, "failed to provision pinterest")
 				}
 			}
 
