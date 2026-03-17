@@ -10,6 +10,7 @@ linters:
   disable:
     # Project specific linters
     - paralleltest
+    - forbidigo
     # Discouraged linters
     - noinlineerr # Disallows inline error handling (`if err := ...; err != nil {`).
     - embeddedstructfieldcheck #  Embedded types should be at the top of the field list of a struct, and there must be an empty line separating embedded fields from regular fields. [fast]
@@ -64,6 +65,10 @@ linters:
       rules:
         - name: package-comments
           disabled: true
+    # https://golangci-lint.run/docs/linters/configuration/#gocritic
+    gocritic:
+      disabled-checks:
+        - ifElseChain
   exclusions:
     presets:
       - comments
