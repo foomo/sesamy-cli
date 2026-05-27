@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	cowsay "github.com/Code-Hex/Neo-cowsay/v2"
-	"github.com/foomo/sesamy-cli/cmd"
+	"github.com/foomo/sesamy-cli/internal/cli"
 	cmdx "github.com/foomo/sesamy-cli/pkg/cmd"
 	"github.com/pkg/errors"
 )
@@ -15,17 +15,7 @@ import (
 func main() {
 	l := cmdx.NewLogger()
 
-	root := cmd.NewRoot(l)
-	root.AddCommand(
-		cmd.NewConfig(l),
-		cmd.NewList(l),
-		cmd.NewDiff(l),
-		cmd.NewOpen(l),
-		cmd.NewProvision(l),
-		cmd.NewTags(l),
-		cmd.NewTypeScript(l),
-		cmd.NewVersion(l),
-	)
+	root := cli.NewCommand(l)
 
 	say := func(msg string) string {
 		if say, cerr := cowsay.Say(msg, cowsay.BallonWidth(80)); cerr == nil {

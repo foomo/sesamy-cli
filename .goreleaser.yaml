@@ -2,7 +2,7 @@ version: 2
 
 builds:
   - binary: sesamy
-    main: ./main.go
+    main: ./cmd/sesamy-cli
     env:
       - CGO_ENABLED=0
     goos:
@@ -18,7 +18,7 @@ builds:
       - -trimpath
       - -tags=safe
     ldflags:
-      - -s -w -X github.com/foomo/sesamy-cli/cmd.version={{.Version}}
+      - -s -w -X github.com/foomo/sesamy-cli/internal/cli.version={{.Version}}
 
 release:
   prerelease: auto

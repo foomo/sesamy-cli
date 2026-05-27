@@ -1,9 +1,9 @@
-package cmd
+package cli
 
 import (
 	"log/slog"
 
-	"github.com/foomo/sesamy-cli/cmd/diff"
+	"github.com/foomo/sesamy-cli/internal/cli/diff"
 	"github.com/spf13/cobra"
 )
 
