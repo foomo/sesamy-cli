@@ -77,18 +77,18 @@ generate:
 build:
 	@mkdir -p bin
 	@echo "building: bin/sesamy"
-	@go build -tags=safe -o bin/sesamy main.go
+	@go build -tags=safe -o bin/sesamy ./cmd/sesamy-cli
 
 .PHONY: install
 ## Install binary
 install:
 	@echo "installing: ${GOPATH}/bin/sesamy"
-	@go build -tags=safe -o ${GOPATH}/bin/sesamy main.go
+	@go build -tags=safe -o ${GOPATH}/bin/sesamy ./cmd/sesamy-cli
 
 .PHONY: install.debug
 ## Install debug binary
 install.debug:
-	@go build -tags=safe -gclags="all=-N -l" -o ${GOPATH}/bin/sesamy main.go
+	@go build -tags=safe -gclags="all=-N -l" -o ${GOPATH}/bin/sesamy ./cmd/sesamy-cli
 
 ### Security
 
@@ -133,6 +133,13 @@ docs:
 docs.build:
 	@echo "〉building docs"
 	@cd docs && bun install && bun run build
+
+.PHONY: docs.cli
+## Generate CLI reference markdown from the cobra command tree
+docs.cli:
+	@echo "〉generating CLI docs"
+	@mkdir -p docs/reference/cli
+	@go run -tags=safe ./cmd/sesamy-cli-docs -out docs/reference/cli
 
 .PHONY: godocs
 ## Open go docs
