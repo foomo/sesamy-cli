@@ -19,5 +19,6 @@ func NewCommand(l *slog.Logger) *cobra.Command {
 		NewTypeScript(l),
 		NewVersion(l),
 	)
+
 	return root
 }
