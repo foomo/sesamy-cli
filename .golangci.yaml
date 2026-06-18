@@ -56,9 +56,6 @@ linters:
 
   # https://golangci-lint.run/docs/linters/
   settings:
-    # https://golangci-lint.run/docs/linters/configuration/#exhaustive
-    exhaustive:
-      default-signifies-exhaustive: true
     # https://golangci-lint.run/docs/linters/configuration/#gosec
     gosec:
       severity: medium
@@ -72,7 +69,11 @@ linters:
     gocritic:
       disabled-checks:
         - ifElseChain
+    # https://golangci-lint.run/docs/linters/configuration/#exhaustive
+    exhaustive:
+      default-signifies-exhaustive: true
   exclusions:
+    generated: lax
     presets:
       - comments
       - common-false-positives
@@ -83,8 +84,13 @@ linters:
         linters:
           - forbidigo
     paths:
-      - docs
-      - tmp
+      - (^|/)\..*
+      - (^|/)bin/
+      - (^|/)tmp/
+      - (^|/)docs/
+      - (^|/)node_modules/
+
+# https://golangci-lint.run/docs/formatters/
 formatters:
   enable:
     - gofmt

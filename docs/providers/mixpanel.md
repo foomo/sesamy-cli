@@ -12,6 +12,7 @@ mixpanel:
     enabled: true
     mode: analytics_storage
   serverContainer:
+    userId: user_id
     track:
       directory: .
       packages:
@@ -35,4 +36,5 @@ mixpanel:
 |-------|---------|
 | `projectToken` | Mixpanel project token. |
 | `googleConsent.mode` | Defaults to `analytics_storage`. |
+| `serverContainer.userId` | Event-data property holding the user ID, forwarded to Mixpanel. |
 | `serverContainer.track.packages` | Events to forward to Mixpanel's `/track` endpoint. |
