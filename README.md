@@ -2,7 +2,7 @@
 [![GoDoc](https://img.shields.io/badge/GoDoc-✓-informational.svg?style=flat-square&logo=go)](https://godoc.org/github.com/foomo/sesamy-cli)
 [![Coverage](https://img.shields.io/codecov/c/github/foomo/sesamy-cli?style=flat-square&logo=github)](https://app.codecov.io/gh/foomo/sesamy-cli)
 [![GitHub Downloads](https://img.shields.io/github/downloads/foomo/sesamy-cli/total.svg?style=flat-square&logo=github)](https://github.com/foomo/sesamy-cli/releases)
-[![Docker Pulls](https://img.shields.io/docker/pulls/foomo/sesamy-cli.svg?style=flat-square&logo=docker)](https://hub.docker.com/r/foomo/sesamy-cli)
+[![Docker Pulls](https://img.shields.io/docker/pulls/foomo/sesamy.svg?style=flat-square&logo=docker)](https://hub.docker.com/r/foomo/sesamy)
 [![GitHub Stars](https://img.shields.io/github/stars/foomo/sesamy-cli.svg?style=flat-square&logo=github)](https://github.com/foomo/sesamy-cli)
 
 <p align="center">
