@@ -16,6 +16,7 @@ type (
 		ServerContainer MixpanelServerContainer `json:"serverContainer" yaml:"serverContainer"`
 	}
 	MixpanelServerContainer struct {
+		UserID string `json:"userId" yaml:"userId"`
 		// Set events
 		Set contemplate.Config `json:"set" yaml:"set"`
 		// SetOnce events
@@ -24,7 +25,5 @@ type (
 		Reset contemplate.Config `json:"reset" yaml:"reset"`
 		// Track events
 		Track contemplate.Config `json:"track" yaml:"track"`
-		// Identify events
-		Identify contemplate.Config `json:"identify" yaml:"identify"`
 	}
 )

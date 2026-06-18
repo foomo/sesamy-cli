@@ -12,7 +12,7 @@ func SetName(v string) string {
 	return "Mixpanel Set - " + v
 }
 
-func NewSet(name string, projectToken *tagmanager.Variable, template *tagmanager.CustomTemplate, params map[string]*tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+func NewSet(name string, projectToken, userID *tagmanager.Variable, template *tagmanager.CustomTemplate, params map[string]*tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	parameter := []*tagmanager.Parameter{
 		{
 			Key:   "serverEU",
@@ -20,9 +20,14 @@ func NewSet(name string, projectToken *tagmanager.Variable, template *tagmanager
 			Value: "true",
 		},
 		{
-			Key:   "logType",
+			Key:   "idMergeApi",
 			Type:  "template",
-			Value: "debug",
+			Value: "simplified",
+		},
+		{
+			Key:   "analyticsStorageConsent",
+			Type:  "template",
+			Value: "optional",
 		},
 		{
 			Key:   "identifyAuto",
@@ -43,6 +48,11 @@ func NewSet(name string, projectToken *tagmanager.Variable, template *tagmanager
 			Key:   "token",
 			Type:  "template",
 			Value: "{{" + projectToken.Name + "}}",
+		},
+		{
+			Key:   "userId",
+			Type:  "template",
+			Value: "{{" + userID.Name + "}}",
 		},
 		{
 			Key:   "trackFromVariable",

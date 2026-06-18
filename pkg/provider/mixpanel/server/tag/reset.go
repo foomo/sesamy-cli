@@ -21,9 +21,9 @@ func NewReset(name string, projectToken *tagmanager.Variable, template *tagmanag
 				Value: "true",
 			},
 			{
-				Key:   "logType",
+				Key:   "analyticsStorageConsent",
 				Type:  "template",
-				Value: "debug",
+				Value: "optional",
 			},
 			{
 				Key:   "type",

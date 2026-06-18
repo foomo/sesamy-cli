@@ -12,7 +12,7 @@ func SetOnceName(v string) string {
 	return "Mixpanel SetOnce - " + v
 }
 
-func NewSetOnce(name string, projectToken *tagmanager.Variable, template *tagmanager.CustomTemplate, params map[string]*tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+func NewSetOnce(name string, projectToken, userID *tagmanager.Variable, template *tagmanager.CustomTemplate, params map[string]*tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	parameter := []*tagmanager.Parameter{
 		{
 			Key:   "serverEU",
@@ -20,9 +20,14 @@ func NewSetOnce(name string, projectToken *tagmanager.Variable, template *tagman
 			Value: "true",
 		},
 		{
-			Key:   "logType",
+			Key:   "idMergeApi",
 			Type:  "template",
-			Value: "debug",
+			Value: "simplified",
+		},
+		{
+			Key:   "analyticsStorageConsent",
+			Type:  "template",
+			Value: "optional",
 		},
 		{
 			Key:   "identifyAuto",
@@ -43,6 +48,11 @@ func NewSetOnce(name string, projectToken *tagmanager.Variable, template *tagman
 			Key:   "token",
 			Type:  "template",
 			Value: "{{" + projectToken.Name + "}}",
+		},
+		{
+			Key:   "userId",
+			Type:  "template",
+			Value: "{{" + userID.Name + "}}",
 		},
 		{
 			Key:   "trackFromVariable",

@@ -456,6 +456,8 @@ mixpanel:
     mode: analytics_storage
   # Google Tag Manager server container settings
   serverContainer:
+    # User id event data property
+    userId: 'user_id'
     # Track events
     track:
       # Directory containing the go.mod file
