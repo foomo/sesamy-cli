@@ -6,9 +6,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/foomo/sesamy-cli/pkg/config"
+	"github.com/hexops/gotextdiff"
+	"github.com/hexops/gotextdiff/myers"
+	"github.com/hexops/gotextdiff/span"
 	"github.com/pkg/errors"
 	"google.golang.org/api/option"
 	"google.golang.org/api/tagmanager/v2"
@@ -921,10 +925,13 @@ func (t *TagManager) UpsertCustomTemplate(ctx context.Context, item *tagmanager.
 
 		value, err = t.Service().Accounts.Containers.Workspaces.Templates.Create(t.WorkspacePath(), item).Context(ctx).Do()
 		t.customTemplates.Set(item.Name, value)
-	} else if item.TemplateData == cache.TemplateData {
+	} else if strings.Trim(item.TemplateData, "\n") == strings.Trim(cache.TemplateData, "\n") {
 		l.Info("└  ✔︎ OK", "id", cache.TemplateId)
 	} else {
+		edits := myers.ComputeEdits(span.URIFromPath("item.txt"), item.TemplateData, cache.TemplateData)
+		diff := gotextdiff.ToUnified("item.txt", "cache.txt", item.TemplateData, edits)
 		l.Info("└  🔄 Update", "id", cache.TemplateId)
+		l.Info(fmt.Sprint(diff))
 		value, err = t.Service().Accounts.Containers.Workspaces.Templates.Update(t.WorkspacePath()+"/templates/"+cache.TemplateId, item).Context(ctx).Do()
 		t.customTemplates.Set(item.Name, value)
 	}

@@ -9,6 +9,7 @@ require (
 	github.com/foomo/go v0.16.0
 	github.com/foomo/gocontemplate v0.2.0
 	github.com/foomo/sesamy-go v0.13.0
+	github.com/hexops/gotextdiff v1.0.3
 	github.com/invopop/jsonschema v0.14.0
 	github.com/itchyny/json2yaml v0.1.5
 	github.com/joho/godotenv v1.5.1

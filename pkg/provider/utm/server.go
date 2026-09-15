@@ -49,9 +49,9 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.Utm) erro
 		triggerOpts = append(triggerOpts, trigger.UtmAllEventsWithConsentMode(consentVariable))
 	}
 
-	allEventsTrigger, err := tm.UpsertTrigger(ctx, folder, trigger.NewUtmAllEvents(NameUtmAllEventsTrigger, triggerOpts...))
+	allEventsTrigger, err := tm.UpsertTrigger(ctx, folder, trigger.NewUtmAllEvents(NameUtmAttributionCookieWriterTrigger, triggerOpts...))
 	if err != nil {
-		return errors.Wrap(err, "failed to upsert event trigger: "+NameUtmAllEventsTrigger)
+		return errors.Wrap(err, "failed to upsert event trigger: "+NameUtmAttributionCookieWriterTrigger)
 	}
 
 	if _, err := tm.UpsertTag(ctx, folder, containertag.NewUtmAttributionCookieWriter(NameUtmAttributionCookieWriterTag, tagTemplate, allEventsTrigger)); err != nil {

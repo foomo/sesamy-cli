@@ -7,5 +7,5 @@ const (
 	NameUtmAttributionCookieWriterTemplate = "UTM Attribution Cookie Writer"
 	NameUtmAttributionVariable             = "UTM Attribution"
 	NameUtmAttributionCookieWriterTag      = "UTM Attribution Cookie"
-	NameUtmAllEventsTrigger                = "All Events"
+	NameUtmAttributionCookieWriterTrigger  = "UTM Attribution Cookie"
 )
