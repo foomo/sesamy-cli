@@ -128,6 +128,10 @@
         "umami": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Umami",
           "description": "Umami provider settings"
+        },
+        "utm": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Utm",
+          "description": "UTM provider settings"
         }
       },
       "additionalProperties": false,
@@ -845,6 +849,20 @@
         "serverContainer": {
           "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
           "description": "Google Tag Manager server container settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.Utm": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable provider"
+        },
+        "googleConsent": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
+          "description": "Google Consent settings"
         }
       },
       "additionalProperties": false,

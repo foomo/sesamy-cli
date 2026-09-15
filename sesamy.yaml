@@ -510,3 +510,14 @@ pinterest:
           - Search
           - SignUp
           - ViewItemList
+
+# --- UTM Attribution settings
+utm:
+  # Enable provider
+  enabled: true
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: ad_storage
