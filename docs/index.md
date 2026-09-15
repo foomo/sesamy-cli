@@ -23,7 +23,7 @@ features:
   - title: Declarative GTM
     details: One sesamy.yaml describes both your web and server containers. The CLI reconciles GTM state to match.
   - title: Multi-provider out of the box
-    details: Google Analytics, Google Ads, Facebook, Pinterest, Microsoft Ads, Criteo, Emarsys, Mixpanel, Umami, Tracify, Hotjar, Cookiebot — wired with sensible defaults.
+    details: Google Analytics, Google Ads, Facebook, Pinterest, Microsoft Ads, Criteo, Emarsys, Mixpanel, Umami, Tracify, UTM, Hotjar, Cookiebot — wired with sensible defaults.
   - title: Diff before you ship
     details: See exactly which tags, triggers, and variables will change before they hit your container.
   - title: Typed events

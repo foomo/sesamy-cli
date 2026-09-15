@@ -2,6 +2,8 @@
 
 Mixpanel server-side event tracking.
 
+Track tags send UTM attribution data, so the [UTM](./utm) provider must be enabled and provisioned first.
+
 ## Configuration
 
 ```yaml
@@ -38,3 +40,5 @@ mixpanel:
 | `googleConsent.mode` | Defaults to `analytics_storage`. |
 | `serverContainer.userId` | Event-data property holding the user ID, forwarded to Mixpanel. |
 | `serverContainer.track.packages` | Events to forward to Mixpanel's `/track` endpoint. |
+
+The `Mixpanel` tag template is provisioned by the CLI — no manual template install required.

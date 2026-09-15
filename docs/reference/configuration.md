@@ -23,6 +23,7 @@ The full top-level schema of `sesamy.yaml` (version `1.1`). For provider-specifi
 | `mixpanel` | object | [Mixpanel provider config](/providers/mixpanel). |
 | `umami` | object | [Umami provider config](/providers/umami). |
 | `tracify` | object | [Tracify provider config](/providers/tracify). |
+| `utm` | object | [UTM provider config](/providers/utm). |
 | `hotjar` | object | [Hotjar provider config](/providers/hotjar). |
 | `cookiebot` | object | [Cookiebot provider config](/providers/cookiebot). |
 
