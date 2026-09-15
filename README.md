@@ -476,6 +476,8 @@ mixpanel:
   enabled: true
   # Project Token
   projectToken: ''
+  # Lookup the manually installed "Mixpanel" tag template instead of provisioning it
+  lookupTagTemplate: false
   # Google Consent settings
   googleConsent:
     # Enable consent mode
