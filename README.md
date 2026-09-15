@@ -1,4 +1,3 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/foomo/sesamy-cli?style=flat-square)](https://goreportcard.com/report/github.com/foomo/sesamy-cli)
 [![GoDoc](https://img.shields.io/badge/GoDoc-✓-informational.svg?style=flat-square&logo=go)](https://godoc.org/github.com/foomo/sesamy-cli)
 [![Coverage](https://img.shields.io/codecov/c/github/foomo/sesamy-cli?style=flat-square&logo=github)](https://app.codecov.io/gh/foomo/sesamy-cli)
 [![GitHub Downloads](https://img.shields.io/github/downloads/foomo/sesamy-cli/total.svg?style=flat-square&logo=github)](https://github.com/foomo/sesamy-cli/releases)
