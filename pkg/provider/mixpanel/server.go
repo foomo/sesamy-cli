@@ -31,9 +31,19 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 		return err
 	}
 
-	template, err := tm.UpsertCustomTemplate(ctx, mixpaneltemplate.NewMixpanelTag(NameTagTemplate))
-	if err != nil {
-		return err
+	var template *tagmanager2.CustomTemplate
+	if cfg.LookupTagTemplate {
+		if template, err = tm.LookupTemplate(ctx, NameTagTemplate); err != nil {
+			if errors.Is(err, tagmanager.ErrNotFound) {
+				l.Warn("Please install the 'Mixpanel' by stape-io Tag Template manually first")
+			}
+
+			return err
+		}
+	} else {
+		if template, err = tm.UpsertCustomTemplate(ctx, mixpaneltemplate.NewMixpanelTag(NameTagTemplate)); err != nil {
+			return err
+		}
 	}
 
 	projectToken, err := tm.UpsertVariable(ctx, folder, commonvariable.NewConstant(NamePrjectTokenConstant, cfg.ProjectToken))

@@ -10,6 +10,8 @@ type (
 		Enabled bool `json:"enabled" yaml:"enabled"`
 		// Mixpanel project token
 		ProjectToken string `json:"projectToken" yaml:"projectToken"`
+		// Lookup tag template instead of provisioning it
+		LookupTagTemplate bool `json:"lookupTagTemplate" yaml:"lookupTagTemplate"`
 		// Google Consent settings
 		GoogleConsent GoogleConsent `json:"googleConsent" yaml:"googleConsent"`
 		// Google Tag Manager server container settings
