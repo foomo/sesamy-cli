@@ -18,6 +18,7 @@ Each provider is a self-contained module under `pkg/provider/` that knows how to
 | [Mixpanel](./mixpanel) | — | ✔ | analytics | PageView, Purchase, ... |
 | [Umami](./umami) | — | ✔ | analytics | PageView, SelectItem |
 | [Tracify](./tracify) | — | ✔ | analytics | AddToCart, Purchase, ... |
+| [UTM](./utm) | — | ✔ | ad | all events |
 | [Hotjar](./hotjar) | ✔ | — | — | — |
 | [Cookiebot](./cookiebot) | ✔ | — | CMP | — |
 

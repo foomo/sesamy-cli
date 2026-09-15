@@ -66,6 +66,7 @@ export default defineConfig({
 					{text: 'Mixpanel', link: '/providers/mixpanel'},
 					{text: 'Umami', link: '/providers/umami'},
 					{text: 'Tracify', link: '/providers/tracify'},
+					{text: 'UTM', link: '/providers/utm'},
 					{text: 'Hotjar', link: '/providers/hotjar'},
 					{text: 'Cookiebot', link: '/providers/cookiebot'},
 				],

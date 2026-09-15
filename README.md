@@ -460,7 +460,18 @@ cookiebot:
       # Default consent ad_personalization
       adPersonalization: denied
 
-# --- Mixpanel
+# --- UTM Attribution settings
+utm:
+  # Enable provider
+  enabled: true
+  # Google Consent settings
+  googleConsent:
+    # Enable consent mode
+    enabled: true
+    # Consent mode name
+    mode: ad_storage
+
+# --- Mixpanel (requires the `utm` provider to be enabled)
 mixpanel:
   # Enable provider
   enabled: true
@@ -531,6 +542,8 @@ pinterest:
 ## Caveats
 
 You might need to increase your Google Tag Manager API quotas, since they are limited to 15 r/m by default.
+
+Mixpanel track tags send UTM attribution data, so the `utm` provider must be enabled and provisioned first.
 
 ## How to Contribute
 

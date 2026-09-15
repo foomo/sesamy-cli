@@ -24,6 +24,7 @@ emarsys: { ... }
 mixpanel: { ... }
 umami: { ... }
 tracify: { ... }
+utm: { ... }
 hotjar: { ... }
 cookiebot: { ... }
 conversionLinker: { ... }
