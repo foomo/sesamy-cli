@@ -33,7 +33,7 @@ const getRequestHeader = require('getRequestHeader');
 const JSON = require('JSON');
 const parseUrl = require('parseUrl');
 
-const COOKIE_NAME = 'stape_attribution'; // must match the writer tag's COOKIE_NAME
+const COOKIE_NAME = 'utm_attribution';
 const UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'utm_id'];
 
 const eventData = getAllEventData();

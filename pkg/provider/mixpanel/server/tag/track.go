@@ -12,12 +12,17 @@ func TrackName(v string) string {
 	return "Mixpanel Track - " + v
 }
 
-func NewTrack(name string, projectToken, userID *tagmanager.Variable, template *tagmanager.CustomTemplate, params map[string]*tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
+func NewTrack(name string, projectToken, userID, utmAttribution *tagmanager.Variable, template *tagmanager.CustomTemplate, params map[string]*tagmanager.Variable, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	parameter := []*tagmanager.Parameter{
 		{
 			Key:   "serverEU",
 			Type:  "boolean",
 			Value: "true",
+		},
+		{
+			Key:   "utmAttribution",
+			Type:  "template",
+			Value: "{{" + utmAttribution.Name + "}}",
 		},
 		{
 			Key:   "idMergeApi",

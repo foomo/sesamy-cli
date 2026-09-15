@@ -76,6 +76,14 @@ func NewServer(l *slog.Logger) *cobra.Command {
 				}
 			}
 
+			if cfg.Utm.Enabled && utils.Tag(utmprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", utmprovider.Name, "tag", utmprovider.Tag)
+
+				if err := utmprovider.Server(cmd.Context(), tm, cfg.Utm); err != nil {
+					return errors.Wrap(err, "failed to provision utm")
+				}
+			}
+
 			if cfg.GoogleAnalytics.Enabled && utils.Tag(googleanalyticsprovider.Tag, tags) {
 				l.Info("🅿️ Running provider", "name", googleanalyticsprovider.Name, "tag", googleanalyticsprovider.Tag)
 
@@ -161,14 +169,6 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 				if err := pinterestprovider.Server(cmd.Context(), l, tm, cfg.Pinterest); err != nil {
 					return errors.Wrap(err, "failed to provision pinterest")
-				}
-			}
-
-			if cfg.Utm.Enabled && utils.Tag(utmprovider.Tag, tags) {
-				l.Info("🅿️ Running provider", "name", utmprovider.Name, "tag", utmprovider.Tag)
-
-				if err := utmprovider.Server(cmd.Context(), tm, cfg.Utm); err != nil {
-					return errors.Wrap(err, "failed to provision utm")
 				}
 			}
 

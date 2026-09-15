@@ -9,7 +9,9 @@ import (
 	googleconsentvariable "github.com/foomo/sesamy-cli/pkg/provider/googleconsent/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
 	servertagx "github.com/foomo/sesamy-cli/pkg/provider/mixpanel/server/tag"
+	mixpaneltemplate "github.com/foomo/sesamy-cli/pkg/provider/mixpanel/server/template"
 	"github.com/foomo/sesamy-cli/pkg/provider/mixpanel/server/trigger"
+	utmprovider "github.com/foomo/sesamy-cli/pkg/provider/utm"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager/server/variable"
@@ -29,12 +31,8 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 		return err
 	}
 
-	template, err := tm.LookupTemplate(ctx, NameTagTemplate)
+	template, err := tm.UpsertCustomTemplate(ctx, mixpaneltemplate.NewMixpanelTag(NameTagTemplate))
 	if err != nil {
-		if errors.Is(err, tagmanager.ErrNotFound) {
-			l.Warn("Please install the 'Mixpanel' by stape-io Tag Template manually first")
-		}
-
 		return err
 	}
 
@@ -173,6 +171,19 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 			return err
 		}
 
+		var utmAttribution *tagmanager2.Variable
+
+		if len(eventParameters) > 0 {
+			utmAttribution, err = tm.LookupVariable(ctx, utmprovider.NameUtmAttributionVariable)
+			if err != nil {
+				if errors.Is(err, tagmanager.ErrNotFound) {
+					return errors.Wrap(err, "mixpanel track tags require the 'utm' provider to be enabled and provisioned first")
+				}
+
+				return err
+			}
+		}
+
 		for event, params := range eventParameters {
 			var eventTriggerOpts []trigger.EventOption
 
@@ -204,7 +215,7 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 				return errors.Wrap(err, "failed to upsert event trigger: "+event)
 			}
 
-			if _, err := tm.UpsertTag(ctx, folder, servertagx.NewTrack(event, projectToken, userID, template, eventParams, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(ctx, folder, servertagx.NewTrack(event, projectToken, userID, utmAttribution, template, eventParams, eventTrigger)); err != nil {
 				return err
 			}
 		}
