@@ -21,6 +21,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/pinterest"
 	"github.com/foomo/sesamy-cli/pkg/provider/tracify"
 	"github.com/foomo/sesamy-cli/pkg/provider/umami"
+	"github.com/foomo/sesamy-cli/pkg/provider/utm"
 	"github.com/pterm/pterm"
 	"github.com/spf13/cobra"
 )
@@ -48,6 +49,7 @@ func NewTags(l *slog.Logger) *cobra.Command {
 				tracify.Name:          tracify.Tag,
 				umami.Name:            umami.Tag,
 				pinterest.Name:        pinterest.Tag,
+				utm.Name:              utm.Tag,
 			}
 			// Define the data for the first table
 			data := pterm.TableData{{"Name", "Tag"}}

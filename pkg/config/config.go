@@ -40,4 +40,6 @@ type Config struct {
 	Tracify Tracify `json:"tracify" yaml:"tracify"`
 	// Umami provider settings
 	Umami Umami `json:"umami" yaml:"umami"`
+	// UTM provider settings
+	Utm Utm `json:"utm" yaml:"utm"`
 }

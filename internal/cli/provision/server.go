@@ -17,6 +17,7 @@ import (
 	pinterestprovider "github.com/foomo/sesamy-cli/pkg/provider/pinterest"
 	tracifyprovider "github.com/foomo/sesamy-cli/pkg/provider/tracify"
 	umamiprovider "github.com/foomo/sesamy-cli/pkg/provider/umami"
+	utmprovider "github.com/foomo/sesamy-cli/pkg/provider/utm"
 	ptermx "github.com/foomo/sesamy-cli/pkg/pterm"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
 	"github.com/foomo/sesamy-cli/pkg/utils"
@@ -72,6 +73,14 @@ func NewServer(l *slog.Logger) *cobra.Command {
 			if utils.Tag(googletagmanagerprovider.Tag, tags) {
 				if err := googletagmanagerprovider.Server(cmd.Context(), tm, cfg.GoogleTagManager, cfg.EnableGeoResolution); err != nil {
 					return errors.Wrap(err, "failed to provision google tag manager")
+				}
+			}
+
+			if cfg.Utm.Enabled && utils.Tag(utmprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", utmprovider.Name, "tag", utmprovider.Tag)
+
+				if err := utmprovider.Server(cmd.Context(), tm, cfg.Utm); err != nil {
+					return errors.Wrap(err, "failed to provision utm")
 				}
 			}
 
