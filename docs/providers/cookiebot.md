@@ -8,6 +8,8 @@ Cookiebot CMP integration. The CLI does **not** install the Cookiebot tag templa
 cookiebot:
   enabled: true
   templateName: Cookiebot CMP     # must match the imported template's name
+  templates:
+    tag: ''
   cookiebotId: ''
   cdnRegion: eu                    # eu or com
   urlPassthrough: false
@@ -29,3 +31,4 @@ cookiebot:
 | `urlPassthrough` | Pass identifiers via URL parameters when consent is denied. |
 | `advertiserConsentModeEnabled` | Enable advertiser consent mode signals. |
 | `regionSettings[]` | Per-region default consent states. Leave `region` blank for the global default. |
+| `templates.tag` | Path to a custom CMP tag template file. Empty (default) looks up the manually installed template. Overrides `templateName` lookup. |

@@ -928,10 +928,12 @@ func (t *TagManager) UpsertCustomTemplate(ctx context.Context, item *tagmanager.
 	} else if strings.Trim(item.TemplateData, "\n") == strings.Trim(cache.TemplateData, "\n") {
 		l.Info("└  ✔︎ OK", "id", cache.TemplateId)
 	} else {
-		edits := myers.ComputeEdits(span.URIFromPath("item.txt"), item.TemplateData, cache.TemplateData)
-		diff := gotextdiff.ToUnified("item.txt", "cache.txt", item.TemplateData, edits)
+		edits := myers.ComputeEdits(span.URIFromPath("item.tpl"), cache.TemplateData, item.TemplateData)
+		diff := gotextdiff.ToUnified("item.tpl", "cache.tpl", cache.TemplateData, edits)
+
 		l.Info("└  🔄 Update", "id", cache.TemplateId)
 		l.Info(fmt.Sprint(diff))
+
 		value, err = t.Service().Accounts.Containers.Workspaces.Templates.Update(t.WorkspacePath()+"/templates/"+cache.TemplateId, item).Context(ctx).Do()
 		t.customTemplates.Set(item.Name, value)
 	}

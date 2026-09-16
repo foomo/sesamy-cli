@@ -8,6 +8,9 @@ GA4 web + server-side tagging.
 googleAnalytics:
   enabled: true
   propertyId: ''                  # used by `sesamy open ga`
+  templates:
+    jsonRequestValueVariable: ''
+    gtagClient: ''
   googleConsent:
     enabled: true
     mode: analytics_storage
@@ -41,3 +44,5 @@ googleAnalytics:
 | `googleGTagJSOverride.ecommerceItems` | Normalize ecommerce items in the override. |
 | `webContainer.packages` | Events handled in the web container. |
 | `serverContainer.packages` | Events handled in the server container. |
+| `templates.jsonRequestValueVariable` | Path to a custom JSON request value variable template file. Empty (default) provisions the embedded template. |
+| `templates.gtagClient` | Path to a custom gtag client template file. Empty (default) provisions the embedded template. |

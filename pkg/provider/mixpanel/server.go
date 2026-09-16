@@ -13,6 +13,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/mixpanel/server/trigger"
 	utmprovider "github.com/foomo/sesamy-cli/pkg/provider/utm"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/utils"
@@ -31,7 +32,12 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 		return err
 	}
 
-	template, err := tm.UpsertCustomTemplate(ctx, mixpaneltemplate.NewMixpanelTag(NameTagTemplate))
+	tagTemplate, err := commontemplate.Resolve(cfg.Templates.Tag, NameTagTemplate, mixpaneltemplate.NewMixpanelTag(NameTagTemplate))
+	if err != nil {
+		return err
+	}
+
+	template, err := tm.UpsertCustomTemplate(ctx, tagTemplate)
 	if err != nil {
 		return err
 	}

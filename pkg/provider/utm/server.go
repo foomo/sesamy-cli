@@ -11,6 +11,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/utm/server/trigger"
 	containervariable "github.com/foomo/sesamy-cli/pkg/provider/utm/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	"github.com/pkg/errors"
 )
 
@@ -20,7 +21,12 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.Utm) erro
 		return err
 	}
 
-	variableTemplate, err := tm.UpsertCustomTemplate(ctx, containertemplate.NewUtmAttribution(NameUtmAttributionVariableTemplate))
+	attributionTemplate, err := commontemplate.Resolve(cfg.Templates.AttributionVariable, NameUtmAttributionVariableTemplate, containertemplate.NewUtmAttribution(NameUtmAttributionVariableTemplate))
+	if err != nil {
+		return err
+	}
+
+	variableTemplate, err := tm.UpsertCustomTemplate(ctx, attributionTemplate)
 	if err != nil {
 		return err
 	}
@@ -29,7 +35,12 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.Utm) erro
 		return err
 	}
 
-	tagTemplate, err := tm.UpsertCustomTemplate(ctx, containertemplate.NewUtmAttributionCookieWriter(NameUtmAttributionCookieWriterTemplate))
+	cookieWriterTemplate, err := commontemplate.Resolve(cfg.Templates.CookieWriterTag, NameUtmAttributionCookieWriterTemplate, containertemplate.NewUtmAttributionCookieWriter(NameUtmAttributionCookieWriterTemplate))
+	if err != nil {
+		return err
+	}
+
+	tagTemplate, err := tm.UpsertCustomTemplate(ctx, cookieWriterTemplate)
 	if err != nil {
 		return err
 	}

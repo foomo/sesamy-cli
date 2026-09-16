@@ -10,6 +10,8 @@ pinterest:
   advertiserId: ''
   apiAccessToken: ''
   testModeEnabled: false
+  templates:
+    tag: ''
   googleConsent:
     enabled: true
     mode: analytics_storage
@@ -34,3 +36,4 @@ pinterest:
 | `testModeEnabled` | Send events with the `test` flag set — won't count toward live data. |
 | `googleConsent.mode` | Defaults to `analytics_storage`. |
 | `serverContainer.packages` | Events to send. |
+| `templates.tag` | Path to a custom conversions tag template file. Empty (default) looks up the manually installed template. |

@@ -653,10 +653,6 @@ function sendIdentifyRequest() {
 }
 
 function sendRequest(eventName, postBody) {
-  // GIM-5006 @custom modification
-  if (eventName === 'purchase') {
-    eventName = 'checkout_completed';
-  }
   postBody.event = eventName;
 
   if (!postBody.properties) postBody.properties = {};
@@ -787,13 +783,7 @@ function trackCommonData(postBody) {
 
   if (eventData.user_agent) postBody.properties.user_agent = eventData.user_agent;
   if (eventData.page_path) postBody.properties.path = eventData.page_path;
-  // GIM-4989 @custom modification
-  if (eventData.page_location) {
-    const urlParsed = parseUrl(eventData.page_location);
-    postBody.properties.page_path = urlParsed.pathname;
-    postBody.properties.page_url = urlParsed.hostname + urlParsed.pathname;
-    postBody.properties['$current_url'] = eventData.page_location;
-  }
+  if (eventData.page_location) postBody.properties['$current_url'] = eventData.page_location;
   if (eventData.screen_resolution)
     postBody.properties['$screen_width'] = eventData.screen_resolution.split('x')[0];
   if (eventData.screen_resolution)

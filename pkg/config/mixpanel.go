@@ -14,6 +14,12 @@ type (
 		GoogleConsent GoogleConsent `json:"googleConsent" yaml:"googleConsent"`
 		// Google Tag Manager server container settings
 		ServerContainer MixpanelServerContainer `json:"serverContainer" yaml:"serverContainer"`
+		// Custom tag template settings
+		Templates MixpanelTemplates `json:"templates" yaml:"templates"`
+	}
+	MixpanelTemplates struct {
+		// Path to a custom tag template file, defaults to the embedded one
+		Tag string `json:"tag" yaml:"tag"`
 	}
 	MixpanelServerContainer struct {
 		UserID string `json:"userId" yaml:"userId"`

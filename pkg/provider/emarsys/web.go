@@ -10,6 +10,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/googletag"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/provider/googletag/web/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	commontrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/common/trigger"
 	"github.com/pkg/errors"
 )
@@ -21,7 +22,12 @@ func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.Emarsys) err
 	}
 
 	{ // create initialization tag
-		tagTemplate, err := tm.UpsertCustomTemplate(ctx, template.NewEmarsysInitializationTag(NameWebEmarsysInitalizationTagTemplate))
+		initializationTemplate, err := commontemplate.Resolve(cfg.Templates.InitializationTag, NameWebEmarsysInitalizationTagTemplate, template.NewEmarsysInitializationTag(NameWebEmarsysInitalizationTagTemplate))
+		if err != nil {
+			return err
+		}
+
+		tagTemplate, err := tm.UpsertCustomTemplate(ctx, initializationTemplate)
 		if err != nil {
 			return err
 		}

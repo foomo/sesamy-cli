@@ -15,4 +15,11 @@ type Cookiebot struct {
 	AdvertiserConsentModeEnabled bool `json:"advertiserConsentModeEnabled" yaml:"advertiserConsentModeEnabled"`
 	// Default Consent state
 	RegionSettings []CookiebotRegionSetting `json:"regionSettings" yaml:"regionSettings"`
+	// Custom tag template settings
+	Templates CookiebotTemplates `json:"templates" yaml:"templates"`
+}
+
+type CookiebotTemplates struct {
+	// Path to a custom cmp tag template file, defaults to the manually installed one
+	Tag string `json:"tag" yaml:"tag"`
 }

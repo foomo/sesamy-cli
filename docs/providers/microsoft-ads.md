@@ -8,6 +8,8 @@ Microsoft Ads (Bing UET) server-side conversion tracking.
 microsoftAds:
   enabled: true
   tagId: ''
+  templates:
+    conversionTag: ''
   googleConsent:
     enabled: true
     mode: ad_storage
@@ -30,6 +32,7 @@ microsoftAds:
 | `googleConsent.mode` | Defaults to `ad_storage`. |
 | `conversion.serverContainer.settings.<event>` | List of `{ conversionLabel }` pairs — one tag per entry. |
 | `conversion.serverContainer.packages` | Events to wire conversion tags for. |
+| `templates.conversionTag` | Path to a custom conversion tag template file. Empty (default) provisions the embedded template. |
 
 ::: tip
 Field names are based on the current schema. Run `sesamy config -c sesamy.yaml` to see the resolved values your build will use.

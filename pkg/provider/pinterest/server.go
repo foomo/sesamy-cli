@@ -10,8 +10,10 @@ import (
 	containertag "github.com/foomo/sesamy-cli/pkg/provider/pinterest/server/tag"
 	"github.com/foomo/sesamy-cli/pkg/provider/pinterest/server/trigger"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
+	tagmanager2 "google.golang.org/api/tagmanager/v2"
 )
 
 func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.Pinterest) error {
@@ -20,7 +22,9 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 		return err
 	}
 
-	template, err := tm.LookupTemplate(ctx, NameTagTemplate)
+	template, err := commontemplate.ResolveOrLookup(ctx, tm, cfg.Templates.Tag, NameTagTemplate, func() (*tagmanager2.CustomTemplate, error) {
+		return tm.LookupTemplate(ctx, NameTagTemplate)
+	})
 	if err != nil {
 		if errors.Is(err, tagmanager.ErrNotFound) {
 			l.Warn("Please install the 'Pinterest API for Conversions Tag' Tag Template manually first")
