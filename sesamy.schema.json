@@ -101,6 +101,10 @@
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.MicrosoftAds",
           "description": "MicrosoftAds provider settings"
         },
+        "openaiAds": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.OpenAIAds",
+          "description": "OpenAIAds provider settings"
+        },
         "mixpanel": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.Mixpanel",
           "description": "Mixpanel provider settings"
@@ -866,6 +870,89 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "github.com.foomo.sesamy-cli.pkg.config.OpenAIAds": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable provider"
+        },
+        "googleConsent": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
+          "description": "Google Consent settings"
+        },
+        "pixelId": {
+          "type": "string",
+          "description": "OpenAI Ads pixel id"
+        },
+        "apiKey": {
+          "type": "string",
+          "description": "OpenAI Ads api key"
+        },
+        "conversion": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.OpenAIAdsConversion",
+          "description": "OpenAI Ads Conversion settings"
+        },
+        "templates": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.OpenAIAdsTemplates",
+          "description": "Custom tag template settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.OpenAIAdsConversion": {
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Enable provider"
+        },
+        "validateOnly": {
+          "type": "boolean",
+          "description": "Only validate the events without persisting them"
+        },
+        "serverContainer": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.OpenAIAdsServerContainer",
+          "description": "Google Tag Manager server container settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.OpenAIAdsConversionTag": {
+      "properties": {
+        "eventName": {
+          "type": "string",
+          "description": "Standard event name sent to OpenAI Ads, defaults to the event name"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.OpenAIAdsServerContainer": {
+      "properties": {
+        "directory": {
+          "type": "string"
+        },
+        "packages": {
+          "$ref": "#/$defs/[]*contemplate.PackageConfig"
+        },
+        "settings": {
+          "$ref": "#/$defs/map[string]config.OpenAIAdsConversionTag"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.OpenAIAdsTemplates": {
+      "properties": {
+        "conversionsApiTag": {
+          "type": "string",
+          "description": "Path to a custom conversions api tag template file, defaults to the manually installed one"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "github.com.foomo.sesamy-cli.pkg.config.Pinterest": {
       "properties": {
         "enabled": {
@@ -1063,6 +1150,12 @@
     "map[string]config.MicrosoftAdsConversionTag": {
       "additionalProperties": {
         "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.MicrosoftAdsConversionTag"
+      },
+      "type": "object"
+    },
+    "map[string]config.OpenAIAdsConversionTag": {
+      "additionalProperties": {
+        "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.OpenAIAdsConversionTag"
       },
       "type": "object"
     },

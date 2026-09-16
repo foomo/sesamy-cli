@@ -13,6 +13,7 @@ Each provider is a self-contained module under `pkg/provider/` that knows how to
 | [Facebook](./facebook) | — | ✔ | ad | AddToCart, Purchase, ... |
 | [Pinterest](./pinterest) | — | ✔ | analytics | AddToCart, Purchase, ... |
 | [Microsoft Ads](./microsoft-ads) | — | ✔ | ad | conversions |
+| [OpenAI Ads](./openai-ads) | — | ✔ | ad | conversions |
 | [Criteo](./criteo) | — | ✔ | — | AddToCart, Purchase, ... |
 | [Emarsys](./emarsys) | — | ✔ | analytics | Purchase, ViewItem, ... |
 | [Mixpanel](./mixpanel) | — | ✔ | analytics | PageView, Purchase, ... |

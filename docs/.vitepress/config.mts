@@ -61,6 +61,7 @@ export default defineConfig({
 					{text: 'Facebook', link: '/providers/facebook'},
 					{text: 'Pinterest', link: '/providers/pinterest'},
 					{text: 'Microsoft Ads', link: '/providers/microsoft-ads'},
+					{text: 'OpenAI Ads', link: '/providers/openai-ads'},
 					{text: 'Criteo', link: '/providers/criteo'},
 					{text: 'Emarsys', link: '/providers/emarsys'},
 					{text: 'Mixpanel', link: '/providers/mixpanel'},

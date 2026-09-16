@@ -14,6 +14,7 @@ import (
 	googletagmanagerprovider "github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
 	microsoftadsprovider "github.com/foomo/sesamy-cli/pkg/provider/microsoftads"
 	mixpanelprovider "github.com/foomo/sesamy-cli/pkg/provider/mixpanel"
+	openaiadsprovider "github.com/foomo/sesamy-cli/pkg/provider/openaiads"
 	pinterestprovider "github.com/foomo/sesamy-cli/pkg/provider/pinterest"
 	tracifyprovider "github.com/foomo/sesamy-cli/pkg/provider/tracify"
 	umamiprovider "github.com/foomo/sesamy-cli/pkg/provider/umami"
@@ -153,6 +154,14 @@ func NewServer(l *slog.Logger) *cobra.Command {
 
 				if err := microsoftadsprovider.Server(cmd.Context(), l, tm, cfg.MicrosoftAds); err != nil {
 					return errors.Wrap(err, "failed to provision microsoftads")
+				}
+			}
+
+			if cfg.OpenAIAds.Enabled && utils.Tag(openaiadsprovider.Tag, tags) {
+				l.Info("🅿️ Running provider", "name", openaiadsprovider.Name, "tag", openaiadsprovider.Tag)
+
+				if err := openaiadsprovider.Server(cmd.Context(), l, tm, cfg.OpenAIAds); err != nil {
+					return errors.Wrap(err, "failed to provision openaiads")
 				}
 			}
 
