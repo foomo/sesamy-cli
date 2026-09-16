@@ -193,6 +193,12 @@ googleTag:
 googleAnalytics:
   # Enable provider
   enabled: true
+  # Custom tag template settings
+  templates:
+    # Path to a custom json request value variable template file, defaults to the embedded one
+    jsonRequestValueVariable: ''
+    # Path to a custom gtag client template file, defaults to the embedded one
+    gtagClient: ''
   # Google Consent settings
   googleConsent:
     # Enable consent mode
@@ -294,6 +300,10 @@ umami:
   websiteId: ''
   # Endpoint url of the umami api
   endpointUrl: https://umami.your-domain.com
+  # Custom tag template settings
+  templates:
+    # Path to a custom tag template file, defaults to the embedded one
+    tag: ''
   # Google Consent settings
   googleConsent:
     # Enable consent mode
@@ -320,6 +330,12 @@ criteo:
   partnerId: 123456
   # Criteo applicaiton id
   applicationId: com.foomo
+  # Custom tag template settings
+  templates:
+    # Path to a custom events api tag template file, defaults to the manually installed one
+    eventsApiTag: ''
+    # Path to a custom user identification template file, defaults to the manually installed one
+    userIdentification: ''
   # Google Tag Manager server container settings
   serverContainer:
     # Path to the go.mod file
@@ -347,6 +363,10 @@ facebook:
   apiAccessToken: ''
   # Code used to verify that your server events are received correctly by Conversions API
   testEventToken: ''
+  # Custom tag template settings
+  templates:
+    # Path to a custom conversions api tag template file, defaults to the manually installed one
+    conversionsApiTag: ''
   # Google Tag Manager server container settings
   # Google Consent settings
   googleConsent:
@@ -377,6 +397,14 @@ emarsys:
   enabled: true
   # Emarsys merchant id
   merchantId: ''
+  # Custom tag template settings
+  templates:
+    # Path to a custom web extend tag template file, defaults to the embedded one
+    webExtendTag: ''
+    # Path to a custom initialization client template file, defaults to the embedded one
+    initializationClient: ''
+    # Path to a custom initialization tag template file, defaults to the embedded one
+    initializationTag: ''
   # Google Consent settings
   googleConsent:
     # Enable consent mode
@@ -403,6 +431,10 @@ tracify:
   token: ''
   # Tracify customer site id
   customerSiteId: ''
+  # Custom tag template settings
+  templates:
+    # Path to a custom tag template file, defaults to the embedded one
+    tag: ''
   # Google Consent settings
   googleConsent:
     # Enable consent mode
@@ -436,6 +468,10 @@ cookiebot:
   # Name of the manually installed Cookiebot CMP tag template
   # "https://tagmanager.google.com/gallery/#/owners/cybotcorp/templates/gtm-templates-cookiebot-cmp
   templateName: Cookiebot CMP
+  # Custom tag template settings
+  templates:
+    # Path to a custom cmp tag template file, defaults to the manually installed one
+    tag: ''
   # Cookiebot id
   cookiebotId: ''
   # CDN Region (eu, com)
@@ -463,6 +499,12 @@ cookiebot:
 utm:
   # Enable provider
   enabled: true
+  # Custom tag template settings
+  templates:
+    # Path to a custom attribution variable template file, defaults to the embedded one
+    attributionVariable: ''
+    # Path to a custom cookie writer tag template file, defaults to the embedded one
+    cookieWriterTag: ''
   # Google Consent settings
   googleConsent:
     # Enable consent mode
@@ -476,8 +518,10 @@ mixpanel:
   enabled: true
   # Project Token
   projectToken: ''
-  # Lookup the manually installed "Mixpanel" tag template instead of provisioning it
-  lookupTagTemplate: false
+  # Custom tag template settings
+  templates:
+    # Path to a custom tag template file, defaults to the embedded one
+    tag: ''
   # Google Consent settings
   googleConsent:
     # Enable consent mode
@@ -517,6 +561,10 @@ pinterest:
   apiAccessToken: ''
   # Enable test mode
   testModeEnabled: false
+  # Custom tag template settings
+  templates:
+    # Path to a custom conversions tag template file, defaults to the manually installed one
+    tag: ''
   # Google Consent settings
   googleConsent:
     # Enable consent mode

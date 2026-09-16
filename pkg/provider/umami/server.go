@@ -10,6 +10,7 @@ import (
 	containertemplate "github.com/foomo/sesamy-cli/pkg/provider/umami/server/template"
 	"github.com/foomo/sesamy-cli/pkg/provider/umami/server/trigger"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
 )
@@ -20,7 +21,12 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.Umami) er
 		return err
 	}
 
-	template, err := tm.UpsertCustomTemplate(ctx, containertemplate.NewUmami(Name))
+	umamiTemplate, err := commontemplate.Resolve(cfg.Templates.Tag, Name, containertemplate.NewUmami(Name))
+	if err != nil {
+		return err
+	}
+
+	template, err := tm.UpsertCustomTemplate(ctx, umamiTemplate)
 	if err != nil {
 		return err
 	}

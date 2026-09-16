@@ -11,6 +11,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/microsoftads/server/template"
 	"github.com/foomo/sesamy-cli/pkg/provider/microsoftads/server/trigger"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
@@ -28,7 +29,12 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 	}
 
 	if cfg.Conversion.Enabled {
-		tagTemplate, err := tm.UpsertCustomTemplate(ctx, template.NewConversionTag(NameConversionsTagTemplate))
+		conversionTemplate, err := commontemplate.Resolve(cfg.Templates.ConversionTag, NameConversionsTagTemplate, template.NewConversionTag(NameConversionsTagTemplate))
+		if err != nil {
+			return err
+		}
+
+		tagTemplate, err := tm.UpsertCustomTemplate(ctx, conversionTemplate)
 		if err != nil {
 			return err
 		}

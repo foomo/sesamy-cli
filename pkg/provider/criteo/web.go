@@ -8,7 +8,9 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/config"
 	client "github.com/foomo/sesamy-cli/pkg/provider/criteo/web/tag"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
+	tagmanager2 "google.golang.org/api/tagmanager/v2"
 )
 
 func Web(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error {
@@ -17,7 +19,9 @@ func Web(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg con
 		return err
 	}
 
-	template, err := tm.LookupTemplate(ctx, NameCriteoUserIdentificationTemplate)
+	template, err := commontemplate.ResolveOrLookup(ctx, tm, cfg.Templates.UserIdentification, NameCriteoUserIdentificationTemplate, func() (*tagmanager2.CustomTemplate, error) {
+		return tm.LookupTemplate(ctx, NameCriteoUserIdentificationTemplate)
+	})
 	if err != nil {
 		if errors.Is(err, tagmanager.ErrNotFound) {
 			l.Warn("Please install the 'Criteo User Identification' template manually first")

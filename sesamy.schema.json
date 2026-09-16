@@ -187,6 +187,10 @@
         "regionSettings": {
           "$ref": "#/$defs/[]config.CookiebotRegionSetting",
           "description": "Default Consent state"
+        },
+        "templates": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.CookiebotTemplates",
+          "description": "Custom tag template settings"
         }
       },
       "additionalProperties": false,
@@ -222,6 +226,16 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "github.com.foomo.sesamy-cli.pkg.config.CookiebotTemplates": {
+      "properties": {
+        "tag": {
+          "type": "string",
+          "description": "Path to a custom cmp tag template file, defaults to the manually installed one"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "github.com.foomo.sesamy-cli.pkg.config.Criteo": {
       "properties": {
         "enabled": {
@@ -240,6 +254,10 @@
           "type": "string",
           "description": "Criteo application id"
         },
+        "templates": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.CriteoTemplates",
+          "description": "Custom tag template settings"
+        },
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
           "description": "Google Consent settings"
@@ -247,6 +265,20 @@
         "serverContainer": {
           "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
           "description": "Google Tag Manager server container settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.CriteoTemplates": {
+      "properties": {
+        "eventsApiTag": {
+          "type": "string",
+          "description": "Path to a custom events api tag template file, defaults to the manually installed one"
+        },
+        "userIdentification": {
+          "type": "string",
+          "description": "Path to a custom user identification template file, defaults to the manually installed one"
         }
       },
       "additionalProperties": false,
@@ -270,6 +302,10 @@
           "type": "boolean",
           "description": "Enable debug mode"
         },
+        "templates": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.EmarsysTemplates",
+          "description": "Custom tag template settings"
+        },
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
           "description": "Google Consent settings"
@@ -281,6 +317,24 @@
         "serverContainer": {
           "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
           "description": "Google Tag Manager server container settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.EmarsysTemplates": {
+      "properties": {
+        "webExtendTag": {
+          "type": "string",
+          "description": "Path to a custom web extend tag template file, defaults to the embedded one"
+        },
+        "initializationClient": {
+          "type": "string",
+          "description": "Path to a custom initialization client template file, defaults to the embedded one"
+        },
+        "initializationTag": {
+          "type": "string",
+          "description": "Path to a custom initialization tag template file, defaults to the embedded one"
         }
       },
       "additionalProperties": false,
@@ -300,6 +354,10 @@
         },
         "testEventToken": {
           "type": "string"
+        },
+        "templates": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.FacebookTemplates",
+          "description": "Custom tag template settings"
         },
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
@@ -337,6 +395,16 @@
         },
         "settings": {
           "$ref": "#/$defs/map[string]config.FacebookConversionAPITag"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.FacebookTemplates": {
+      "properties": {
+        "conversionsApiTag": {
+          "type": "string",
+          "description": "Path to a custom conversions api tag template file, defaults to the manually installed one"
         }
       },
       "additionalProperties": false,
@@ -466,6 +534,10 @@
           "type": "boolean",
           "description": "Enable mpv2 user data transformation (experimental)"
         },
+        "templates": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleAnalyticsTemplates",
+          "description": "Custom tag template settings"
+        },
         "webContainer": {
           "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
           "description": "Google Tag Manager web container settings"
@@ -491,6 +563,20 @@
         "ecommerceItems": {
           "type": "boolean",
           "description": "Allow sending items for non ecommerce events"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.GoogleAnalyticsTemplates": {
+      "properties": {
+        "jsonRequestValueVariable": {
+          "type": "string",
+          "description": "Path to a custom json request value variable template file, defaults to the embedded one"
+        },
+        "gtagClient": {
+          "type": "string",
+          "description": "Path to a custom gtag client template file, defaults to the embedded one"
         }
       },
       "additionalProperties": false,
@@ -659,6 +745,10 @@
         "conversion": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.MicrosoftAdsConversion",
           "description": "Microsoft Ads Conversion settings"
+        },
+        "templates": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.MicrosoftAdsTemplates",
+          "description": "Custom tag template settings"
         }
       },
       "additionalProperties": false,
@@ -705,6 +795,16 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "github.com.foomo.sesamy-cli.pkg.config.MicrosoftAdsTemplates": {
+      "properties": {
+        "conversionTag": {
+          "type": "string",
+          "description": "Path to a custom conversion tag template file, defaults to the embedded one"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "github.com.foomo.sesamy-cli.pkg.config.Mixpanel": {
       "properties": {
         "enabled": {
@@ -715,10 +815,6 @@
           "type": "string",
           "description": "Mixpanel project token"
         },
-        "lookupTagTemplate": {
-          "type": "boolean",
-          "description": "Lookup tag template instead of provisioning it"
-        },
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
           "description": "Google Consent settings"
@@ -726,6 +822,10 @@
         "serverContainer": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.MixpanelServerContainer",
           "description": "Google Tag Manager server container settings"
+        },
+        "templates": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.MixpanelTemplates",
+          "description": "Custom tag template settings"
         }
       },
       "additionalProperties": false,
@@ -756,6 +856,16 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "github.com.foomo.sesamy-cli.pkg.config.MixpanelTemplates": {
+      "properties": {
+        "tag": {
+          "type": "string",
+          "description": "Path to a custom tag template file, defaults to the embedded one"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "github.com.foomo.sesamy-cli.pkg.config.Pinterest": {
       "properties": {
         "enabled": {
@@ -774,6 +884,10 @@
           "type": "boolean",
           "description": "Enable test mode"
         },
+        "templates": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.PinterestTemplates",
+          "description": "Custom tag template settings"
+        },
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
           "description": "Google Consent settings"
@@ -781,6 +895,16 @@
         "serverContainer": {
           "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
           "description": "Google Tag Manager server container settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.PinterestTemplates": {
+      "properties": {
+        "tag": {
+          "type": "string",
+          "description": "Path to a custom conversions tag template file, defaults to the manually installed one"
         }
       },
       "additionalProperties": false,
@@ -804,6 +928,10 @@
           "type": "boolean",
           "description": "Enable stating mode"
         },
+        "templates": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.TracifyTemplates",
+          "description": "Custom tag template settings"
+        },
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
           "description": "Google Consent settings"
@@ -811,6 +939,16 @@
         "serverContainer": {
           "$ref": "#/$defs/github.com.foomo.gocontemplate.pkg.contemplate.Config",
           "description": "Google Tag Manager server container settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.TracifyTemplates": {
+      "properties": {
+        "tag": {
+          "type": "string",
+          "description": "Path to a custom tag template file, defaults to the embedded one"
         }
       },
       "additionalProperties": false,
@@ -846,6 +984,10 @@
         "endpointUrl": {
           "type": "string"
         },
+        "templates": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.UmamiTemplates",
+          "description": "Custom tag template settings"
+        },
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
           "description": "Google Consent settings"
@@ -858,15 +1000,43 @@
       "additionalProperties": false,
       "type": "object"
     },
+    "github.com.foomo.sesamy-cli.pkg.config.UmamiTemplates": {
+      "properties": {
+        "tag": {
+          "type": "string",
+          "description": "Path to a custom tag template file, defaults to the embedded one"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "github.com.foomo.sesamy-cli.pkg.config.Utm": {
       "properties": {
         "enabled": {
           "type": "boolean",
           "description": "Enable provider"
         },
+        "templates": {
+          "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.UtmTemplates",
+          "description": "Custom tag template settings"
+        },
         "googleConsent": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.GoogleConsent",
           "description": "Google Consent settings"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "github.com.foomo.sesamy-cli.pkg.config.UtmTemplates": {
+      "properties": {
+        "attributionVariable": {
+          "type": "string",
+          "description": "Path to a custom attribution variable template file, defaults to the embedded one"
+        },
+        "cookieWriterTag": {
+          "type": "string",
+          "description": "Path to a custom cookie writer tag template file, defaults to the embedded one"
         }
       },
       "additionalProperties": false,

@@ -10,9 +10,11 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/googleconsent"
 	googleconsentvariable "github.com/foomo/sesamy-cli/pkg/provider/googleconsent/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
+	tagmanager2 "google.golang.org/api/tagmanager/v2"
 )
 
 func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg config.Criteo) error {
@@ -21,7 +23,9 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 		return err
 	}
 
-	template, err := tm.LookupTemplate(ctx, NameCriteoEventsAPITemplate)
+	template, err := commontemplate.ResolveOrLookup(ctx, tm, cfg.Templates.EventsAPITag, NameCriteoEventsAPITemplate, func() (*tagmanager2.CustomTemplate, error) {
+		return tm.LookupTemplate(ctx, NameCriteoEventsAPITemplate)
+	})
 	if err != nil {
 		if errors.Is(err, tagmanager.ErrNotFound) {
 			l.Warn("Please install the 'Criteo Events API' Tag Template manually first")

@@ -9,6 +9,8 @@ tracify:
   enabled: true
   token: ''
   customerSiteId: ''
+  templates:
+    tag: ''
   googleConsent:
     enabled: true
     mode: analytics_storage
@@ -29,3 +31,4 @@ tracify:
 | `customerSiteId` | Tracify customer site identifier. |
 | `googleConsent.mode` | Defaults to `analytics_storage`. |
 | `serverContainer.packages` | Events to forward. |
+| `templates.tag` | Path to a custom tag template file. Empty (default) provisions the embedded template. |

@@ -11,6 +11,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/tracify/server/template"
 	"github.com/foomo/sesamy-cli/pkg/provider/tracify/server/trigger"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
@@ -33,7 +34,12 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 			return err
 		}
 
-		tagTemplate, err := tm.UpsertCustomTemplate(ctx, template.NewTracifyTag(NameTracifyServerTagTemplate))
+		tracifyTemplate, err := commontemplate.Resolve(cfg.Templates.Tag, NameTracifyServerTagTemplate, template.NewTracifyTag(NameTracifyServerTagTemplate))
+		if err != nil {
+			return err
+		}
+
+		tagTemplate, err := tm.UpsertCustomTemplate(ctx, tracifyTemplate)
 		if err != nil {
 			return err
 		}

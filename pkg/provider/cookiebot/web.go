@@ -6,7 +6,9 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/config"
 	"github.com/foomo/sesamy-cli/pkg/provider/cookiebot/web/tag"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	"github.com/pkg/errors"
+	tagmanager2 "google.golang.org/api/tagmanager/v2"
 )
 
 func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.Cookiebot) error {
@@ -16,7 +18,9 @@ func Web(ctx context.Context, tm *tagmanager.TagManager, cfg config.Cookiebot) e
 	}
 
 	{ // create event tags
-		temmplate, err := tm.LookupTemplate(ctx, cfg.TemplateName)
+		temmplate, err := commontemplate.ResolveOrLookup(ctx, tm, cfg.Templates.Tag, cfg.TemplateName, func() (*tagmanager2.CustomTemplate, error) {
+			return tm.LookupTemplate(ctx, cfg.TemplateName)
+		})
 		if err != nil {
 			return errors.Wrapf(err, "Failed to lookup `%s`, please install the `%s` gallery tag template first (%s)", cfg.TemplateName, "Cookiebot CMP", "https://tagmanager.google.com/gallery/#/owners/cybotcorp/templates/gtm-templates-cookiebot-cmp")
 		}

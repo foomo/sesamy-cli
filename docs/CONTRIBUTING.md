@@ -8,8 +8,8 @@ Thank you for your interest in contributing to our project! This guide will help
 2. Create a new branch: `git checkout -b feature/your-feature-name`
 3. Make your changes
 4. Check and fix code style and formatting issues: `make lint`
-5. Run checks: `make test`
-6. Build the project: `make build`
+5. Run tests: `make test`
+6. Run final checks: `make check`
 7. Commit your changes using the conventions below
 8. Push your branch to your fork
 9. Open a pull request
@@ -29,10 +29,13 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/) for clear
 
 ## Pull Request Guidelines
 
-1. Update documentation if needed
-2. Ensure all tests pass
-3. Address any feedback from code reviews
-4. Once approved, your PR will be merged
+1. Adhere to the coding and style guidelines of the project
+2. Perform a self-review of your own code
+3. Comment your code, particularly in hard-to-understand areas
+4. Make corresponding changes to the documentation
+5. Ensure all tests pass
+6. Address any feedback from code reviews
+7. Once approved, your PR will be merged
 
 ## Code of Conduct & Security
 

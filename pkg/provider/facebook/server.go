@@ -10,6 +10,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/googleconsent"
 	googleconsentvariable "github.com/foomo/sesamy-cli/pkg/provider/googleconsent/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
@@ -43,7 +44,9 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 		}
 	}
 
-	template, err := tm.LookupTemplate(ctx, NameConversionsAPITagTemplate)
+	template, err := commontemplate.ResolveOrLookup(ctx, tm, cfg.Templates.ConversionsAPITag, NameConversionsAPITagTemplate, func() (*tagmanager2.CustomTemplate, error) {
+		return tm.LookupTemplate(ctx, NameConversionsAPITagTemplate)
+	})
 	if errors.Is(err, tagmanager.ErrNotFound) {
 		l.Warn("Please install the 'Conversions API Tag' by 'facebookincubator' template manually first")
 		return err

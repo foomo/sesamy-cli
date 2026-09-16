@@ -9,4 +9,11 @@ type MicrosoftAds struct {
 	TagID string `json:"tagId" yaml:"tagId"`
 	// Microsoft Ads Conversion settings
 	Conversion MicrosoftAdsConversion `json:"conversion" yaml:"conversion"`
+	// Custom tag template settings
+	Templates MicrosoftAdsTemplates `json:"templates" yaml:"templates"`
+}
+
+type MicrosoftAdsTemplates struct {
+	// Path to a custom conversion tag template file, defaults to the embedded one
+	ConversionTag string `json:"conversionTag" yaml:"conversionTag"`
 }

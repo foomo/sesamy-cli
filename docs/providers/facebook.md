@@ -10,6 +10,8 @@ facebook:
   pixelId: ''
   apiAccessToken: ''
   testEventToken: ''
+  templates:
+    conversionsApiTag: ''
   googleConsent:
     enabled: true
     mode: ad_storage
@@ -36,6 +38,7 @@ facebook:
 | `testEventToken` | Optional — use Meta's test events tool to verify the payload. |
 | `googleConsent.mode` | Defaults to `ad_storage`. |
 | `serverContainer.packages` | Events to send via Conversions API. |
+| `templates.conversionsApiTag` | Path to a custom Conversions API tag template file. Empty (default) looks up the manually installed template. |
 
 ## Test events
 

@@ -13,6 +13,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/googletag"
 	"github.com/foomo/sesamy-cli/pkg/provider/googletagmanager"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	servertemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/server/template"
 	servertransformation "github.com/foomo/sesamy-cli/pkg/tagmanager/server/transformation"
 	servertrigger "github.com/foomo/sesamy-cli/pkg/tagmanager/server/trigger"
@@ -61,7 +62,12 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleAna
 			}
 
 			if cfg.EnableMPv2UserDataTransformation {
-				userDataTemplate, err := tm.UpsertCustomTemplate(ctx, servertemplate.NewJSONRequestValue(NameJSONRequestValueTemplate))
+				jsonRequestValueTemplate, err := commontemplate.Resolve(cfg.Templates.JSONRequestValueVariable, NameJSONRequestValueTemplate, servertemplate.NewJSONRequestValue(NameJSONRequestValueTemplate))
+				if err != nil {
+					return err
+				}
+
+				userDataTemplate, err := tm.UpsertCustomTemplate(ctx, jsonRequestValueTemplate)
 				if err != nil {
 					return err
 				}
@@ -87,7 +93,12 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.GoogleAna
 		}
 
 		if cfg.GoogleGTagJSOverride.Enabled {
-			template, err := tm.UpsertCustomTemplate(ctx, googleanalyticstemplate.NewGoogleGTagClient(NameGoogleGTagClientTemplate))
+			gtagClientTemplate, err := commontemplate.Resolve(cfg.Templates.GTagClient, NameGoogleGTagClientTemplate, googleanalyticstemplate.NewGoogleGTagClient(NameGoogleGTagClientTemplate))
+			if err != nil {
+				return err
+			}
+
+			template, err := tm.UpsertCustomTemplate(ctx, gtagClientTemplate)
 			if err != nil {
 				return err
 			}

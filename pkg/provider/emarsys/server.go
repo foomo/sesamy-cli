@@ -12,6 +12,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/googleconsent"
 	googleconsentvariable "github.com/foomo/sesamy-cli/pkg/provider/googleconsent/server/variable"
 	"github.com/foomo/sesamy-cli/pkg/tagmanager"
+	commontemplate "github.com/foomo/sesamy-cli/pkg/tagmanager/common/template"
 	commonvariable "github.com/foomo/sesamy-cli/pkg/tagmanager/common/variable"
 	"github.com/foomo/sesamy-cli/pkg/utils"
 	"github.com/pkg/errors"
@@ -29,12 +30,22 @@ func Server(ctx context.Context, l *slog.Logger, tm *tagmanager.TagManager, cfg 
 			return err
 		}
 
-		tagTemplate, err := tm.UpsertCustomTemplate(ctx, template.NewEmarsysWebExtendTag(NameServerEmarsysWebExtendTagTemplate))
+		webExtendTemplate, err := commontemplate.Resolve(cfg.Templates.WebExtendTag, NameServerEmarsysWebExtendTagTemplate, template.NewEmarsysWebExtendTag(NameServerEmarsysWebExtendTagTemplate))
 		if err != nil {
 			return err
 		}
 
-		clientTemplate, err := tm.UpsertCustomTemplate(ctx, template.NewEmarsysInitializationClient(NameServerEmarsysInitalizationClientTemplate))
+		tagTemplate, err := tm.UpsertCustomTemplate(ctx, webExtendTemplate)
+		if err != nil {
+			return err
+		}
+
+		initializationClientTemplate, err := commontemplate.Resolve(cfg.Templates.InitializationClient, NameServerEmarsysInitalizationClientTemplate, template.NewEmarsysInitializationClient(NameServerEmarsysInitalizationClientTemplate))
+		if err != nil {
+			return err
+		}
+
+		clientTemplate, err := tm.UpsertCustomTemplate(ctx, initializationClientTemplate)
 		if err != nil {
 			return err
 		}

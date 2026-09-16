@@ -7,6 +7,9 @@ UTM attribution for the server container. Persists the incoming UTM parameters i
 ```yaml
 utm:
   enabled: true
+  templates:
+    attributionVariable: ''
+    cookieWriterTag: ''
   googleConsent:
     enabled: true
     mode: ad_storage
@@ -15,6 +18,8 @@ utm:
 | Field | Purpose |
 |-------|---------|
 | `googleConsent.mode` | Defaults to `ad_storage`. |
+| `templates.attributionVariable` | Path to a custom attribution variable template file. Empty (default) provisions the embedded template. |
+| `templates.cookieWriterTag` | Path to a custom cookie writer tag template file. Empty (default) provisions the embedded template. |
 
 ## What gets provisioned
 
