@@ -18,6 +18,7 @@ The full top-level schema of `sesamy.yaml` (version `1.1`). For provider-specifi
 | `facebook` | object | [Facebook provider config](/providers/facebook). |
 | `pinterest` | object | [Pinterest provider config](/providers/pinterest). |
 | `microsoftAds` | object | [Microsoft Ads provider config](/providers/microsoft-ads). |
+| `openAiAds` | object | [OpenAI Ads provider config](/providers/openai-ads). |
 | `criteo` | object | [Criteo provider config](/providers/criteo). |
 | `emarsys` | object | [Emarsys provider config](/providers/emarsys). |
 | `mixpanel` | object | [Mixpanel provider config](/providers/mixpanel). |

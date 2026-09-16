@@ -18,6 +18,7 @@ import (
 	"github.com/foomo/sesamy-cli/pkg/provider/hotjar"
 	"github.com/foomo/sesamy-cli/pkg/provider/microsoftads"
 	"github.com/foomo/sesamy-cli/pkg/provider/mixpanel"
+	"github.com/foomo/sesamy-cli/pkg/provider/openaiads"
 	"github.com/foomo/sesamy-cli/pkg/provider/pinterest"
 	"github.com/foomo/sesamy-cli/pkg/provider/tracify"
 	"github.com/foomo/sesamy-cli/pkg/provider/umami"
@@ -46,6 +47,7 @@ func NewTags(l *slog.Logger) *cobra.Command {
 				hotjar.Name:           hotjar.Tag,
 				microsoftads.Name:     microsoftads.Tag,
 				mixpanel.Name:         mixpanel.Tag,
+				openaiads.Name:        openaiads.Tag,
 				tracify.Name:          tracify.Tag,
 				umami.Name:            umami.Tag,
 				pinterest.Name:        pinterest.Tag,

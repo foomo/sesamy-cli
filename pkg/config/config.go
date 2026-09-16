@@ -26,6 +26,8 @@ type Config struct {
 	Facebook Facebook `json:"facebook" yaml:"facebook"`
 	// MicrosoftAds provider settings
 	MicrosoftAds MicrosoftAds `json:"microsoftAds" yaml:"microsoftAds"`
+	// OpenAIAds provider settings
+	OpenAIAds OpenAIAds `json:"openaiAds" yaml:"openaiAds"`
 	// Mixpanel provider settings
 	Mixpanel Mixpanel `json:"mixpanel" yaml:"mixpanel"`
 	// Pinterest provider settings
