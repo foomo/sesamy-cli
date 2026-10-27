@@ -77,6 +77,28 @@ ___TEMPLATE_PARAMETERS___
         "defaultValue": 1000
       }
     ]
+  },
+  {
+    "type": "GROUP",
+    "name": "eventDataGroup",
+    "displayName": "Event Data",
+    "groupStyle": "ZIPPY_OPEN",
+    "subParams": [
+      {
+        "type": "SIMPLE_TABLE",
+        "name": "eventParameters",
+        "displayName": "Event Parameters (Optional)",
+        "help": "Names of the event data keys to send as Umami event data. Missing and empty values are omitted.",
+        "simpleTableColumns": [
+          {
+            "defaultValue": "",
+            "displayName": "Parameter Name",
+            "name": "name",
+            "type": "TEXT"
+          }
+        ]
+      }
+    ]
   }
 ]
 
@@ -116,6 +138,16 @@ if (pageLocation) {
       screen: eventData.screen_resolution || "1920x1080"
     }
   };
+
+  const ip = getIp(eventData.ip_override);
+  if (ip) {
+    umamiEvent.payload.ip = ip;
+  }
+
+  const umamiData = getEventParameters(eventData, data.eventParameters);
+  if (umamiData) {
+    umamiEvent.payload.data = umamiData;
+  }
 
   logToConsole(
     JSON.stringify({
@@ -163,6 +195,37 @@ if (pageLocation) {
   );
 } else {
   data.gtmOnFailure();
+}
+
+// getIp returns the first address of a comma separated ip_override value.
+function getIp(value) {
+  if (!value) {
+    return undefined;
+  }
+  const ip = makeString(value).split(',')[0].trim();
+  return ip || undefined;
+}
+
+// getEventParameters returns the declared event parameters with a value, or undefined if there are none.
+function getEventParameters(eventData, params) {
+  if (!params || params.length === 0) {
+    return undefined;
+  }
+  const ret = {};
+  let found = false;
+  for (let i = 0; i < params.length; i++) {
+    const key = params[i].name;
+    if (!key) {
+      continue;
+    }
+    const value = eventData[key];
+    if (value === undefined || value === null || value === '') {
+      continue;
+    }
+    ret[key] = value;
+    found = true;
+  }
+  return found ? ret : undefined;
 }
 
 function addRequestHeaders(headers) {
