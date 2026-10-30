@@ -260,9 +260,9 @@ criteo:
   # Enable provider
   enabled: true
   # Criteo caller id
-  callerId: 123
+  callerId: '123'
   # Criteo partner id
-  partnerId: 123456
+  partnerId: '123456'
   # Criteo applicaiton id
   applicationId: com.foomo
   # Google Tag Manager server container settings
