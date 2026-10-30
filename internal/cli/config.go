@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/alecthomas/chroma/quick"
+	"github.com/alecthomas/chroma/v2/quick"
 	pkgcmd "github.com/foomo/sesamy-cli/pkg/cmd"
 	"github.com/itchyny/json2yaml"
 	"github.com/pkg/errors"
