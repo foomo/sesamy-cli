@@ -32,37 +32,37 @@ endif
 
 .PHONY: check
 ## Run lint & tests
-check: tidy generate lint.fix test.race audit
+check: tidy generate actionlint lint.fix test.race audit
 
 .PHONY: lint
 ## Run linter
 lint:
 	@echo "〉golangci-lint run"
-	@golangci-lint run --max-same-issues 0 --max-issues-per-linter 0
+	@golangci-lint run
 
 .PHONY: lint.fix
 ## Fix lint violations
 lint.fix:
 	@echo "〉golangci-lint run fix"
-	@golangci-lint run --fix --max-same-issues 0 --max-issues-per-linter 0
+	@golangci-lint run --fix
 
 .PHONY: test
 ## Run tests
 test:
 	@echo "〉go test"
-	@GO_TEST_TAGS=-skip go test -tags=safe -shuffle=on -coverprofile=coverage.out ./...
+	@GO_TEST_TAGS=-skip gotestsum -- -tags=safe -shuffle=on -coverprofile=coverage.out ./...
 
 .PHONY: test.race
 ## Run tests with -race
 test.race:
 	@echo "〉go test -race"
-	@GO_TEST_TAGS=-skip go test -tags=safe -shuffle=on -coverprofile=coverage.out -race ./...
+	@GO_TEST_TAGS=-skip gotestsum -- -tags=safe -shuffle=on -coverprofile=coverage.out -race ./...
 
 .PHONY: test.nocache
 ## Run tests with -count=1
 test.nocache:
 	@echo "〉go test -count=1"
-	@GO_TEST_TAGS=-skip go test -tags=safe -shuffle=on -coverprofile=coverage.out -count=1 ./...
+	@GO_TEST_TAGS=-skip gotestsum -- -tags=safe -shuffle=on -coverprofile=coverage.out -count=1 ./...
 
 .PHONY: generate
 ## Run go generate
@@ -96,7 +96,7 @@ install.debug:
 ## Run security audit
 audit:
 	@echo "〉security audit"
-	@$(foreach mod,$(GOMODS), (cd $(dir $(mod)) && echo "📂 $(dir $(mod))" && govulncheck ./...) &&) true
+	@osv-scanner --call-analysis=all --config=.osv-scanner.toml $(if $(GITHUB_ACTIONS),--format=gh-annotations) -r .
 
 ### Dependencies
 
@@ -106,17 +106,18 @@ tidy:
 	@echo "〉go mod tidy"
 	@go mod tidy
 
+
 .PHONY: outdated
 ## Show outdated direct dependencies
 outdated:
 	@echo "〉go mod outdated"
-	@go-mod-upgrade --list
+	@go-mod-upgrade --cooldown 7d --list
 
 .PHONY: upgrade
 ## Upgrade direct dependencies
 upgrade:
 	@echo "〉go mod upgrade"
-	@go-mod-upgrade
+	@go-mod-upgrade --cooldown 7d
 	@$(MAKE) tidy
 
 ### Documentation
@@ -147,6 +148,11 @@ godocs:
 	@go doc -http
 
 ### Utils
+
+.PHONY: actionlint
+## Run actionlint
+actionlint:
+	@actionlint
 
 .PHONY: help
 # https://patorjk.com/software/taag/#p=display&f=Future+Smooth&t=SESAMY+CLI&x=none&v=4&h=4&w=80&we=false

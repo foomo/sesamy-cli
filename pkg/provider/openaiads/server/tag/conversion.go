@@ -15,6 +15,7 @@ func ConversionName(v string) string {
 func NewConversion(name string, pixelID, apiKey *tagmanager.Variable, template *tagmanager.CustomTemplate, validateOnly bool, settings config.OpenAIAdsConversionTag, triggers ...*tagmanager.Trigger) *tagmanager.Tag {
 	eventName := settings.EventName
 	eventNameSetup := "standard"
+
 	if eventName == "" {
 		eventName = name
 		eventNameSetup = "inherit"
