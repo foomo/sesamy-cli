@@ -37,7 +37,7 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.Umami) er
 			return err
 		}
 
-		for event := range eventParameters {
+		for event, params := range eventParameters {
 			var eventTriggerOpts []trigger.UmamiEventOption
 
 			if cfg.GoogleConsent.Enabled {
@@ -58,7 +58,7 @@ func Server(ctx context.Context, tm *tagmanager.TagManager, cfg config.Umami) er
 				return errors.Wrap(err, "failed to upsert event trigger: "+event)
 			}
 
-			if _, err := tm.UpsertTag(ctx, folder, containertag.NewUmami(event, cfg, template, eventTrigger)); err != nil {
+			if _, err := tm.UpsertTag(ctx, folder, containertag.NewUmami(event, cfg, template, params, eventTrigger)); err != nil {
 				return err
 			}
 		}
