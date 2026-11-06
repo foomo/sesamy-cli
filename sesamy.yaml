@@ -238,6 +238,8 @@ umami:
   websiteId: ''
   # Endpoint url of the umami api
   endpointUrl: https://umami.your-domain.com
+  # Optional event data key whose value is sent as the Umami distinct ID (payload.id)
+  distinctIdParameter: ''
   # Google Consent settings
   googleConsent:
     # Enable consent mode

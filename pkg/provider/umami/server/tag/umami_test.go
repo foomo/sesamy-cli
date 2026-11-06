@@ -73,3 +73,36 @@ func TestNewUmami(t *testing.T) {
 		})
 	}
 }
+
+func TestNewUmami_DistinctIDParameter(t *testing.T) {
+	t.Parallel()
+
+	find := func(tag *tagmanager.Tag, key string) *tagmanager.Parameter {
+		for _, p := range tag.Parameter {
+			if p.Key == key {
+				return p
+			}
+		}
+
+		return nil
+	}
+
+	t.Run("set", func(t *testing.T) {
+		t.Parallel()
+
+		got := tag.NewUmami("page_view", config.Umami{DistinctIDParameter: "session_id"}, &tagmanager.CustomTemplate{}, nil)
+
+		p := find(got, "distinctIdParameter")
+		require.NotNil(t, p)
+		assert.Equal(t, "template", p.Type)
+		assert.Equal(t, "session_id", p.Value)
+	})
+
+	t.Run("empty", func(t *testing.T) {
+		t.Parallel()
+
+		got := tag.NewUmami("page_view", config.Umami{}, &tagmanager.CustomTemplate{}, nil)
+
+		assert.Nil(t, find(got, "distinctIdParameter"))
+	})
+}

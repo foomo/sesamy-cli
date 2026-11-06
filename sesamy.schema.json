@@ -1071,6 +1071,10 @@
         "endpointUrl": {
           "type": "string"
         },
+        "distinctIdParameter": {
+          "type": "string",
+          "description": "Event data key whose value the tag sends as the Umami distinct ID (payload.id), e.g. a first-party session ID.\nUmami v3.4.0 and later separate sessions by it. Empty (default) sends no distinct ID."
+        },
         "templates": {
           "$ref": "#/$defs/github.com.foomo.sesamy-cli.pkg.config.UmamiTemplates",
           "description": "Custom tag template settings"

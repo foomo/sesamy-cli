@@ -75,6 +75,13 @@ ___TEMPLATE_PARAMETERS___
           }
         ],
         "defaultValue": 1000
+      },
+      {
+        "type": "TEXT",
+        "name": "distinctIdParameter",
+        "displayName": "Distinct ID Parameter (Optional)",
+        "simpleValueType": true,
+        "help": "Event data key whose value is sent as the Umami distinct ID (payload.id)"
       }
     ]
   },
@@ -142,6 +149,13 @@ if (pageLocation) {
   const ip = getIp(eventData.ip_override);
   if (ip) {
     umamiEvent.payload.ip = ip;
+  }
+
+  if (data.distinctIdParameter) {
+    const distinctId = eventData[data.distinctIdParameter];
+    if (distinctId) {
+      umamiEvent.payload.id = makeString(distinctId);
+    }
   }
 
   const umamiData = getEventParameters(eventData, data.eventParameters);
