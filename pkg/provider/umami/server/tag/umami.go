@@ -39,6 +39,14 @@ func NewUmami(name string, cfg config.Umami, template *tagmanager.CustomTemplate
 		},
 	}
 
+	if cfg.DistinctIDParameter != "" {
+		parameter = append(parameter, &tagmanager.Parameter{
+			Key:   "distinctIdParameter",
+			Type:  "template",
+			Value: cfg.DistinctIDParameter,
+		})
+	}
+
 	if len(params) > 0 {
 		var list []*tagmanager.Parameter
 
